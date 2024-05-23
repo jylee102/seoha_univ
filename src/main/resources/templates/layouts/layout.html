@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBlog</title>
+
+    <!-- 공통으로 사용할 CSS -->
+
+    <link rel="stylesheet" th:href="@{/vendors/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/vendors/feather/feather.css}">
+    <link rel="stylesheet" th:href="@{/vendors/base/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/vendors/font-awesome/css/font-awesome.min.css}">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" />
+
+    <!-- 각 페이지의 CSS가 작성될 위치 지정 -->
+    <th:block layout:fragment="css"></th:block>
+</head>
+
+<body>
+    <div class="container-scroller">
+
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <div class="container-fluid page-body-wrapper">
+
+            <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+            <div class="main-panel">
+                <div layout:fragment="content" class="content"></div>
+
+                <div th:replace="~{fragments/footer :: footer}"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 공통으로 사용할 JS  -->
+    <script th:src="@{/vendors/base/vendor.bundle.base.js}"></script>
+
+    <script th:src="@{/js/off-canvas.js}"></script>
+    <script th:src="@{/js/hoverable-collapse.js}"></script>
+    <script th:src="@{/js/template.js}"></script>
+
+    <script th:src="@{/js/dashboard.js}"></script>
+
+    <!-- 각 페이지의 JS가 작성될 위치 지정 -->
+    <th:block layout:fragment="script"></th:block>
+</body>
+</html>
