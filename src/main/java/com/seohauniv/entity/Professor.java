@@ -1,11 +1,9 @@
 package com.seohauniv.entity;
 
-import com.seohauniv.util.IdGenerator;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "professor")
@@ -14,7 +12,6 @@ import java.time.LocalDateTime;
 @ToString
 public class Professor {
     @Id
-    @Column(name = "member_id")
     private String id;
 
     private String name;
@@ -31,15 +28,8 @@ public class Professor {
     @JoinColumn(name = "subject_id")
     private Dept major;
 
-    @PrePersist
-    public void prePersist() {
-        if (this.id == null) {
-            this.id = IdGenerator.generateProfessorId(LocalDateTime.now());
-        }
-    }
-
     @MapsId
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }
