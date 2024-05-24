@@ -10984,21 +10984,21 @@ fieldset:disabled .ajax-upload-dragdrop a.ajax-file-upload,
 
 .btn-primary {
   color: #fff;
-  background-color: #ffffff;
-  border-color: #ffffff;
+  background-color: #0D2D84;
+  border-color: #0D2D84;
 }
 
 .btn-primary:hover {
   color: #fff;
-  background-color: #e811fb;
-  border-color: #e705fb;
+  background-color: #1540b3;
+  border-color: #0D2D84;
 }
 
 .btn-primary:focus, .btn-primary.focus {
   color: #fff;
-  background-color: #e811fb;
-  border-color: #e705fb;
-  box-shadow: 0 0 0 0.2rem rgba(239, 85, 252, 0.5);
+  background-color: #1540b3;
+  border-color: #1540b3;
+  box-shadow: 0 0 0 0.2rem #1540b3;
 }
 
 .btn-primary.disabled, .btn-primary:disabled {
@@ -11016,7 +11016,7 @@ fieldset:disabled .ajax-upload-dragdrop a.ajax-file-upload,
 
 .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus,
 .show > .btn-primary.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.2rem rgba(239, 85, 252, 0.5);
+  box-shadow: 0 0 0 0.2rem #1540b3;
 }
 
 .btn-secondary {
@@ -19666,7 +19666,7 @@ code {
 }
 
 .btn-primary, .btn-primary:hover {
-  box-shadow: 0 2px 2px 0 rgba(236, 55, 252, 0.14), 0 3px 1px -2px rgba(236, 55, 252, 0.2), 0 1px 5px 0 rgba(236, 55, 252, 0.12);
+  box-shadow: 0 0 0 0.2rem #1540b3;
 }
 
 .btn-inverse-secondary {
@@ -19936,7 +19936,7 @@ code {
 }
 
 .btn-primary, .btn-primary:hover {
-  box-shadow: 0 2px 2px 0 rgba(236, 55, 252, 0.14), 0 3px 1px -2px rgba(236, 55, 252, 0.2), 0 1px 5px 0 rgba(236, 55, 252, 0.12);
+ box-shadow: 0 0 0 0.2rem #1540b3;
 }
 
 .btn-outline-secondary {

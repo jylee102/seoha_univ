@@ -66,7 +66,7 @@
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             </form>
                             <div class="text-center mt-4 font-weight-light">
-                                비밀번호를 잊었나요? <a class="text-primary" onclick="openModal();">비밀번호 초기화</a>
+                                비밀번호를 잊었나요? <a  onclick="openModal();" style="color: #e811fb; !important">비밀번호 초기화</a>
                             </div>
 
                             <!-- 비밀번호 초기화 모달 -->
@@ -74,7 +74,7 @@
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="resetPasswordModalLabel">비밀번호 초기화</h5>
+                                            <h5 class="modal-title" id="resetPasswordModalLabel" >비밀번호 초기화</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
