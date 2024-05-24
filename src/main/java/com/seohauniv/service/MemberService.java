@@ -1,5 +1,6 @@
 package com.seohauniv.service;
 
+import com.seohauniv.config.MemberContext;
 import com.seohauniv.constant.Role;
 import com.seohauniv.entity.Member;
 import com.seohauniv.entity.Professor;
@@ -7,16 +8,22 @@ import com.seohauniv.entity.Staff;
 import com.seohauniv.entity.Student;
 import com.seohauniv.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -71,5 +78,23 @@ public class MemberService {
 
     public Long count() {
         return memberRepository.count();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+        //해당 id 계정을 가진 사용자가 있는지 확인
+        Member member = memberRepository.getById(id);
+
+        if (member == null) { //사용자가 없다면
+            throw new UsernameNotFoundException(id);
+        }
+
+        if (member == null) { //사용자가 없다면
+            throw new UsernameNotFoundException(id);
+        }
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        return new MemberContext(member, authorities); //Member 객체를 상속받은 MemberContext을 넣어주면 스프링이 알아서 처리한다.
     }
 }
