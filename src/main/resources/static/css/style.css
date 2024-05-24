@@ -18245,7 +18245,7 @@ button.bg-dark:focus {
 }
 
 .text-primary {
-  color: #ffffff !important;
+  color: #0D2D84 !important;
 }
 
 a.text-primary:hover, a.text-primary:focus {
@@ -20254,7 +20254,7 @@ code {
   width: 18px;
   height: 18px;
   border-radius: 2px;
-  border: solid #ffffff;
+  border: solid #0D2D84;
   border-width: 2px;
   -webkit-transition: all;
   -moz-transition: all;
@@ -20289,7 +20289,7 @@ code {
 }
 
 .form-check .form-check-label input[type="checkbox"]:checked + .input-helper:before {
-  background: #ffffff;
+  background: #0D2D84;
   border-width: 0;
 }
 
@@ -20310,7 +20310,7 @@ code {
 
 .form-check .form-check-label input[type="checkbox"]:disabled:checked + .input-helper:after {
   background: #e4e6f6;
-  color: #ffffff;
+  color: #0D2D84;
 }
 
 .form-check .form-check-label input[type="radio"] + .input-helper:before {
@@ -22824,3 +22824,4 @@ dl li {
 }
 
 /*# sourceMappingURL=maps/style.css.map */
+
