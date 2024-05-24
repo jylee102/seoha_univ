@@ -12,8 +12,9 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class Staff {
+public class Staff extends BaseTimeEntity {
     @Id
+    @Column(name = "member_id")
     private String id;
 
     private String name;

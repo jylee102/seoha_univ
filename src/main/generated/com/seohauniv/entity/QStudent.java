@@ -22,11 +22,17 @@ public class QStudent extends EntityPathBase<Student> {
 
     public static final QStudent student = new QStudent("student");
 
+    public final QBaseTimeEntity _super = new QBaseTimeEntity(this);
+
     public final StringPath address = createString("address");
 
     public final DatePath<java.time.LocalDate> birth = createDate("birth", java.time.LocalDate.class);
 
     public final StringPath email = createString("email");
+
+    public final NumberPath<Integer> grade = createNumber("grade", Integer.class);
+
+    public final DatePath<java.time.LocalDate> graduationDate = createDate("graduationDate", java.time.LocalDate.class);
 
     public final StringPath id = createString("id");
 
@@ -37,6 +43,14 @@ public class QStudent extends EntityPathBase<Student> {
     public final StringPath name = createString("name");
 
     public final StringPath phone = createString("phone");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
+
+    public final NumberPath<Integer> semester = createNumber("semester", Integer.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
 
     public QStudent(String variable) {
         this(Student.class, forVariable(variable), INITS);

@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <nav th:fragment="sidebar" class="sidebar sidebar-offcanvas"
-     id="sidebar" th:style="'background-color: ' + ${session.symbolColor} + ';'">
+     id="sidebar" style="background-color: #0D2D84;">
     <div class="user-profile">
         <div class="user-image">
-            <img th:src="${session.emblem}">
+            <img th:src="@{/images/로고_2.png}">
         </div>
         <div class="user-designation">
-            <span th:text="${session.univName}"></span>
-            <span class="user-designation" th:if="${session.role} == 'Staff'">(교직원)</span>
-            <span class="user-designation" th:if="${session.role} == 'Professor'">(교수)</span>
-            <span class="user-designation" th:if="${session.role} == 'Student'">(학생)</span>
+            <span>서하대학교</span>
+            <span class="user-designation">(교직원)</span>
+            <span class="user-designation">(교수)</span>
+            <span class="user-designation">(학생)</span>
         </div>
 
-        <div class="user-name" th:text="${session.nickname} + ' 님'"></div>
-        <button type="button" class="btn btn-dark" onclick="location.href = '/logout';">
+        <div class="user-name">"유저이름"님</div>
+        <button type="button" class="btn btn-dark" onclick="location.href = '/members/logout';">
             로그아웃
         </button>
     </div>

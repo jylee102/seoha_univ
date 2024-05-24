@@ -12,10 +12,10 @@ public class MainController {
 
     @GetMapping(value = "/")
     public String main(HttpServletRequest request, Model model, Principal principal) {
-        // 로그인 되어 있지 않다면 로그인 페이지로
-        Object httpStatus = request.getAttribute("HttpStatus");
-        if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
-            return "/members/login";
+//        // 로그인 되어 있지 않다면 로그인 페이지로
+//        Object httpStatus = request.getAttribute("HttpStatus");
+//        if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
+//            return "/members/login";
 
         return "index";
     }

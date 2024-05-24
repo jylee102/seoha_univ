@@ -10,8 +10,9 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class Professor {
+public class Professor extends BaseTimeEntity {
     @Id
+    @Column(name = "member_id")
     private String id;
 
     private String name;
@@ -25,7 +26,7 @@ public class Professor {
     private String address;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id")
+    @JoinColumn(name = "dept_id")
     private Dept major;
 
     @MapsId
