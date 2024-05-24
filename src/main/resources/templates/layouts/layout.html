@@ -13,6 +13,7 @@
     <link rel="stylesheet" th:href="@{/vendors/feather/feather.css}">
     <link rel="stylesheet" th:href="@{/vendors/base/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/vendors/font-awesome/css/font-awesome.min.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css}">
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" />
@@ -45,6 +46,22 @@
     <script th:src="@{/js/off-canvas.js}"></script>
     <script th:src="@{/js/hoverable-collapse.js}"></script>
     <script th:src="@{/js/template.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            $('.navbar-toggler').on('click', function() {
+                $('.navbar-toggler').toggleClass('collapsed');
+
+                if ($('.navbar-toggler').hasClass('collapsed')) {
+                    $('.logoutBtn').html('<i class="fa-solid fa-arrow-right-from-bracket"></i>');
+                    $('.logoImg').css('display', 'none');
+                } else {
+                    $('.logoutBtn').html('로그아웃');
+                    $('.logoImg').css('display', 'inline-block');
+                }
+            });
+        });
+    </script>
 
     <!-- 각 페이지의 JS가 작성될 위치 지정 -->
     <th:block layout:fragment="script"></th:block>
