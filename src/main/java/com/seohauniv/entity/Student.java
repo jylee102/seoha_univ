@@ -1,20 +1,18 @@
 package com.seohauniv.entity;
 
-import com.seohauniv.util.IdGenerator;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "student")
 @Getter
 @Setter
 @ToString
-public class Student {
+public class Student extends BaseTimeEntity {
     @Id
     @Column(name = "member_id")
     private String id;
@@ -29,20 +27,19 @@ public class Student {
 
     private String address;
 
+    private int grade;
+
+    private int semester;
+
+    @Column(name = "graduation_date")
+    private LocalDate graduationDate;
+
     @ManyToOne
-    @JoinColumn(name = "subject_id")
+    @JoinColumn(name = "dept_id")
     private Dept major;
 
-    @PrePersist
-    public void prePersist() {
-        if (this.id == null) {
-            this.id = IdGenerator.generateStudentId(LocalDateTime.now());
-        }
-    }
-
-    // 식별 관계 표현
-    @MapsId
-    @OneToOne
+    @MapsId // 식별 관계 표현
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }

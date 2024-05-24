@@ -22,6 +22,8 @@ public class QProfessor extends EntityPathBase<Professor> {
 
     public static final QProfessor professor = new QProfessor("professor");
 
+    public final QBaseTimeEntity _super = new QBaseTimeEntity(this);
+
     public final StringPath address = createString("address");
 
     public final DatePath<java.time.LocalDate> birth = createDate("birth", java.time.LocalDate.class);
@@ -37,6 +39,12 @@ public class QProfessor extends EntityPathBase<Professor> {
     public final StringPath name = createString("name");
 
     public final StringPath phone = createString("phone");
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
 
     public QProfessor(String variable) {
         this(Professor.class, forVariable(variable), INITS);

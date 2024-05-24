@@ -1,8 +1,11 @@
 package com.seohauniv.entity;
 
 import com.seohauniv.constant.Role;
+import com.seohauniv.util.IdGenerator;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "member")
@@ -36,9 +39,9 @@ public class Member extends BaseTimeEntity {
     @PrePersist
     public void prePersist() {
         if (this.id == null) {
-            if (this.staff != null) this.id = this.staff.getId();
-            else if (this.student != null) this.id = this.student.getId();
-            else if (this.professor != null) this.id = this.professor.getId();
+            if (this.staff != null) this.id = IdGenerator.generateStaffId(this.getRegDate());
+            else if (this.student != null) this.id = IdGenerator.generateStudentId(this.getRegDate());
+            else if (this.professor != null) this.id = IdGenerator.generateProfessorId(this.getRegDate());
         }
     }
 }

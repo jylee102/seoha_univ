@@ -26,8 +26,10 @@ public class MemberInit implements ApplicationRunner {
             admin.setName("이지영");
             admin.setEmail("lilydodo11@gmail.com");
             admin.setBirth(LocalDate.of(2001, 2, 2));
+            admin.setPhone("");
+            admin.setAddress("");
 
-            staffService.saveStaff(admin);
+            memberService.createMember(admin);
         }
     }
 }

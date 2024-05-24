@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <link rel="stylesheet" th:href="@{/css/main.css}" />
+      <link rel="stylesheet" th:href="@{/css/main_page.css}" />
+      <link
+         rel="stylesheet"
+         th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css}"
+      />
+   </head>
+   <body>
+      <div layout:fragment="content"
+         class="d-flex justify-content-center align-items-start"
+         style="min-width: 150em"
+      >
+         <div>
+            <img
+               alt=""
+               src="/images/main_bg.jpg"
+               class="main--page--img"
+               style="margin-top: 100px"
+            />
+            <div class="d-flex align-items-start">
+               <div class="main--page--div">
+                  <div class="d-flex">
+                     <!-- 공지사항 -->
+                     <div class="main--page--notice">
+                        <h3>
+                           <a href="/notice">공지사항</a>
+                        </h3>
+                        <div class="main--page--split"></div>
+                        <table>
+                           <tr>
+                              <td>
+                                 <a>긴급&nbsp;입학</a> <!--  href="/notice/read?id=${notice.id}" -->
+                              </td>
+                              <td>2024-05-23</td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <a>긴급&nbsp;입학</a>
+                              </td>
+                              <td>2024-05-23</td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <a>긴급&nbsp;입학</a>
+                              </td>
+                              <td>2024-05-23</td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <a>긴급&nbsp;입학</a>
+                              </td>
+                              <td>2024-05-23</td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <a>긴급&nbsp;입학</a>
+                              </td>
+                              <td>2024-05-23</td>
+                           </tr>
+                        </table>
+                     </div>
+                     <div class="main--page--calander">
+                        <h3>
+                           <a href="/schedule">학사일정</a>
+                        </h3>
+                        <div class="main--page--split"></div>
+                        <table>
+                           <tr>
+                              <td>수업수업수업수업수업수업</td>
+                              <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
+                           </tr>
+                           <tr>
+                              <td>수업수업수업수업수업수업</td>
+                              <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
+                           </tr>
+                           <tr>
+                              <td>수업수업수업수업수업수업</td>
+                              <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
+                           </tr>
+                           <tr>
+                              <td>수업수업수업수업수업수업</td>
+                              <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
+                           </tr>
+                           <tr>
+                              <td>수업수업수업수업수업수업</td>
+                              <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
+                           </tr>
+                           <tr>
+                              <td>수업수업수업수업수업수업</td>
+                              <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
+                           </tr>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+               <div>
+                  <!-- 사용자 간단한 프로필 -->
+
+                  <br />
+               </div>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>
