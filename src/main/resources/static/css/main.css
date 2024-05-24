@@ -1,6 +1,5 @@
 @charset "UTF-8";
 .main--page--div {
-   width: 1500px;
    margin-bottom: 50px;
    display: flex;
    justify-content: flex-end;
@@ -8,7 +7,7 @@
 }
 
 .main--page--img {
-   width: 1500px;
+   width: 100%;
    height: 500px;
    margin-bottom: 40px;
 }
@@ -31,7 +30,7 @@
 }
 
 .main--page--notice tr td:first-of-type {
-   width: 450px;
+   width: 80%;
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;
@@ -133,4 +132,13 @@
 footer {
    margin: 80px 0 30px 0;
    text-align: center;
+}
+
+@media screen and (max-width: 1024px) {
+    .schedule-tb td:first-child {
+        width: 100%;
+    }
+    .schedule-tb td:last-child {
+        display: none;
+    }
 }

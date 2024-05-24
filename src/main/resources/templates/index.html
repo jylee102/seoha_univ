@@ -13,10 +13,28 @@
            th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css}"
    />
 </head>
+
+<th:block layout:fragment="css">
+   <style>
+      .main-panel {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+      }
+
+      .main--page--notice {
+         width: 50%;
+      }
+
+      table {
+         width: 100%;
+      }
+   </style>
+</th:block>
+
 <body>
 <div layout:fragment="content"
-     class="d-flex justify-content-center align-items-start"
-     style="min-width: 100em"
+     style="width: calc(50vw + 240px);"
 >
    <div>
       <img
@@ -25,7 +43,7 @@
               class="main--page--img"
               style="margin-top: 70px"
       />
-      <div class="d-flex align-items-start">
+      <div>
          <div class="main--page--div">
             <div class="d-flex">
                <!-- 공지사항 -->
@@ -67,12 +85,12 @@
                      </tr>
                   </table>
                </div>
-               <div class="main--page--calander">
+               <div class="main--page--notice">
                   <h3>
                      <a href="/schedule">학사일정</a>
                   </h3>
                   <div class="main--page--split"></div>
-                  <table>
+                  <table class="schedule-tb">
                      <tr>
                         <td>수업수업수업수업수업수업</td>
                         <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
