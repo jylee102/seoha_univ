@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <nav th:fragment="sidebar" class="sidebar sidebar-offcanvas"
      id="sidebar" style="background-color: #0D2D84;">
     <div class="user-profile">
         <div class="user-image">
-            <img th:src="@{/images/logo.png}">
+            <img class="logoImg" th:src="@{/images/logo.png}">
         </div>
         <div class="user-designation">
             <span>서하대학교</span>
-            <span class="user-designation">(교직원)</span>
-            <span class="user-designation">(교수)</span>
-            <span class="user-designation">(학생)</span>
+            <span class="user-designation" th:if="${#authentication.principal.role == 'STAFF'}">(교직원)</span>
+            <span class="user-designation" th:if="${#authentication.principal.role == 'PROFESSOR'}">(교수)</span>
+            <span class="user-designation" th:if="${#authentication.principal.role == 'STUDENT'}">(학생)</span>
         </div>
 
-        <div class="user-name">"유저이름"님</div>
-        <button type="button" class="btn btn-dark" onclick="location.href = '/members/logout';">
-            로그아웃
-        </button>
+        <div class="user-name" th:text="${#authentication.principal.name} + '님'"></div>
+        <form action="/members/logout" method="post">
+            <button type="submit" class="btn btn-dark logoutBtn">
+                로그아웃
+            </button>
+        </form>
     </div>
     <ul class="nav">
         <li class="nav-item">
