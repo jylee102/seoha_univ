@@ -21598,7 +21598,7 @@ dl li {
 }
 
 .auth .register-half-bg {
-  background: url("../images/auth/register-bg.jpg");
+  background: url("../images/auth/university.jpg");
   background-size: cover;
 }
 
@@ -21738,7 +21738,7 @@ dl li {
 
 .content-wrapper {
   background: #f4f7fa;
-  padding: 2.5rem 2.5rem;
+  /*padding: 2.5rem 2.5rem;*/
   width: 100%;
   -webkit-flex-grow: 1;
   flex-grow: 1;
