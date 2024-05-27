@@ -1,6 +1,8 @@
 package com.seohauniv.controller;
 
 import com.seohauniv.dto.MemberFormDto;
+import com.seohauniv.entity.Dept;
+import com.seohauniv.service.DeptService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +12,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.List;
 
 import static com.seohauniv.entity.QNotice.notice;
 
 @Controller
 @RequiredArgsConstructor
 public class MainController {
+
+    private final DeptService deptService;
 
     @GetMapping(value = "/")
     public String main(HttpServletRequest request, Model model, Principal principal) {
@@ -44,7 +49,10 @@ public class MainController {
         if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
             return "/members/login";
 
+        List<Dept> deptList = deptService.getAllDept();
+
         model.addAttribute("memberFormDto", new MemberFormDto());
+        model.addAttribute("deptList", deptList);
 
         return "staff/memberForm";
     }
