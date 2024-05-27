@@ -19005,6 +19005,8 @@ code {
   font-family: "Karla", sans-serif;
   font-weight: 400;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin: auto;
+  text-align: center;
 }
 
 .footer a {
@@ -21763,8 +21765,6 @@ dl li {
   -webkit-transition: width 0.25s ease, background 0.25s ease;
   -moz-transition: width 0.25s ease, background 0.25s ease;
   -ms-transition: width 0.25s ease, background 0.25s ease;
-  box-shadow: 6px 16px 31px -18px #b7bcd1;
-  -webkit-box-shadow: 6px 16px 31px -18px #b7bcd1;
   -moz-box-shadow: 6px 16px 31px -18px #b7bcd1;
   -ms-box-shadow: 6px 16px 31px -18px #b7bcd1;
 }
