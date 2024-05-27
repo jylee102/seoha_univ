@@ -4,10 +4,14 @@ import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.entity.Member;
 import com.seohauniv.service.MemberService;
 //import com.seohauniv.util.EmailUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -33,7 +37,7 @@ public class MemberController {
     }
 
     // 비밀번호 변경
-    @PostMapping("/members/changePw")
+    @PostMapping(value = "/members/changePw")
     public String changePassword(@RequestParam("currentPassword") String currentPassword,
                                  @RequestParam("newPassword") String newPassword,
                                  @RequestParam("confirmPassword") String confirmPassword,
@@ -71,5 +75,13 @@ public class MemberController {
         model.addAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
 
         return "member/changePassword";
+    }
+
+    // 멤버 등록
+    @PostMapping(value = "/members/new")
+    public @ResponseBody ResponseEntity newMember(@Valid MemberFormDto memberFormDto, BindingResult bindingResult,
+                                                  Model model) {
+        System.out.println(memberFormDto);
+        return new ResponseEntity<>("구성원 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
     }
 }

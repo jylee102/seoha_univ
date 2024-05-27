@@ -1,5 +1,6 @@
 package com.seohauniv.controller;
 
+import com.seohauniv.dto.MemberFormDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +37,12 @@ public class MainController {
 
     // 구성원 등록 페이지
     @GetMapping(value= "/staffs/regMember")
-    public String regMember(HttpServletRequest request) {
+    public String regMember(HttpServletRequest request, Model model) {
         Object httpStatus = request.getAttribute("HttpStatus");
         if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
             return "/members/login";
+
+        model.addAttribute("memberFormDto", new MemberFormDto());
 
         return "staff/memberForm";
     }
