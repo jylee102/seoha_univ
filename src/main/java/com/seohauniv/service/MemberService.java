@@ -61,7 +61,7 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(member);
     }
 
-    private String generateRawPassword(Object entity) {
+    public String generateRawPassword(Object entity) {
         LocalDate birth = null;
         if (entity instanceof Staff) {
             birth = ((Staff) entity).getBirth();
@@ -114,5 +114,4 @@ public class MemberService implements UserDetailsService {
 
         return new MemberContext(member, authorities); //Member 객체를 상속받은 MemberContext을 넣어주면 스프링이 알아서 처리한다.
     }
-
 }
