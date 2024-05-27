@@ -7,6 +7,7 @@ import com.seohauniv.entity.Professor;
 import com.seohauniv.entity.Staff;
 import com.seohauniv.entity.Student;
 import com.seohauniv.repository.MemberRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional
@@ -79,6 +79,22 @@ public class MemberService implements UserDetailsService {
 
     public Long count() {
         return memberRepository.count();
+    }
+
+    // 학번/교번으로 회원 찾기
+    public Member getMember(String id) {
+        return memberRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    // 비밀번호 확인(현재 비밀번호와 같은지)
+    public Boolean checkPassword(Member member, String password) {
+        return passwordEncoder.matches(password, member.getPassword());
+    }
+
+    // 비밀번호 변경
+    public void updatePassword(Member member, String rawPassword) {
+        String password = passwordEncoder.encode(rawPassword);
+        member.setPassword(password);
     }
 
     @Override

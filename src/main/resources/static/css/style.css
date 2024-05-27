@@ -21965,20 +21965,20 @@ dl li {
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link:hover {
-  color: #ffffff;
+  color: #495057;
   background: transparent;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link:hover::before {
-  border: 1px solid #ffffff;
+  border: 1px solid #495057;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link.active {
-  color: #ffffff;
+  color: #495057;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link.active::before {
-  border: 1px solid #ffffff;
+  border: 1px solid #495057;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link::before {
@@ -22676,6 +22676,13 @@ dl li {
 
 /* Layouts */
 @media (min-width: 992px) {
+  .sidebar-icon-only .logoutBtn .menu-title {
+    display: none;
+  }
+  .sidebar-icon-only .logoImg {
+    display: none;
+  }
+
   .sidebar-icon-only .navbar .navbar-brand-wrapper {
     width: 70px;
   }
@@ -22821,6 +22828,13 @@ dl li {
   .sidebar-icon-only .main-panel {
     width: calc(100% - 70px);
   }
+}
+
+.btn-seoha {
+    background: #0D2D84;
+    color: #fff;
+    border-color: #0D2D84;
+    box-shadow: none;
 }
 
 /*# sourceMappingURL=maps/style.css.map */

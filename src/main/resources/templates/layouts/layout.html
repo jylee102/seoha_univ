@@ -46,22 +46,6 @@
     <script th:src="@{/js/off-canvas.js}"></script>
     <script th:src="@{/js/hoverable-collapse.js}"></script>
     <script th:src="@{/js/template.js}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            $('.navbar-toggler').on('click', function() {
-                $('.navbar-toggler').toggleClass('collapsed');
-
-                if ($('.navbar-toggler').hasClass('collapsed')) {
-                    $('.logoutBtn').html('<i class="fa-solid fa-arrow-right-from-bracket"></i>');
-                    $('.logoImg').css('display', 'none');
-                } else {
-                    $('.logoutBtn').html('로그아웃');
-                    $('.logoImg').css('display', 'inline-block');
-                }
-            });
-        });
-    </script>
 
     <!-- 각 페이지의 JS가 작성될 위치 지정 -->
     <th:block layout:fragment="script"></th:block>
