@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
+import static com.seohauniv.entity.QNotice.notice;
+
 @Controller
 @RequiredArgsConstructor
 public class MainController {
@@ -36,7 +38,7 @@ public class MainController {
     }
 
     // 구성원 등록 페이지
-    @GetMapping(value= "/staffs/regMember")
+    @GetMapping(value = "/staffs/regMember")
     public String regMember(HttpServletRequest request, Model model) {
         Object httpStatus = request.getAttribute("HttpStatus");
         if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
@@ -45,5 +47,15 @@ public class MainController {
         model.addAttribute("memberFormDto", new MemberFormDto());
 
         return "staff/memberForm";
+    }
+
+    @GetMapping(value = "/notice")
+    public String notice(Model model) {
+        return "staff/notice";
+    }
+
+    @GetMapping(value = "/noticeForm")
+    public String noticeForm(Model model) {
+        return "staff/noticeForm";
     }
 }
