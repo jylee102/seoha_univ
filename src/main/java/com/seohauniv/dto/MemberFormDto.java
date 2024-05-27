@@ -24,10 +24,6 @@ public class MemberFormDto {
     @Email(message = "이메일 형식으로 입력해주세요.")
     private String email;
 
-    @NotEmpty(message = "비밀번호는 필수 입력 값입니다.")
-    @Length(min = 8, max = 16, message = "비밀번호는 8자 ~ 16자 사이로 입력해주세요.")
-    private String password;
-
     @Pattern(regexp="^\\d{3}-\\d{3,4}-\\d{4}$", message="전화번호 형식이 올바르지 않습니다.")
     private String phone;
 
@@ -36,6 +32,8 @@ public class MemberFormDto {
     private LocalDate birth;
 
     private Dept dept;
+
+    private String role;
 
     private static ModelMapper modelMapper = new ModelMapper();
 
