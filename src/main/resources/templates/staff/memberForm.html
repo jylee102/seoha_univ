@@ -41,7 +41,13 @@
 
                     <tr class="dept-form">
                         <td><label th:for="dept">학과</label></td>
-                        <td><input type="text" th:field="*{dept}" class="input--box"/></td>
+                        <td>
+                            <input type="text" id="deptInput" autocomplete="off" class="input--box" list="dept_titles"/>
+                            <input type="hidden" th:field="*{dept}"/>
+                            <datalist id="dept_titles">
+                                <option th:each="dept : ${deptList}" th:value="${dept.title}" th:data-id="${dept.id}"></option>
+                            </datalist>
+                        </td>
                     </tr>
 
                     <tr>
@@ -75,6 +81,14 @@
             if ($('.nav-link.active[role="tab"]').val() == 'STAFF') {
                 $('.dept-form').css('display', 'none');
             } else $('.dept-form').css('display', 'table-row');
+        });
+
+        $('#deptInput').on('input', function() {
+            var inputVal = $(this).val();
+            var deptId = $('#dept_titles option').filter(function() {
+                return $(this).val() === inputVal;
+            }).data('id');
+            $('#dept').val(deptId);
         });
     </script>
 </th:block>

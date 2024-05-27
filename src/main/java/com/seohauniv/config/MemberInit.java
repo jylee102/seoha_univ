@@ -1,6 +1,5 @@
 package com.seohauniv.config;
 
-import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.entity.Staff;
 import com.seohauniv.service.MemberService;
 import com.seohauniv.service.StaffService;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 public class MemberInit implements ApplicationRunner {
 
     private final MemberService memberService;
-    private final StaffService staffService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
