@@ -66,4 +66,7 @@ public class MainController {
     public String noticeForm(Model model) {
         return "staff/noticeForm";
     }
+
+    @GetMapping(value = "/myInfo")
+    public String myInfo(Model model){ return "member/myInfo";}
 }
