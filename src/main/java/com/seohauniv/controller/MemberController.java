@@ -2,27 +2,30 @@ package com.seohauniv.controller;
 
 import com.seohauniv.constant.Role;
 import com.seohauniv.dto.MemberFormDto;
-import com.seohauniv.entity.Member;
+import com.seohauniv.entity.*;
+import com.seohauniv.service.DeptService;
 import com.seohauniv.service.MemberService;
 import com.seohauniv.util.EmailUtil;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Random;
 
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
-    private final PasswordEncoder passwordEncoder;
+    private final DeptService deptService;
     private final MemberService memberService;
     private final EmailUtil emailUtil;
 
@@ -82,10 +85,56 @@ public class MemberController {
 
     // 멤버 등록
     @PostMapping(value = "/members/new")
-    public @ResponseBody ResponseEntity newMember(@Valid MemberFormDto memberFormDto, BindingResult bindingResult,
+    public String newMember(@Valid MemberFormDto memberFormDto, BindingResult bindingResult,
                                                   Model model) {
-        System.out.println(memberFormDto);
-        return new ResponseEntity<>("구성원 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
+
+        List<Dept> deptList = deptService.getAllDept();
+
+        if (bindingResult.hasErrors()) {
+            StringBuilder sb = new StringBuilder();
+
+            // 유효성 체크 후 에러 결과를 가져온다.
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors(); // 에러 메시지를 가지고 온다.
+
+            for (FieldError fieldError : fieldErrors) {
+                sb.append(fieldError.getDefaultMessage()).append("\n");
+            }
+
+            model.addAttribute("errorMessage", sb.toString());
+
+            model.addAttribute("memberFormDto", new MemberFormDto());
+            model.addAttribute("deptList", deptList);
+            return "staff/memberForm";
+        }
+
+        // 유효성 검사를 통과했다면 회원가입 진행
+        try {
+            switch (memberFormDto.getRole()) {
+                case "STUDENT":
+                    Student student = new Student(memberFormDto);
+                    memberService.createMember(student);
+                    break;
+                case "STAFF":
+                    Staff staff = new Staff(memberFormDto);
+                    memberService.createMember(staff);
+                    break;
+                case "PROFESSOR":
+                    Professor professor = new Professor(memberFormDto);
+                    memberService.createMember(professor);
+                    break;
+            }
+            model.addAttribute("errorMessage", "구성원 등록에 성공했습니다.");
+
+            model.addAttribute("memberFormDto", new MemberFormDto());
+            model.addAttribute("deptList", deptList);
+            return "staff/memberForm";
+        } catch (IllegalStateException e) { // 회원가입이 이미 되어있다면
+            model.addAttribute("errorMessage", "구성원 등록에 실패했습니다.");
+
+            model.addAttribute("memberFormDto", new MemberFormDto());
+            model.addAttribute("deptList", deptList);
+            return "staff/memberForm";
+        }
     }
     
     // 비밀번호 초기화
@@ -94,15 +143,14 @@ public class MemberController {
         try {
             Member member = memberService.getMember(id);
 
-            if (member == null) {
-                return new ResponseEntity("해당 이메일로 된 계정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
-            }
-
             String verificationCode = generateRandomCode();
             session.setAttribute("verificationCode", verificationCode);
             emailUtil.sendVerificationCode(member.getEmail(), verificationCode); // 이메일로 인증코드 전송
 
             return new ResponseEntity("해당 이메일로 인증코드가 전송되었습니다.", HttpStatus.OK);
+        } catch (EntityNotFoundException ex) {
+            ex.printStackTrace();
+            return new ResponseEntity("해당 이메일로 된 계정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("현재 비밀번호 초기화를 이용할 수 없습니다. 관리자에게 문의하세요.", HttpStatus.BAD_REQUEST);
@@ -113,13 +161,6 @@ public class MemberController {
         // 랜덤한 6자리 인증 코드 생성 로직
         return String.format("%06d", new Random().nextInt(1000000));
     }
-
-
-
-
-
-
-
 
     @PostMapping("/members/verifyVerificationCode/{verificationCode}/{id}")
     public @ResponseBody ResponseEntity verifyVerificationCode(@PathVariable("verificationCode") String verificationCode,
@@ -150,20 +191,4 @@ public class MemberController {
             return new ResponseEntity<>("인증번호가 올바르지 않습니다", HttpStatus.BAD_REQUEST);
         }
     }
-
-
-//    @GetMapping(value = "/initPw/{id}")
-//    public ResponseEntity<String> initPw(@PathVariable("id") String id) {
-//        try {
-//            Member member = memberService.getMember(id);
-//            String password = memberService.generateRawPassword(member);
-//
-//            memberService.updatePassword(member, password);
-//            return new ResponseEntity<String>("비밀번호가 성공적으로 초기화 되었습니다.", HttpStatus.OK);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>("비밀번호 초기화에 실패했습니다.", HttpStatus.BAD_REQUEST);
-//        }
-//    }
 }

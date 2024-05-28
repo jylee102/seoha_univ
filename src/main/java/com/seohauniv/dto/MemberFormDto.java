@@ -2,10 +2,7 @@ package com.seohauniv.dto;
 
 import com.seohauniv.entity.Dept;
 import com.seohauniv.entity.Member;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -29,6 +26,7 @@ public class MemberFormDto {
 
     private String address;
 
+    @NotNull(message = "생일은 필수 입력 값입니다.")
     private LocalDate birth;
 
     private Dept dept;
