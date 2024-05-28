@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <link rel="stylesheet" th:href="@{/css/myInfo.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+</head>
+<div layout:fragment="content" class="wrap">
+    <div class="grid-margin stretch-card">
+        <div class="card"  >
+            <div class="card-body" style="height: 730px;">
+                <h1>내 정보 조회</h1>
+                <div class="split--div"></div>
+                <table border="1" style="display:flex; margin:auto" class="input--table" th:if="${#authentication.principal.role == 'STUDENT'}">
+                    <colgroup>
+                        <col class="col1">
+                        <col class="col2">
+                        <col class="col3">
+                        <col class="col4">
+                    </colgroup>
+                    <tr>
+                        <th>성명</th>
+                        <td>${student.name}</td>
+                        <th>생년월일</th>
+                        <td>${student.birth}</td>
+                    </tr>
+                    <tr>
+                        <th>학번</th>
+                        <td>${student.id}</td>
+                        <th>주소</th>
+                        <td>${student.address}</td>
+                    </tr>
+                    <tr>
+                        <th>연락처</th>
+                        <td>${student.phone}</td>
+                        <th>email</th>
+                        <td>${student.email}</td>
+                    </tr>
+                </table>
+                <table border="1" style="display:flex; margin:auto" class="input--table" th:if="${#authentication.principal.role == 'PROFESSOR'}">
+                    <colgroup>
+                        <col class="col1">
+                        <col class="col2">
+                        <col class="col3">
+                        <col class="col4">
+                    </colgroup>
+                    <tr>
+                        <th>성명</th>
+                        <td>${student.name}</td>
+                        <th>생년월일</th>
+                        <td>${student.birth}</td>
+                    </tr>
+                    <tr>
+                        <th>학번</th>
+                        <td>${student.id}</td>
+                        <th>주소</th>
+                        <td>${student.address}</td>
+                    </tr>
+                    <tr>
+                        <th>연락처</th>
+                        <td>${student.phone}</td>
+                        <th>email</th>
+                        <td>${student.email}</td>
+                    </tr>
+                </table>
+                <table border="1" style="margin:auto; margin-bottom:20px;" class="input--table" th:if="${#authentication.principal.role == 'STAFF'}">
+                    <colgroup>
+                        <col class="col1">
+                        <col class="col2">
+                        <col class="col3">
+                        <col class="col4">
+                    </colgroup>
+                    <tr>
+                        <th>성명</th>
+                        <td>${staff.name}</td>
+                        <th>생년월일</th>
+                        <td>${staff.birth}</td>
+                    </tr>
+                    <tr>
+                        <th>ID</th>
+                        <td>${staff.id}</td>
+                        <th>주소</th>
+                        <td>${staff.address}</td>
+                    </tr>
+                    <tr>
+                        <th>연락처</th>
+                        <td>${staff.phone}</td>
+                        <th>email</th>
+                        <td>${staff.email}</td>
+                    </tr>
+                </table>
+                <button type="button" style="display:flex; margin:auto;" onclick="location.href='/update'" class="btn btn-dark update--button">수정하기</button>
+                <hr>
+                <table border="1" style=" margin:auto" class="input--table" >
+                    <colgroup>
+                        <col class="col1">
+                        <col class="col2">
+
+                    </colgroup>
+                    <tr>
+                        <th>휴학신청내역</th>
+                        <td>휴학내역</td>
+
+
+                    </tr>
+
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        var message = [[${message}]];
+        if(message != null) alert(message);
+    </script>
+</th:block>
+
+</html>

@@ -19007,9 +19007,6 @@ code {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   margin: auto;
   text-align: center;
-  display:flex;
-  flex-direction: column;
-  align-item: center;
 }
 
 .footer a {
@@ -19021,7 +19018,6 @@ code {
   .footer {
     margin-left: 0;
     width: 100%;
-    padding: 1.5rem 0;
   }
 }
 
@@ -22841,17 +22837,5 @@ dl li {
     box-shadow: none;
 }
 
-
- .footer-list {
-               display: flex;
-               justify-content: center;
-               flex-wrap: wrap;
-           }
-
-         @media screen and (max-width: 580px) {
-        .footer-list {
-            flex-wrap: nowrap; /* 작은 화면에서는 강제로 한 줄에 배치 */
-        }
-    }
 /*# sourceMappingURL=maps/style.css.map */
 
