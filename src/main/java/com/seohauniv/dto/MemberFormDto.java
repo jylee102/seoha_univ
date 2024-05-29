@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.modelmapper.ModelMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -27,6 +28,7 @@ public class MemberFormDto {
     private String address;
 
     @NotNull(message = "생일은 필수 입력 값입니다.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
 
     private Dept dept;

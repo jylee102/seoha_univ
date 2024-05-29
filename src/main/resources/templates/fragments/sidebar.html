@@ -29,15 +29,15 @@
                 <span class="menu-title">My Page</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="ui-myPage">
+            <div class="collapse" id="ui-myPage"  th:classappend="${activePage == 'myInfo' || activePage == 'changePw' ? ' show' : ''}">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                        <a class="nav-link" href="/myInfo">
+                        <a class="nav-link" href="/myInfo" th:classappend="${activePage == 'myInfo' ? ' active' : ''}">
                             내 정보 조회
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/changePw">
+                        <a class="nav-link" href="/changePw" th:classappend="${activePage == 'changePw' ? ' active' : ''}">
                             비밀번호 변경
                         </a>
                     </li>

@@ -68,7 +68,7 @@ public class InfoController {
                 memberFormDto.setBirth(member.getProfessor().getBirth());
                 break;
        }
-
+       model.addAttribute("activePage", "myInfo");
        model.addAttribute("memberFormDto",memberFormDto);
        return "member/myInfoUpdate";
     }
