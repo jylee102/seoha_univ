@@ -69,4 +69,13 @@ public class MainController {
 
     @GetMapping(value = "/myInfo")
     public String myInfo(Model model){ return "member/myInfo";}
+
+    @GetMapping(value = "/professors/syllabus")
+    public String syllabus(HttpServletRequest request) {
+        Object httpStatus = request.getAttribute("HttpStatus");
+        if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
+            return "/members/login";
+
+        return "professor/syllabus";
+    }
 }
