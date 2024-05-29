@@ -9,12 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import java.security.Principal;
 import java.util.List;
-
-import static com.seohauniv.entity.QNotice.notice;
 
 @Controller
 @RequiredArgsConstructor
@@ -67,8 +63,6 @@ public class MainController {
         return "staff/noticeForm";
     }
 
-<<<<<<< HEAD
-=======
     @GetMapping(value = "/myInfo")
     public String myInfo(Model model){ return "member/myInfo";}
 
@@ -80,5 +74,5 @@ public class MainController {
 
         return "professor/syllabus";
     }
->>>>>>> 864b3cb5849edf60f70cb85440b06db21f005d1b
+
 }
