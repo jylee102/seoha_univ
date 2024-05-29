@@ -53,14 +53,9 @@ public class MainController {
         return "staff/memberForm";
     }
 
-    @GetMapping(value = "/notice")
-    public String notice(Model model) {
-        return "staff/notice";
-    }
-
-    @GetMapping(value = "/noticeForm")
-    public String noticeForm(Model model) {
-        return "staff/noticeForm";
+    @GetMapping(value = "/staffs/manageMember")
+    public String memberList(Model model) {
+        return "staff/memberList";
     }
 
     @GetMapping(value = "/professors/syllabus")

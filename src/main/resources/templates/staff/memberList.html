@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <style>
+        @media screen and (min-width: 1024px) {
+            .input--box {
+                width: 70%;
+            }
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>구성원 명단</h1>
+            <div class="split--div"></div>
+            <nav class="nav nav-tabs">
+                <button class="nav-link active" data-bs-toggle="tab" role="tab" value="STUDENT">학생</button>
+                <button class="nav-link" data-bs-toggle="tab" role="tab" value="PROFESSOR">교수</button>
+                <button class="nav-link" data-bs-toggle="tab" role="tab" value="STAFF">교직원</button>
+            </nav>
+            <!-- 여기에 내용 넣기 -->
+            <form action="/staffs/manageMember" method="get" th:object="${member}">
+                <div class="d-flex align-items-center" th:object="${memberSearchDto}">
+                    <div>
+                        <label>학번/교번</label>
+                        <input type="text" class="input--box" />
+                    </div>
+                    <div>
+                        <label>이름</label>
+                        <input type="text" />
+                    </div>
+                    <div>
+                        <button id="searchBtn" type="submit" class="btn btn-sm btn-info mb-3">조회</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+
+        $('.nav-link[role="tab"]').on('click', function() {
+            $('#role').val($('.nav-link.active[role="tab"]').val());
+
+            if ($('.nav-link.active[role="tab"]').val() == 'STAFF') {
+                $('.dept-form').css('display', 'none');
+            } else $('.dept-form').css('display', 'table-row');
+        });
+
+        $('#deptInput').on('input', function() {
+            var inputVal = $(this).val();
+            var deptId = $('#dept_titles option').filter(function() {
+                return $(this).val() === inputVal;
+            }).data('id');
+            $('#dept').val(deptId);
+        });
+    </script>
+</th:block>
+
+</html>
