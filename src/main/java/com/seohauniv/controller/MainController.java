@@ -67,6 +67,4 @@ public class MainController {
         return "staff/noticeForm";
     }
 
-    @GetMapping(value = "/myInfo")
-    public String myInfo(Model model){ return "member/myInfo";}
 }

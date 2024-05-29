@@ -6,94 +6,49 @@
     <link rel="stylesheet" th:href="@{/css/myInfo.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
+
+    <th:block layout:fragment="css">
+        <style>
+            .input--box{
+               border-color: transparent;
+            }
+        </style>
+    </th:block>
 </head>
 <div layout:fragment="content" class="wrap">
+
     <div class="grid-margin stretch-card">
-        <div class="card"  >
-            <div class="card-body" style="height: 730px;">
+        <div class="card">
+            <div class="card-body" style="height: 100%;">
                 <h1>내 정보 조회</h1>
+                <form role="form" action="/myInfo" method="get" enctype="multipart/form-data" name="infoForm">
                 <div class="split--div"></div>
-                <table border="1" style="display:flex; margin:auto" class="input--table" th:if="${#authentication.principal.role == 'STUDENT'}">
-                    <colgroup>
-                        <col class="col1">
-                        <col class="col2">
-                        <col class="col3">
-                        <col class="col4">
-                    </colgroup>
-                    <tr>
-                        <th>성명</th>
-                        <td>${student.name}</td>
-                        <th>생년월일</th>
-                        <td>${student.birth}</td>
-                    </tr>
-                    <tr>
-                        <th>학번</th>
-                        <td>${student.id}</td>
-                        <th>주소</th>
-                        <td>${student.address}</td>
-                    </tr>
-                    <tr>
-                        <th>연락처</th>
-                        <td>${student.phone}</td>
-                        <th>email</th>
-                        <td>${student.email}</td>
-                    </tr>
-                </table>
-                <table border="1" style="display:flex; margin:auto" class="input--table" th:if="${#authentication.principal.role == 'PROFESSOR'}">
-                    <colgroup>
-                        <col class="col1">
-                        <col class="col2">
-                        <col class="col3">
-                        <col class="col4">
-                    </colgroup>
-                    <tr>
-                        <th>성명</th>
-                        <td>${student.name}</td>
-                        <th>생년월일</th>
-                        <td>${student.birth}</td>
-                    </tr>
-                    <tr>
-                        <th>학번</th>
-                        <td>${student.id}</td>
-                        <th>주소</th>
-                        <td>${student.address}</td>
-                    </tr>
-                    <tr>
-                        <th>연락처</th>
-                        <td>${student.phone}</td>
-                        <th>email</th>
-                        <td>${student.email}</td>
-                    </tr>
-                </table>
-                <table border="1" style="margin:auto; margin-bottom:20px;" class="input--table" th:if="${#authentication.principal.role == 'STAFF'}">
-                    <colgroup>
-                        <col class="col1">
-                        <col class="col2">
-                        <col class="col3">
-                        <col class="col4">
-                    </colgroup>
-                    <tr>
-                        <th>성명</th>
-                        <td>${staff.name}</td>
-                        <th>생년월일</th>
-                        <td>${staff.birth}</td>
-                    </tr>
-                    <tr>
-                        <th>ID</th>
-                        <td>${staff.id}</td>
-                        <th>주소</th>
-                        <td>${staff.address}</td>
-                    </tr>
-                    <tr>
-                        <th>연락처</th>
-                        <td>${staff.phone}</td>
-                        <th>email</th>
-                        <td>${staff.email}</td>
-                    </tr>
-                </table>
-                <button type="button" style="display:flex; margin:auto;" onclick="location.href='/update'" class="btn btn-dark update--button">수정하기</button>
-                <hr>
-                <table border="1" style=" margin:auto" class="input--table" >
+                    <table class="table--container table">
+                        <tr>
+                            <td><label for="name">이름</label></td>
+                            <td><input type="text" th:text="${member.name}" id="name" class="input--box" readonly/></td>
+                        </tr>
+                        <tr>
+                            <td><label for="birth">생년월일</label></td>
+                            <td><input type="text" th:text="${member.birth}" id="birth" class="input--box" readonly/></td>
+                        </tr>
+                        <tr>
+                            <td><label for="address">주소</label></td>
+                            <td><input type="text" th:text="${member.address}" id="address" class="input--box" readonly/></td>
+                        </tr>
+
+                        <tr>
+                            <td><label for="phone">전화번호</label></td>
+                            <td><input type="text" th:text="${member.phone}" id="phone" class="input--box" readonly/></td>
+                        </tr>
+                        <tr>
+                            <td><label for="email">이메일</label></td>
+                            <td><input type="text" th:text="${member.email}" id="email" class="input--box" readonly/></td>
+                        </tr>
+                    </table>
+                <button type="button" style="display:flex; margin:auto; margin-top:50px;" onclick="location.href = '/myInfo/update'" class="btn btn-dark update--button">수정하기</button>
+
+                <table border="1" style=" margin:auto" class="input--table" th:if="${#authentication.principal.role == 'STUDENT'}" >
                     <colgroup>
                         <col class="col1">
                         <col class="col2">
@@ -108,6 +63,8 @@
 
 
                 </table>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                </form>
             </div>
         </div>
     </div>
@@ -117,6 +74,10 @@
     <script th:inline="javascript">
         var message = [[${message}]];
         if(message != null) alert(message);
+
+<!--        function move() {-->
+<!--            location.href = '/myInfo/update/' + [[${member.id}]];-->
+<!--        }-->
     </script>
 </th:block>
 

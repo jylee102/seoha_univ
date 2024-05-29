@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Table(name = "staff")
 @Getter
 @Setter
-@ToString
 public class Staff extends BaseTimeEntity {
     @Id
     @Column(name = "member_id")
@@ -31,4 +30,16 @@ public class Staff extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Override
+    public String toString() {
+        return "Staff{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", birth=" + birth +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }

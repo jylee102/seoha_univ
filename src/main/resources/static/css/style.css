@@ -13175,7 +13175,6 @@ input[type="button"].btn-block {
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid #e4e6f6;
   border-radius: 0;
 }
 
@@ -19007,6 +19006,9 @@ code {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   margin: auto;
   text-align: center;
+  display:flex;
+  flex-direction: column;
+  align-item: center;
 }
 
 .footer a {
@@ -19018,6 +19020,7 @@ code {
   .footer {
     margin-left: 0;
     width: 100%;
+    padding: 1.5rem 0;
   }
 }
 
