@@ -7,9 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
         @media screen and (min-width: 1024px) {
-            .input--box {
+            .input-search {
                 width: 70%;
             }
         }
@@ -20,25 +21,65 @@
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1>구성원 명단</h1>
-            <div class="split--div"></div>
-            <nav class="nav nav-tabs">
-                <button class="nav-link active" data-bs-toggle="tab" role="tab" value="STUDENT">학생</button>
-                <button class="nav-link" data-bs-toggle="tab" role="tab" value="PROFESSOR">교수</button>
-                <button class="nav-link" data-bs-toggle="tab" role="tab" value="STAFF">교직원</button>
-            </nav>
-            <!-- 여기에 내용 넣기 -->
+            <div class="div-split"></div>
             <form action="/staffs/manageMember" method="get" th:object="${member}">
-                <div class="d-flex align-items-center" th:object="${memberSearchDto}">
-                    <div>
-                        <label>학번/교번</label>
-                        <input type="text" class="input--box" />
+                <div class="d-flex align-items-center" th:object="${memberSearchDto}" style="padding-left: 3rem; padding-bottom: 1rem;">
+                    <div style="padding-right: 10px;">
+                        <select class="input-search select-search">
+                            <option value="id">학번/교번</option>
+                            <option value="name">이름</option>
+                        </select>
                     </div>
                     <div>
-                        <label>이름</label>
-                        <input type="text" />
+                        <input type="text" class="input-search" />
                     </div>
-                    <div>
+                    <div class="btn-search">
                         <button id="searchBtn" type="submit" class="btn btn-sm btn-info mb-3">조회</button>
+                    </div>
+                </div>
+                <nav class="nav nav-tabs">
+                    <button class="nav-link active" data-bs-toggle="tab" role="tab" value="STUDENT">학생</button>
+                    <button class="nav-link" data-bs-toggle="tab" role="tab" value="PROFESSOR">교수</button>
+                    <button class="nav-link" data-bs-toggle="tab" role="tab" value="STAFF">교직원</button>
+                </nav>
+                <!-- 여기에 내용 넣기 -->
+
+                <div class="table-div">
+                    <table>
+                        <tr>
+                            <th>학번</th>
+                            <th>이름</th>
+                            <th>생년월일</th>
+                            <th>주소</th>
+                            <th>전화번호</th>
+                            <th>이메일</th>
+                            <th>학과명</th>
+                            <th>학년</th>
+                            <th>입학일</th>
+                            <th>졸업예정일</th>
+                        </tr>
+                        <tr th:each="member, status: ${members.getContent()}">
+                            <td th:text="${member.id}">246727</td>
+                            <td th:text="${member.name}">최볼키</td>
+                            <td>2013-10-29</td>
+                            <td>서울 구로구 경인로 557 하이미디어 5동 1202호</td>
+                            <td>010-1111-1111</td>
+                            <td>volki131029@gmail.cpm</td>
+                            <td>경영학과</td>
+                            <td>1학년</td>
+                            <td>2024-03-03</td>
+                            <td>2028-02-28</td>
+                        </tr>
+                    </table>
+
+                    <div class="pagination">
+                        <ul>
+                            <li>&laquo;</li>
+                            <li>&lt;</li>
+                            <li class="page-active">1</li>
+                            <li>&gt;</li>
+                            <li>&raquo;</li>
+                        </ul>
                     </div>
                 </div>
             </form>

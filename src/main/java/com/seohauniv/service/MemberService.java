@@ -3,6 +3,7 @@ package com.seohauniv.service;
 import com.seohauniv.config.MemberContext;
 import com.seohauniv.constant.Role;
 import com.seohauniv.dto.MemberFormDto;
+import com.seohauniv.dto.MemberSearchDto;
 import com.seohauniv.entity.Member;
 import com.seohauniv.entity.Professor;
 import com.seohauniv.entity.Staff;
@@ -10,6 +11,8 @@ import com.seohauniv.entity.Student;
 import com.seohauniv.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -145,5 +148,12 @@ public class MemberService implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         return new MemberContext(member, authorities); //Member 객체를 상속받은 MemberContext을 넣어주면 스프링이 알아서 처리한다.
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Member> getMemberListPage(MemberSearchDto memberSearchDto, Pageable pageable) {
+        Page<Member> memberPage = memberRepository.getMemberListPage(memberSearchDto, pageable);
+        return memberPage;
+
     }
 }
