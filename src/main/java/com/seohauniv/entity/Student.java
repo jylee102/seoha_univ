@@ -1,5 +1,6 @@
 package com.seohauniv.entity;
 
+import com.seohauniv.dto.MemberFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,4 +43,16 @@ public class Student extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public Student() {
+    }
+
+    public Student(MemberFormDto memberFormDto) {
+        this.name = memberFormDto.getName();
+        this.email = memberFormDto.getEmail();
+        this.birth = memberFormDto.getBirth();
+        this.phone = memberFormDto.getPhone();
+        this.address = memberFormDto.getAddress();
+        this.major = memberFormDto.getDept();
+    }
 }

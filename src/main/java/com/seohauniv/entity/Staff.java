@@ -1,5 +1,6 @@
 package com.seohauniv.entity;
 
+import com.seohauniv.dto.MemberFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Table(name = "staff")
 @Getter
 @Setter
+@ToString
 public class Staff extends BaseTimeEntity {
     @Id
     @Column(name = "member_id")
@@ -31,15 +33,14 @@ public class Staff extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Override
-    public String toString() {
-        return "Staff{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", birth=" + birth +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                '}';
+    public Staff() {
+    }
+
+    public Staff(MemberFormDto memberFormDto) {
+        this.name = memberFormDto.getName();
+        this.email = memberFormDto.getEmail();
+        this.birth = memberFormDto.getBirth();
+        this.phone = memberFormDto.getPhone();
+        this.address = memberFormDto.getAddress();
     }
 }
