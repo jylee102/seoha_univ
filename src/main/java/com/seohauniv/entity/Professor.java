@@ -1,5 +1,6 @@
 package com.seohauniv.entity;
 
+import com.seohauniv.dto.MemberFormDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,4 +34,16 @@ public class Professor extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public Professor() {
+    }
+
+    public Professor(MemberFormDto memberFormDto) {
+        this.name = memberFormDto.getName();
+        this.email = memberFormDto.getEmail();
+        this.birth = memberFormDto.getBirth();
+        this.phone = memberFormDto.getPhone();
+        this.address = memberFormDto.getAddress();
+        this.major = memberFormDto.getDept();
+    }
 }

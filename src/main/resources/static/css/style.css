@@ -13175,7 +13175,6 @@ input[type="button"].btn-block {
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid #e4e6f6;
   border-radius: 0;
 }
 
@@ -19005,6 +19004,11 @@ code {
   font-family: "Karla", sans-serif;
   font-weight: 400;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin: auto;
+  text-align: center;
+  display:flex;
+  flex-direction: column;
+  align-item: center;
 }
 
 .footer a {
@@ -19016,6 +19020,7 @@ code {
   .footer {
     margin-left: 0;
     width: 100%;
+    padding: 1.5rem 0;
   }
 }
 
@@ -21763,8 +21768,6 @@ dl li {
   -webkit-transition: width 0.25s ease, background 0.25s ease;
   -moz-transition: width 0.25s ease, background 0.25s ease;
   -ms-transition: width 0.25s ease, background 0.25s ease;
-  box-shadow: 6px 16px 31px -18px #b7bcd1;
-  -webkit-box-shadow: 6px 16px 31px -18px #b7bcd1;
   -moz-box-shadow: 6px 16px 31px -18px #b7bcd1;
   -ms-box-shadow: 6px 16px 31px -18px #b7bcd1;
 }
@@ -21965,20 +21968,20 @@ dl li {
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link:hover {
-  color: #ffffff;
+  color: #495057;
   background: transparent;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link:hover::before {
-  border: 1px solid #ffffff;
+  border: 1px solid #495057;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link.active {
-  color: #ffffff;
+  color: #495057;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link.active::before {
-  border: 1px solid #ffffff;
+  border: 1px solid #495057;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link::before {
@@ -22676,6 +22679,13 @@ dl li {
 
 /* Layouts */
 @media (min-width: 992px) {
+  .sidebar-icon-only .logoutBtn .menu-title {
+    display: none;
+  }
+  .sidebar-icon-only .logoImg {
+    display: none;
+  }
+
   .sidebar-icon-only .navbar .navbar-brand-wrapper {
     width: 70px;
   }
@@ -22821,6 +22831,13 @@ dl li {
   .sidebar-icon-only .main-panel {
     width: calc(100% - 70px);
   }
+}
+
+.btn-seoha {
+    background: #0D2D84;
+    color: #fff;
+    border-color: #0D2D84;
+    box-shadow: none;
 }
 
 /*# sourceMappingURL=maps/style.css.map */

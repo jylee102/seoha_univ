@@ -10,6 +10,11 @@
     </style>
 </th:block>
 
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
 <div layout:fragment="content" class="content-wrapper">
     <div class="container-scroller">
         <div class="container-fluid page-body-wrapper full-page-wrapper">
@@ -83,7 +88,7 @@
                                             <form id="resetPasswordForm">
                                                 <div class="form-group">
                                                     <label for="id">학번/교번</label>
-                                                    <input type="text" id="id" name="studentId" class="form-control" placeholder="학번 또는 교번">
+                                                    <input type="text" id="id" name="id" class="form-control" placeholder="학번 또는 교번">
                                                 </div>
                                                 <button type="button" class="btn btn-primary" onclick="sendVerificationCode()">확인</button>
                                             </form>
@@ -165,13 +170,20 @@
             $('#resetPasswordModal').modal('show');
         }
 
+        // ★ 헤더에 있는 토큰 값을 가지고 온다. (반드시 같이 전송해야 함)
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
         function sendVerificationCode() {
-            var url = '/sendVerificationCode/' + $('#univName').val() + '/' + $('#id').val();
+            var url = '/members/sendVerificationCode/' + $('#id').val();
 
             $.ajax({
                 url: url,
                 method: 'POST',
                 contentType: 'application/json',
+                beforeSend : function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
                 success: function(response) {
                     $('#resetPasswordModal').modal('hide');
                     $('#verificationModal').modal('show');
@@ -183,46 +195,26 @@
             });
         }
 
-        function initPw() {
-            const url = '/initPw';
+        function verifyVerificationCodeAndInitPw() {
+            var url = '/members/verifyVerificationCode/' + $('#verificationCode').val() + '/' + $('#id').val();
 
             $.ajax({
                 url: url,
-                method: 'GET',
-                contentType: 'application/json',
-                success: function(response) {
-                    alert(response); // 서버에서 비밀번호 초기화 응답 처리
-                },
-                error: function(jqXHR, status, error) {
-                    console.error('initPw 실패 - status: ' + status + ', error: ' + error);
-                    alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-                }
-            });
-        }
-
-        function verifyVerificationCodeAndInitPw() {
-            var verificationCode = $('#verificationCode').val();
-            var requestData = {
-                verificationCode: verificationCode
-            };
-
-            $.ajax({
-                url: '/verifyVerificationCode',
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(requestData),
+                beforeSend : function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
                 success: function(response) {
-                    if (response.valid) {
-                        $('#verificationModal').modal('hide'); // 인증번호 확인 모달 숨기기
-                        alert('인증에 성공했습니다.'); // 비밀번호 초기화 요청 후에 alert 창 띄우기
-                        initPw(); // 비밀번호 초기화 요청
-                    } else {
-                        alert('인증번호가 올바르지 않습니다. 다시 입력해주세요.');
+                    $('#verificationModal').modal('hide'); // 인증번호 확인 모달 숨기기
+                    alert(response);
+                    if (response === '비밀번호가 성공적으로 초기화 되었습니다.') {
+                        location.href= '/members/login';
                     }
                 },
                 error: function(jqXHR, status, error) {
-                    console.error('verifyVerificationCode 실패 - status: ' + status + ', error: ' + error);
-                    alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                    console.log(jqXHR);
+                    alert(jqXHR.responseText);
                 }
             });
         }

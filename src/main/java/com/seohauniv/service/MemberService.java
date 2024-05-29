@@ -2,11 +2,13 @@ package com.seohauniv.service;
 
 import com.seohauniv.config.MemberContext;
 import com.seohauniv.constant.Role;
+import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.entity.Member;
 import com.seohauniv.entity.Professor;
 import com.seohauniv.entity.Staff;
 import com.seohauniv.entity.Student;
 import com.seohauniv.repository.MemberRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,7 +62,7 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(member);
     }
 
-    private String generateRawPassword(Object entity) {
+    public String generateRawPassword(Object entity) {
         LocalDate birth = null;
         if (entity instanceof Staff) {
             birth = ((Staff) entity).getBirth();
@@ -78,6 +80,53 @@ public class MemberService implements UserDetailsService {
 
     public Long count() {
         return memberRepository.count();
+    }
+
+    // 학번/교번으로 회원 찾기
+    public Member getMember(String id) {
+        return memberRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    // 비밀번호 확인(현재 비밀번호와 같은지)
+    public Boolean checkPassword(Member member, String password) {
+        return passwordEncoder.matches(password, member.getPassword());
+    }
+
+    // 비밀번호 변경
+    public void updatePassword(Member member, String rawPassword) {
+        String password = passwordEncoder.encode(rawPassword);
+        member.setPassword(password);
+    }
+
+    public Member updateInfo(MemberFormDto memberFormDto,String memberId){
+        Member member = getMember(memberId);
+        if (member.getRole().equals(Role.STAFF)) {
+            Staff staff = member.getStaff();
+            staff.setPhone(memberFormDto.getPhone());
+            staff.setEmail(memberFormDto.getEmail());
+            staff.setAddress(memberFormDto.getAddress());
+
+            member.setEmail(staff.getEmail());
+            member.setStaff(staff);
+        } else if (member.getRole().equals(Role.STUDENT)) {
+            Student student = member.getStudent();
+            student.setPhone(memberFormDto.getPhone());
+            student.setEmail(memberFormDto.getEmail());
+            student.setAddress(memberFormDto.getAddress());
+
+            member.setEmail(student.getEmail());
+            member.setStudent(student);
+        } else if (member.getRole().equals(Role.PROFESSOR)) {
+            Professor professor = member.getProfessor();
+            professor.setPhone(memberFormDto.getPhone());
+            professor.setEmail(memberFormDto.getEmail());
+            professor.setAddress(memberFormDto.getAddress());
+
+            member.setEmail(professor.getEmail());
+            member.setProfessor(professor);
+        }
+
+        return member;
     }
 
     @Override

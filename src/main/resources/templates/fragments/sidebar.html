@@ -1,56 +1,193 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <nav th:fragment="sidebar" class="sidebar sidebar-offcanvas"
      id="sidebar" style="background-color: #0D2D84;">
     <div class="user-profile">
         <div class="user-image">
-            <img th:src="@{/images/logo.png}">
+            <img class="logoImg" th:src="@{/images/logo.png}">
         </div>
         <div class="user-designation">
             <span>서하대학교</span>
-            <span class="user-designation">(교직원)</span>
-            <span class="user-designation">(교수)</span>
-            <span class="user-designation">(학생)</span>
+            <span class="user-designation" th:if="${#authentication.principal.role == 'STAFF'}">(교직원)</span>
+            <span class="user-designation" th:if="${#authentication.principal.role == 'PROFESSOR'}">(교수)</span>
+            <span class="user-designation" th:if="${#authentication.principal.role == 'STUDENT'}">(학생)</span>
         </div>
 
-        <div class="user-name">"유저이름"님</div>
-        <button type="button" class="btn btn-dark" onclick="location.href = '/members/logout';">
-            로그아웃
-        </button>
+        <div class="user-name" th:text="${#authentication.principal.name} + '님'"></div>
+        <form action="/members/logout" method="post">
+            <button type="submit" class="btn btn-dark logoutBtn">
+                <span class="menu-title">로그아웃&nbsp;</span>
+                <i class="fa-solid fa-arrow-right-from-bracket menu-icon"></i>
+            </button>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        </form>
     </div>
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+            <a class="nav-link" data-toggle="collapse" href="#ui-myPage" aria-expanded="false" aria-controls="ui-basic">
                 <i class="icon-head menu-icon"></i>
                 <span class="menu-title">My Page</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="ui-basic">
+            <div class="collapse" id="ui-myPage">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            Dashboard
+                        <a class="nav-link" href="/myInfo">
+                            내 정보 조회
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/myInfo">
-                            개인정보 수정
+                        <a class="nav-link" href="/changePw">
+                            비밀번호 변경
+                        </a>
+                    </li>
+                    <li class="nav-item" th:if="${#authentication.principal.role == 'STUDENT'}">
+                        <a class="nav-link" href="/students/applyForLeave">
+                            휴학신청
                         </a>
                     </li>
                 </ul>
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/list">
-                <i class="icon-file menu-icon"></i>
-                <span class="menu-title">수강신청하기</span>
+
+        <li class="nav-item" th:if="${#authentication.principal.role == 'STUDENT'}">
+            <a class="nav-link" data-toggle="collapse" href="#ui-student-course" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-head menu-icon"></i>
+                <span class="menu-title">강의</span>
+                <i class="menu-arrow"></i>
             </a>
+            <div class="collapse" id="ui-student-course">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/students/myCourse">
+                            내 강의
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/students/enroll">
+                            수강신청
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/students/timeTable">
+                            내 시간표
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/timeTable">
-                <i class="icon-pie-graph menu-icon"></i>
-                <span class="menu-title">시간표보기</span>
+        <li class="nav-item" th:if="${#authentication.principal.role == 'STUDENT'}">
+            <a class="nav-link" data-toggle="collapse" href="#ui-student-grade" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-head menu-icon"></i>
+                <span class="menu-title">학사정보</span>
+                <i class="menu-arrow"></i>
             </a>
+            <div class="collapse" id="ui-student-grade">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/students/grade">
+                            금학기 성적 조회
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/students/gradeFor">
+                            학기별 성적 조회
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="nav-item" th:if="${#authentication.principal.role == 'PROFESSOR'}">
+            <a class="nav-link" data-toggle="collapse" href="#ui-professor-course" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-head menu-icon"></i>
+                <span class="menu-title">강의</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-professor-course">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/professors/myCourse">
+                            내 강의
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/professors/syllabus">
+                            강의 계획서 등록
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item" th:if="${#authentication.principal.role == 'PROFESSOR'}">
+            <a class="nav-link" data-toggle="collapse" href="#ui-professor-manageStudent" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-head menu-icon"></i>
+                <span class="menu-title">학생관리</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-professor-manageStudent">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/professors/checkAttendancce">
+                            출석체크
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/professors/manageGrade">
+                            성적 관리
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="nav-item" th:if="${#authentication.principal.role == 'STAFF'}">
+            <a class="nav-link" data-toggle="collapse" href="#ui-staff-manage" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-head menu-icon"></i>
+                <span class="menu-title">등록/관리</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-staff-manage">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/staffs/regMember">
+                            구성원 등록
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/staffs/manageMember">
+                            구성원 관리
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/staffs/createCourse">
+                            강의 개설
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-univInfo" aria-expanded="false" aria-controls="ui-basic">
+                <i class="icon-head menu-icon"></i>
+                <span class="menu-title">학사정보</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-univInfo">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/notice">
+                            공지사항
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/schedule">
+                            학사일정
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
     </ul>
 </nav>

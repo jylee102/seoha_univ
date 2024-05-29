@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="css">
+<style>
+    * {
+       margin: 0 auto;
+    }
+    .mb-3 {
+       display: grid;
+       text-align: left !important;
+    }
+    .mb-3 label {
+       font-weight: bold;
+       font-size: 25px;
+    }
+    .mb-3 button {
+       font-weight: bold;
+       font-size: 15px;
+       background-color: rgb(51, 157, 255);
+       border: none;
+       border-radius: 10px;
+       padding: 10px;
+       margin-top: 10px;
+       width: 100px;
+    }
+</style>
+</th:block>
+<div layout:fragment="content">
+    <form action="">
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label" style="width: 1000px">제목</label>
+            <input
+                    type="email"
+                    class="form-control"
+                    id="exampleFormControlInput1"
+                    placeholder="name@example.com"
+                    style="width: 1000px; height: 30px"
+            />
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label" style="width: 1000px">내용</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"
+                      style="width: 1000px; height: 300px"></textarea>
+        </div>
+        <div class="mb-3" style="width: 1000px">
+            <div>
+                <button>등록하기</button>
+                <button>메인화면</button>
+            </div>
+        </div>
+    </form>
+</div>
+</html>
