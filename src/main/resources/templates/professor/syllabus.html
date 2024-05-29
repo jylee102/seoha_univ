@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <style>
+        @media screen and (min-width: 1380px) {
+            .input--box, .type-form {
+                width: 70%;
+            }
+
+            .type-text {
+                display: inline !important;
+            }
+        }
+
+        @media screen and (max-width: 745px) {
+            .table--container > tbody > tr:not(.nav-add_plan) > td:first-of-type {
+                display: none;
+            }
+
+            .input--box::placeholder {
+                opacity: 1 !important;
+            }
+        }
+
+        .auto-resize {
+            min-height: 50px; /* 최소 높이 */
+            resize: none; /* 사용자가 크기 조정하지 못하게 함 */
+            overflow: hidden; /* 스크롤 바 감추기 */
+            line-height: 1.5; /* 줄 간격 설정 */
+        }
+
+        .input--box::placeholder {
+            opacity: 0;
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>강의 계획서</h1>
+            <div class="split--div"></div>
+
+            <form name="syllabusForm">
+                <input type="hidden" id="role" name="role" value="STUDENT">
+                <table class="table--container table">
+                    <tr>
+                        <td><label th:for="name">강좌명</label></td>
+                        <td>
+                            <input type="text" name="name" class="input--box" placeholder="강좌명"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>강의 시간</label></td>
+                        <td>
+                            <table class="table input--box">
+                                <tr>
+                                    <th>강의 요일</th>
+                                    <th>시작 시간</th>
+                                    <th>종료 시간</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox"> 월</input></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox"> 화</input></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox"> 수</input></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox"> 목</input></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox"> 금</input></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                    <td><input class="input--box" type="time"/></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr class="dept-form">
+                        <td><label th:for="type">구분 / 이수학점</label></td>
+                        <td>
+                            <div class="row type-form">
+                                <div class="col" style="display: flex; align-items: center;"><input type="radio" name="type"> 전공</input></div>
+                                <div class="col" style="display: flex; align-items: center;"><input type="radio" name="type"> 교양</input></div>
+                                <div class="col" style="min-width: 182px;">
+                                    <input class="input--box" type="number" min="1" max="3" placeholder="이수학점">
+                                    <span class="type-text" style="display: none;">학점</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label th:for="address">수업 개요</label></td>
+                        <td>
+                            <textarea name="overview" class="input--box auto-resize" placeholder="수업 개요"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label th:for="phone">강의 목표</label></td>
+                        <td>
+                            <textarea name="objective" class="input--box auto-resize" placeholder="강의 목표"></textarea>
+                        </td>
+                    </tr>
+
+                    <tr class="nav-add_plan">
+                        <td colspan="2" style="text-align: -webkit-center;">
+                            <a class="nav-link addWeeklyPlan collapsed" data-toggle="collapse" href="#weeklyPlan"
+                               aria-expanded="false" aria-controls="ui-basic" style="width: fit-content;">
+                                주별 계획 추가 <span class="weekly-icon"><i class="mdi mdi-plus" style="font-size: larger;"></i></span>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr id="weeklyPlan" class="collapse">
+                        <td><label th:for="email">주별 계획</label></td>
+                        <td>
+                            <table class="table input--box">
+                                <tr>
+                                    <th>주차</th>
+                                    <th>내용</th>
+                                </tr>
+                                <tr th:each="i : ${#numbers.sequence(1, 16)}">
+                                    <td th:text="${i} + '주차'" style="width: 100px;"></td>
+                                    <td>
+                                        <textarea class="input--box auto-resize" style="width: 100%;"></textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label th:for="textbook">수업 교재</label></td>
+                        <td>
+                            <input type="text" name="textbook" class="input--box" placeholder="수업 교재"/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="button--container">
+                    <button class="btn btn-seoha" type="button" onclick="beforeSubmit()">신청</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $('.addWeeklyPlan').on('click', function() {
+            if ($('.addWeeklyPlan').hasClass('collapsed'))
+                $('.weekly-icon').html('<i class="mdi mdi-minus" style="font-size: larger;"></i>');
+            else $('.weekly-icon').html('<i class="mdi mdi-plus" style="font-size: larger;"></i>');
+        });
+
+        var lineHeight = parseInt($('.auto-resize').css('line-height'), 10);
+
+        // 입력 이벤트를 감지하여 높이를 조정하는 함수
+        function adjustHeight() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        }
+
+        $('textarea.auto-resize').on('input', adjustHeight);
+        $('textarea.auto-resize').each(adjustHeight); // 페이지 로드 시 각 textarea의 높이를 초기화
+
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
+        function beforeSubmit() {
+            const f = document.syllabusForm;
+
+            console.log(f);
+
+<!--            $.ajax({-->
+<!--                url: '/professor/applyForSyllabus',-->
+<!--                method: 'POST',-->
+<!--                contentType: 'application/json',-->
+<!--                data: ,-->
+<!--                beforeSend : function(xhr) {-->
+<!--                    xhr.setRequestHeader(header, token);-->
+<!--                },-->
+<!--                success: function(response) {-->
+<!--                },-->
+<!--                error: function(jqXHR, status, error) {-->
+<!--                    alert(jqXHR.responseText);-->
+<!--                }-->
+<!--            });-->
+        }
+    </script>
+</th:block>
+</html>
