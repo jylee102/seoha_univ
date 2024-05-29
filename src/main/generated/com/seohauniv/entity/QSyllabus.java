@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -19,13 +20,25 @@ public class QSyllabus extends EntityPathBase<Syllabus> {
 
     public static final QSyllabus syllabus = new QSyllabus("syllabus");
 
+    public final StringPath courseName = createString("courseName");
+
+    public final ListPath<CourseTime, QCourseTime> courseTimes = this.<CourseTime, QCourseTime>createList("courseTimes", CourseTime.class, QCourseTime.class, PathInits.DIRECT2);
+
+    public final EnumPath<com.seohauniv.constant.CourseType> courseType = createEnum("courseType", com.seohauniv.constant.CourseType.class);
+
+    public final NumberPath<Integer> credit = createNumber("credit", Integer.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath objective = createString("objective");
 
     public final StringPath overview = createString("overview");
 
+    public final EnumPath<com.seohauniv.constant.ProcedureStatus> status = createEnum("status", com.seohauniv.constant.ProcedureStatus.class);
+
     public final StringPath textbook = createString("textbook");
+
+    public final ListPath<WeeklyPlan, QWeeklyPlan> weeklyPlans = this.<WeeklyPlan, QWeeklyPlan>createList("weeklyPlans", WeeklyPlan.class, QWeeklyPlan.class, PathInits.DIRECT2);
 
     public QSyllabus(String variable) {
         super(Syllabus.class, forVariable(variable));

@@ -43,6 +43,15 @@
         .input--box::placeholder {
             opacity: 0;
         }
+
+        #weeklyPlan {
+            transition: max-height 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+        #weeklyPlan.collapse {
+            max-height: none; /* 축소되었을 때 요소가 사라지지 않도록 함 */
+        }
     </style>
 </th:block>
 
@@ -58,7 +67,7 @@
                     <tr>
                         <td><label th:for="name">강좌명</label></td>
                         <td>
-                            <input type="text" name="name" class="input--box" placeholder="강좌명"/>
+                            <input type="text" name="courseName" class="input--box" placeholder="강좌명"/>
                         </td>
                     </tr>
                     <tr>
@@ -71,27 +80,27 @@
                                     <th>종료 시간</th>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox"> 월</input></td>
+                                    <td><input type="checkbox" value="MON"> 월</input></td>
                                     <td><input class="input--box" type="time"/></td>
                                     <td><input class="input--box" type="time"/></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox"> 화</input></td>
+                                    <td><input type="checkbox" value="TUE"> 화</input></td>
                                     <td><input class="input--box" type="time"/></td>
                                     <td><input class="input--box" type="time"/></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox"> 수</input></td>
+                                    <td><input type="checkbox" value="WED"> 수</input></td>
                                     <td><input class="input--box" type="time"/></td>
                                     <td><input class="input--box" type="time"/></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox"> 목</input></td>
+                                    <td><input type="checkbox" value="THU"> 목</input></td>
                                     <td><input class="input--box" type="time"/></td>
                                     <td><input class="input--box" type="time"/></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="checkbox"> 금</input></td>
+                                    <td><input type="checkbox" value="FRI"> 금</input></td>
                                     <td><input class="input--box" type="time"/></td>
                                     <td><input class="input--box" type="time"/></td>
                                 </tr>
@@ -103,10 +112,14 @@
                         <td><label th:for="type">구분 / 이수학점</label></td>
                         <td>
                             <div class="row type-form">
-                                <div class="col" style="display: flex; align-items: center;"><input type="radio" name="type"> 전공</input></div>
-                                <div class="col" style="display: flex; align-items: center;"><input type="radio" name="type"> 교양</input></div>
+                                <div class="col" style="display: flex; align-items: center;">
+                                    <input type="radio" name="type" value="MAJOR"> 전공</input>
+                                </div>
+                                <div class="col" style="display: flex; align-items: center;">
+                                    <input type="radio" name="type" value="LIBERAL"> 교양</input>
+                                </div>
                                 <div class="col" style="min-width: 182px;">
-                                    <input class="input--box" type="number" min="1" max="3" placeholder="이수학점">
+                                    <input class="input--box" type="number" name="credit" min="1" max="3" placeholder="이수학점">
                                     <span class="type-text" style="display: none;">학점</span>
                                 </div>
                             </div>
@@ -128,8 +141,7 @@
 
                     <tr class="nav-add_plan">
                         <td colspan="2" style="text-align: -webkit-center;">
-                            <a class="nav-link addWeeklyPlan collapsed" data-toggle="collapse" href="#weeklyPlan"
-                               aria-expanded="false" aria-controls="ui-basic" style="width: fit-content;">
+                            <a class="nav-link addWeeklyPlan collapsed" style="width: fit-content; cursor: pointer;">
                                 주별 계획 추가 <span class="weekly-icon"><i class="mdi mdi-plus" style="font-size: larger;"></i></span>
                             </a>
                         </td>
@@ -169,46 +181,76 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        $('.addWeeklyPlan').on('click', function() {
-            if ($('.addWeeklyPlan').hasClass('collapsed'))
-                $('.weekly-icon').html('<i class="mdi mdi-minus" style="font-size: larger;"></i>');
-            else $('.weekly-icon').html('<i class="mdi mdi-plus" style="font-size: larger;"></i>');
-        });
+                document.querySelector('.addWeeklyPlan').addEventListener('click', function() {
+                    var weeklyPlan = document.getElementById('weeklyPlan');
+                    var isCollapsed = weeklyPlan.classList.contains('collapse');
+                    var icon = document.querySelector('.weekly-icon i');
 
-        var lineHeight = parseInt($('.auto-resize').css('line-height'), 10);
+                    weeklyPlan.classList.toggle('collapse', !isCollapsed);
+                    icon.className = isCollapsed ? 'mdi mdi-minus' : 'mdi mdi-plus';
+                });
 
-        // 입력 이벤트를 감지하여 높이를 조정하는 함수
-        function adjustHeight() {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
-        }
+                var lineHeight = parseInt($('.auto-resize').css('line-height'), 10);
 
-        $('textarea.auto-resize').on('input', adjustHeight);
-        $('textarea.auto-resize').each(adjustHeight); // 페이지 로드 시 각 textarea의 높이를 초기화
+                // 입력 이벤트를 감지하여 높이를 조정하는 함수
+                function adjustHeight() {
+                    this.style.height = 'auto';
+                    this.style.height = this.scrollHeight + 'px';
+                }
 
-        var token = $("meta[name='_csrf']").attr("content");
-        var header = $("meta[name='_csrf_header']").attr("content");
+                $('textarea.auto-resize').on('input', adjustHeight);
+                $('textarea.auto-resize').each(adjustHeight); // 페이지 로드 시 각 textarea의 높이를 초기화
 
-        function beforeSubmit() {
-            const f = document.syllabusForm;
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
 
-            console.log(f);
+                function beforeSubmit() {
+                    const f = document.syllabusForm;
 
-<!--            $.ajax({-->
-<!--                url: '/professor/applyForSyllabus',-->
-<!--                method: 'POST',-->
-<!--                contentType: 'application/json',-->
-<!--                data: ,-->
-<!--                beforeSend : function(xhr) {-->
-<!--                    xhr.setRequestHeader(header, token);-->
-<!--                },-->
-<!--                success: function(response) {-->
-<!--                },-->
-<!--                error: function(jqXHR, status, error) {-->
-<!--                    alert(jqXHR.responseText);-->
-<!--                }-->
-<!--            });-->
-        }
+                    var courseTimes = [];
+                    $('input[type="checkbox"]:checked').each(function() {
+                        var day = $(this).val().trim();
+                        var startTime = $(this).closest('tr').find('.input--box[type="time"]').eq(0).val();
+                        var endTime = $(this).closest('tr').find('.input--box[type="time"]').eq(1).val();
+                        courseTimes.push({ day: day, startTime: startTime, endTime: endTime });
+                    });
+
+                    var weeklyPlans = [];
+
+                    $('#weeklyPlan tr:not(:first)').each(function() {
+                        var week = parseInt($(this).find('td:first').text().replace('주차', ''));
+                        var content = $(this).find('td:last textarea').val();
+                        weeklyPlans.push({ week: week, content: content });
+                    });
+
+                    var paramData = {
+                        courseName : f.courseName.value,
+                        courseType : f.type.value,
+                        credit: f.credit.value,
+                        overview: f.overview.value,
+                        objective: f.objective.value,
+                        textbook: f.textbook.value,
+
+                        courseTimes: courseTimes,
+                        weeklyPlans: weeklyPlans
+                    };
+
+                    $.ajax({
+                        url: '/professor/applyForSyllabus',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(paramData),
+                        beforeSend : function(xhr) {
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: function(response) {
+                            alert("강의계획서가 성공적으로 등록되었습니다.");
+                        },
+                        error: function(jqXHR, status, error) {
+                            alert(jqXHR.responseText);
+                        }
+                    });
+                }
     </script>
 </th:block>
 </html>

@@ -1,6 +1,5 @@
 package com.seohauniv.entity;
 
-import com.seohauniv.constant.CourseType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,19 +12,13 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    @Column(name = "course_type")
-    private CourseType courseType;
-
     private int year;
     private int semester;
 
-    private int credit;
+    private int capacity; // 수강정원
 
-    private int capacity;
     @Column(name = "rest_seat")
-    private int restSeat;
+    private int restSeat; // 여석
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

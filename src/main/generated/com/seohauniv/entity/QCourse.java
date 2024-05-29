@@ -24,13 +24,7 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final NumberPath<Integer> capacity = createNumber("capacity", Integer.class);
 
-    public final EnumPath<com.seohauniv.constant.CourseType> courseType = createEnum("courseType", com.seohauniv.constant.CourseType.class);
-
-    public final NumberPath<Integer> credit = createNumber("credit", Integer.class);
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final StringPath name = createString("name");
 
     public final QProfessor professor;
 
