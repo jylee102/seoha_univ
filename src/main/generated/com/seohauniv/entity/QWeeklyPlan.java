@@ -48,7 +48,7 @@ public class QWeeklyPlan extends EntityPathBase<WeeklyPlan> {
 
     public QWeeklyPlan(Class<? extends WeeklyPlan> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus")) : null;
+        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus"), inits.get("syllabus")) : null;
     }
 
 }

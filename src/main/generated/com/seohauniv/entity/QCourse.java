@@ -58,7 +58,7 @@ public class QCourse extends EntityPathBase<Course> {
         super(type, metadata, inits);
         this.professor = inits.isInitialized("professor") ? new QProfessor(forProperty("professor"), inits.get("professor")) : null;
         this.room = inits.isInitialized("room") ? new QRoom(forProperty("room")) : null;
-        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus")) : null;
+        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus"), inits.get("syllabus")) : null;
     }
 
 }

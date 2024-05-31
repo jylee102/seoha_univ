@@ -18,6 +18,8 @@ public class QSyllabus extends EntityPathBase<Syllabus> {
 
     private static final long serialVersionUID = -709690319L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QSyllabus syllabus = new QSyllabus("syllabus");
 
     public final StringPath courseName = createString("courseName");
@@ -34,6 +36,8 @@ public class QSyllabus extends EntityPathBase<Syllabus> {
 
     public final StringPath overview = createString("overview");
 
+    public final QProfessor professor;
+
     public final EnumPath<com.seohauniv.constant.ProcedureStatus> status = createEnum("status", com.seohauniv.constant.ProcedureStatus.class);
 
     public final StringPath textbook = createString("textbook");
@@ -41,15 +45,24 @@ public class QSyllabus extends EntityPathBase<Syllabus> {
     public final ListPath<WeeklyPlan, QWeeklyPlan> weeklyPlans = this.<WeeklyPlan, QWeeklyPlan>createList("weeklyPlans", WeeklyPlan.class, QWeeklyPlan.class, PathInits.DIRECT2);
 
     public QSyllabus(String variable) {
-        super(Syllabus.class, forVariable(variable));
+        this(Syllabus.class, forVariable(variable), INITS);
     }
 
     public QSyllabus(Path<? extends Syllabus> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QSyllabus(PathMetadata metadata) {
-        super(Syllabus.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QSyllabus(PathMetadata metadata, PathInits inits) {
+        this(Syllabus.class, metadata, inits);
+    }
+
+    public QSyllabus(Class<? extends Syllabus> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.professor = inits.isInitialized("professor") ? new QProfessor(forProperty("professor"), inits.get("professor")) : null;
     }
 
 }

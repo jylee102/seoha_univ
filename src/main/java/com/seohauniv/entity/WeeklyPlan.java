@@ -1,11 +1,15 @@
 package com.seohauniv.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "weekly_plan")
-@Data
+@Getter
+@Setter
 public class WeeklyPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +22,7 @@ public class WeeklyPlan {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "syllabus_id")
+    @JsonIgnore
     private Syllabus syllabus;
 
     public WeeklyPlan() {
@@ -27,5 +32,14 @@ public class WeeklyPlan {
         this.week = week;
         this.content = content;
         this.syllabus = syllabus;
+    }
+
+    @Override
+    public String toString() {
+        return "WeeklyPlan{" +
+                "id=" + id +
+                ", week=" + week +
+                ", content='" + content + '\'' +
+                '}';
     }
 }

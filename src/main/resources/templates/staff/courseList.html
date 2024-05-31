@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+</th:block>
+
+<main layout:fragment="content">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>강의 계획서 목록</h1>
+            <div class="split--div"></div>
+
+            <form name="syllabusForm">
+                <input type="hidden" id="role" name="role" value="STUDENT">
+                <table class="table--container table">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>강의명</th>
+                        <th>학과/구분</th>
+                        <th></th>
+                        <th>신청인</th>
+                    </tr>
+                    </thead>
+
+                    <tbody></tbody>
+                </table>
+
+                <div class="pagination-container"></div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        let searchValue;
+        let currentPage;
+
+        $(document).ready(function() {
+            currentPage = 1;
+            searchValue = '';
+
+            loadData(currentPage, searchValue);
+        });
+
+        function loadData(page, searchValue) {
+            $.ajax({
+                url: "/staff/loadCourseList",
+                method: "GET",
+                data: { page: page - 1, searchValue: searchValue },
+                success: function(data) {
+                    renderItems(data); // 데이터를 렌더링
+                    renderPagination(data); // 페이징 버튼 렌더링
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText);
+                }
+            });
+        }
+
+        // 데이터를 테이블에 렌더링하는 함수
+        function renderItems(data) {
+            var tableBody = $(".table tbody");
+            tableBody.empty(); // 기존 내용을 비우고 새로운 데이터를 추가할 준비
+
+            if (data.totalPages == 0) {
+                $(".table tbody").append('<tr><td colspan="5">해당하는 데이터가 없습니다.</td></tr>');
+                return;
+            }
+
+            // 받아온 데이터를 반복하여 테이블에 추가
+            $.each(data.content, function(index, item) {
+                var row = $("<tr></tr>");
+
+                // 각 열에 데이터 추가
+                row.append("<td>" + item.id + "</td>");
+                row.append("<td>" + item.courseName + "</td>");
+                row.append("<td>" + item.major + "/" + item.courseTypeDescription + "</td>");
+                row.append("<td>" + item.credit + "학점</td>");
+
+                var courseTimes = "";
+                for (let courseTime of item.courseTimes) {
+                    courseTimes += courseTime.day + " " + courseTime.startTime + "-" + courseTime.endTime + "\n";
+                }
+                row.append("<td>" + courseTimes + "</td>");
+
+                row.append("<td>" + item.professorName + "</td>");
+
+                // 클릭 시 데이터 상세정보 표시
+                row.addClass("clickable-row");
+                row.attr("onclick", `location.href = '/staff/viewSyllabus/${item.id}'`);
+
+                // 테이블에 행 추가
+                tableBody.append(row);
+            });
+        }
+
+        // 페이지 버튼을 동적으로 생성하는 함수
+        function renderPageButtons(start, end, currentPage) {
+            var paginationUl = $("<ul></ul>").addClass("pagination d-flex justify-content-center");
+            for (var i = start; i <= end; i++) {
+                var activeClass = i === currentPage ? 'page-item active' : 'page-item';
+                var buttonClass = (i === start) ? "page-link" : "page-link clickable-page";
+
+                var li = $("<li></li>").addClass(activeClass);
+                var button = $("<button></button>")
+                    .addClass(buttonClass)
+                    .attr("onclick", `loadData(${i}, '${searchValue}');`)
+                    .attr("data-page", i - 1)
+                    .text(i);
+                li.append(button);
+                paginationUl.append(li);
+            }
+            return paginationUl;
+        }
+
+        function renderPagination(data) {
+            var paginationContainer = $(".pagination-container");
+            paginationContainer.empty();
+
+            var maxPage = 5; // 최대 페이지 수
+            var totalPages = data.totalPages;
+
+            if (totalPages == 0) return;
+
+            currentPage = data.number + 1; // 페이지 번호는 0부터 시작하므로 1을 더해줌
+            var start = Math.max(1, currentPage - Math.floor(maxPage / 2));
+            var end = Math.min(totalPages, start + maxPage - 1);
+
+            var prevLi = $("<li></li>").addClass("page-item").addClass(currentPage === 1 ? "disabled" : "");
+            var prevLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${currentPage - 1}, '${searchValue}');`).attr("data-page", currentPage - 2).text("이전");
+            prevLi.append(prevLink);
+
+            var nextLi = $("<li></li>").addClass("page-item").addClass(currentPage === totalPages ? "disabled" : "");
+            var nextLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${currentPage + 1}, '${searchValue}');`).attr("data-page", currentPage).text("다음");
+            nextLi.append(nextLink);
+
+            paginationContainer.append(renderPageButtons(start, end, currentPage).prepend(prevLi).append(nextLi));
+        }
+    </script>
+</th:block>
+
+</html>

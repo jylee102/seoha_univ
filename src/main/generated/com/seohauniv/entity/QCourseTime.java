@@ -50,7 +50,7 @@ public class QCourseTime extends EntityPathBase<CourseTime> {
 
     public QCourseTime(Class<? extends CourseTime> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus")) : null;
+        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus"), inits.get("syllabus")) : null;
     }
 
 }
