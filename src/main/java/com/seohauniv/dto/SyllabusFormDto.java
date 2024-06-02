@@ -12,7 +12,9 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -60,16 +62,31 @@ public class SyllabusFormDto {
         return this.courseType.getDescription();
     }
 
-    public static List<CourseTimeDto> mapCourseTimeList(List<CourseTime> courseTimeList) {
-        List<CourseTimeDto> courseTimeDtoList = new ArrayList<>();
-        for (CourseTime courseTime : courseTimeList) {
-            CourseTimeDto courseTimeDto = new CourseTimeDto();
-            courseTimeDto.setDay(courseTime.getDay());
-            courseTimeDto.setStartTime(courseTime.getStartTime());
-            courseTimeDto.setEndTime(courseTime.getEndTime());
-            courseTimeDtoList.add(courseTimeDto);
+    // CourseTimes의 설명을 얻는 메소드
+    public String getCourseTimesDescription() {
+        StringBuilder convertedDays = new StringBuilder();
+
+        Map<String, List<String>> courseMap = new HashMap<>();
+
+        for (CourseTimeDto courseTime : this.courseTimes) {
+            String key = courseTime.getCourseTimeDescription();
+
+            if (!courseMap.containsKey(key)) {
+                courseMap.put(key, new ArrayList<>());
+            }
+            courseMap.get(key).add(courseTime.getDay().getDescription());
         }
-        return courseTimeDtoList;
+
+        for (Map.Entry<String, List<String>> entry : courseMap.entrySet()) {
+            for (String str : entry.getValue()) {
+                convertedDays.append(str).append("•");
+            }
+            convertedDays.replace(convertedDays.length() - 1, convertedDays.length(), " ");
+            convertedDays.append(entry.getKey()).append("<br>");
+        }
+        convertedDays.delete(convertedDays.length() - 4, convertedDays.length());
+
+        return convertedDays.toString();
     }
 
     private static ModelMapper modelMapper = new ModelMapper();

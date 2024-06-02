@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -21,6 +22,22 @@ public class CourseTimeDto {
     @NotNull(message = "선택된 요일의 강의 종료 시간을 입력하세요.")
     private LocalTime endTime;
     private static ModelMapper modelMapper = new ModelMapper();
+
+    public CourseTimeDto() {
+    }
+
+    public CourseTimeDto(Day day, LocalTime startTime, LocalTime endTime) {
+        this.day = day;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public String getCourseTimeDescription() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        return this.startTime.format(formatter) + " - " +
+                this.endTime.format(formatter);
+    }
 
     // dto -> entity
     public CourseTime toEntity() {

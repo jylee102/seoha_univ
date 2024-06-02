@@ -9,7 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface SyllabusRepository extends JpaRepository<Syllabus, Long>  {
-    @Query("SELECT new com.seohauniv.dto.SyllabusFormDto(s.id, s.courseName, s.courseType, s.credit, s.status, p.name, d.title " +
+
+    @Query("SELECT new com.seohauniv.dto.SyllabusFormDto(s.id, s.courseName, s.courseType, s.credit, s.status, p.name, d.title) " +
             "FROM Syllabus s " +
             "JOIN s.professor p " +
             "JOIN p.major d " +

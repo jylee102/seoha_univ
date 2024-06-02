@@ -28,7 +28,8 @@
                         <th></th>
                         <th>강의명</th>
                         <th>학과/구분</th>
-                        <th></th>
+                        <th>학점</th>
+                        <th>강의 시간</th>
                         <th>신청인</th>
                     </tr>
                     </thead>
@@ -75,7 +76,7 @@
             tableBody.empty(); // 기존 내용을 비우고 새로운 데이터를 추가할 준비
 
             if (data.totalPages == 0) {
-                $(".table tbody").append('<tr><td colspan="5">해당하는 데이터가 없습니다.</td></tr>');
+                $(".table tbody").append('<tr><td colspan="6">해당하는 데이터가 없습니다.</td></tr>');
                 return;
             }
 
@@ -83,18 +84,14 @@
             $.each(data.content, function(index, item) {
                 var row = $("<tr></tr>");
 
+                console.log(item.courseTimesDescription)
+
                 // 각 열에 데이터 추가
                 row.append("<td>" + item.id + "</td>");
                 row.append("<td>" + item.courseName + "</td>");
                 row.append("<td>" + item.major + "/" + item.courseTypeDescription + "</td>");
                 row.append("<td>" + item.credit + "학점</td>");
-
-                var courseTimes = "";
-                for (let courseTime of item.courseTimes) {
-                    courseTimes += courseTime.day + " " + courseTime.startTime + "-" + courseTime.endTime + "\n";
-                }
-                row.append("<td>" + courseTimes + "</td>");
-
+                row.append("<td>" + item.courseTimesDescription + "</td>");
                 row.append("<td>" + item.professorName + "</td>");
 
                 // 클릭 시 데이터 상세정보 표시

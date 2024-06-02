@@ -245,6 +245,7 @@
                         },
                         success: function(response) {
                             alert("강의 계획서가 등록되었습니다.");
+                            location.reload();
                         },
                         error: function(jqXHR, status, error) {
                             alert(jqXHR.responseText);
