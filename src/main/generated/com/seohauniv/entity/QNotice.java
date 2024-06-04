@@ -22,9 +22,12 @@ public class QNotice extends EntityPathBase<Notice> {
 
     public static final QNotice notice = new QNotice("notice");
 
-    public final QBaseTimeEntity _super = new QBaseTimeEntity(this);
+    public final QBaseEntity _super = new QBaseEntity(this);
 
     public final StringPath content = createString("content");
+
+    //inherited
+    public final StringPath createdBy = _super.createdBy;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 

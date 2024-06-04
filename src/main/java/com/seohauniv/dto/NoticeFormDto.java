@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -24,7 +25,14 @@ public class NoticeFormDto {
 
     private LocalDateTime regTime;
 
+    private int views;
+
     private static ModelMapper modelMapper = new ModelMapper();
+
+    public String getFormattedRegTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return regTime != null ? regTime.format(formatter) : "";
+    }
 
     public Notice creatNotice() {
         return modelMapper.map(this, Notice.class);

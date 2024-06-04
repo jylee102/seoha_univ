@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="css">
+    <style>
+        select {
+          margin: 2px;
+          width: 33.33%;
+        }
+
+        a {
+          cursor: pointer;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <div class="site-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 style="margin-left: 28px;">공지사항</h1>
+                    <form th:action="@{'/notice/rewrite/' + ${notices.number}}"
+                          method="get" th:object="${notices}">
+                        <table class="table table-responsive-md">
+                            <thead>
+                            <tr>
+                                <th scope="col">번호</th>
+                                <th scope="col">제목</th>
+                                <th scope="col">등록자</th>
+                                <th scope="col">등록일</th>
+                                <th scope="col">조회수</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- 조회된 데이터를 출력한다. -->
+                            <tr th:each="notice, status: ${notices.getContent()}">
+                                <th th:text="${notice.id}" scope="row"></th>
+                                <td><a th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}"></a></td>
+                                <td th:text="${notice.staff.name}"></td>
+                                <td th:text="${notice.regDate}"></td>
+                                <td th:text="${notice.views}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <nav aria-label="Page navigation example"
+                             th:with="start=${(notices.number/maxPage) * maxPage + 1},
+  end= (${(notices.totalPages == 0) ? 1 : (start + (maxPage - 1) < notices.totalPages ? start + (maxPage - 1) : notices.totalPages)}) "
+                        >
+                            <ul class="pagination d-flex justify-content-center">
+                                <li class="page-item" th:classappend="${notices.first} ? ' disabled'">
+                                    <a class="page-link"
+                                       th:onclick="'javascript:page(' + ${notices.number - 1} + ')'"
+                                    >이전</a>
+                                </li>
+
+                                <li class="page-item"
+                                    th:each="page: ${#numbers.sequence(start, end)}"
+                                    th:classappend="${notices.number eq page-1} ? 'active' : ''"
+                                >
+                                    <a class="page-link" th:inline="text"
+                                       th:onclick="'javascript:page(' + ${page - 1} + ')'"
+                                    >[[${page}]]</a>
+                                </li>
+
+                                <li class="page-item" th:classappend="${notices.last}?' disabled'">
+                                    <a class="page-link"
+                                       th:onclick="'javascript:page(' + ${notices.number + 1} + ')'"
+                                    >다음</a>
+                                </li>
+                            </ul>
+                        </nav>
+
+                        <div class="row" th:object="${noticeSearchDto}" style="height: 40px; margin: 20px 0;" >
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-5" style="display: flex">
+                                <!-- 상품 등록일 -->
+                                <select class="form-control" th:field="*{searchDateType}">
+                                    <option value="all">전체기간</option>
+                                    <option value="1d">1일</option>
+                                    <option value="1w">1주</option>
+                                    <option value="1m">1개월</option>
+                                    <option value="6m">6개월</option>
+                                </select>
+
+                                <!-- 상품명, 등록자 선택 -->
+                                <select class="form-control" th:field="*{searchBy}">
+                                    <option value="title">제목</option>
+                                    <option value="createdBy">등록자</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <div style="display: flex">
+                                    <input type="text" class="form-control" placeholder="검색어 입력" th:field="*{searchQuery}" />
+                                    <button id="searchBtn" type="submit" class="btn btn-primary mb-3">검색</button>
+                                </div>
+                            </div>
+                            <div class="col-lg-2"></div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $("#searchBtn").on("click", function(e) {
+          e.preventDefault(); //submit 방지
+          page(0); //검색 이후엔 검색한 페이지의 시작페이지부터 보여준다.
+        });
+
+        function page(page) {
+          //입력한 값을 전부 가지고 온다.
+          var searchDateType = $("#searchDateType").val();
+          var searchBy = $("#searchBy").val();
+          var searchQuery = $("#searchQuery").val();
+
+          //주소 이동
+          location.href = "/notice/list/" + page
+              + "?searchDateType=" + searchDateType
+              + "&searchBy=" + searchBy
+              + "&searchQuery=" + searchQuery;
+        }
+    </script>
+</th:block>
+</html>
