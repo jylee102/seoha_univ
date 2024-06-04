@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -59,11 +60,18 @@ public class SyllabusController {
         try {
             Pageable pageable = PageRequest.of(page.orElse(0), 10);
             Page<SyllabusFormDto> syllabusPage = syllabusService.getAllSyllabusToRead(pageable, searchValue);
-            System.out.println(syllabusPage);
             return new ResponseEntity(syllabusPage, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("강의계획서 목록을 불러오는 것에 실패했습니다.\n관리자에게 문의하세요.", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/staff/viewSyllabus/{syllabusId}")
+    public String viewSyllabus(@PathVariable("syllabusId") Long syllabusId,
+                               Model model) {
+        Syllabus syllabus = syllabusService.findById(syllabusId);
+        model.addAttribute("syllabusForm", syllabus);
+        return "staff/syllabus";
     }
 }

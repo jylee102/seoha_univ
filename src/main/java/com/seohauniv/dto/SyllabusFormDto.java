@@ -1,8 +1,8 @@
 package com.seohauniv.dto;
 
 import com.seohauniv.constant.CourseType;
+import com.seohauniv.constant.Day;
 import com.seohauniv.constant.ProcedureStatus;
-import com.seohauniv.entity.CourseTime;
 import com.seohauniv.entity.Syllabus;
 import com.seohauniv.entity.WeeklyPlan;
 import jakarta.validation.Valid;
@@ -11,15 +11,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
 public class SyllabusFormDto {
     private Long id;
+
+    private int year; // 연도
+    private int semester; // 학기
 
     @NotBlank(message = "강좌명을 입력하세요.")
     private String courseName;
@@ -30,6 +30,8 @@ public class SyllabusFormDto {
     @Min(value = 1, message = "이수학점은 1 이상이어야 합니다.")
     @Max(value = 3, message = "이수학점은 3 이하이어야 합니다.")
     private int credit;
+
+    private int capacity; // 수강정원
 
     private String overview;
     private String objective;
@@ -71,16 +73,28 @@ public class SyllabusFormDto {
         for (CourseTimeDto courseTime : this.courseTimes) {
             String key = courseTime.getCourseTimeDescription();
 
-            if (!courseMap.containsKey(key)) {
-                courseMap.put(key, new ArrayList<>());
-            }
-            courseMap.get(key).add(courseTime.getDay().getDescription());
+            courseMap.computeIfAbsent(key, k -> new ArrayList<>())
+                    .add(courseTime.getDay().getDescription());
         }
 
-        for (Map.Entry<String, List<String>> entry : courseMap.entrySet()) {
-            for (String str : entry.getValue()) {
-                convertedDays.append(str).append("•");
-            }
+        // courseMap.entrySet()을 Day 순서에 따라 정렬
+        List<Map.Entry<String, List<String>>> sortedEntries = courseMap.entrySet().stream()
+                .sorted(Comparator.comparing(
+                        entry -> entry.getValue().stream()
+                                .map(dayDesc -> {
+                                    for (Day day : Day.values()) {
+                                        if (day.getDescription().equals(dayDesc)) {
+                                            return day.ordinal();
+                                        }
+                                    }
+                                    return Integer.MAX_VALUE;
+                                })
+                                .min(Integer::compareTo)
+                                .orElse(Integer.MAX_VALUE)
+                )).toList();
+
+        for (Map.Entry<String, List<String>> entry : sortedEntries) {
+            entry.getValue().forEach(day -> convertedDays.append(day).append("·"));
             convertedDays.replace(convertedDays.length() - 1, convertedDays.length(), " ");
             convertedDays.append(entry.getKey()).append("<br>");
         }
@@ -89,7 +103,7 @@ public class SyllabusFormDto {
         return convertedDays.toString();
     }
 
-    private static ModelMapper modelMapper = new ModelMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     // dto -> entity
     public Syllabus toEntity() {

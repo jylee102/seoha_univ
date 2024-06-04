@@ -22,6 +22,8 @@ public class QSyllabus extends EntityPathBase<Syllabus> {
 
     public static final QSyllabus syllabus = new QSyllabus("syllabus");
 
+    public final NumberPath<Integer> capacity = createNumber("capacity", Integer.class);
+
     public final StringPath courseName = createString("courseName");
 
     public final ListPath<CourseTime, QCourseTime> courseTimes = this.<CourseTime, QCourseTime>createList("courseTimes", CourseTime.class, QCourseTime.class, PathInits.DIRECT2);
@@ -38,11 +40,15 @@ public class QSyllabus extends EntityPathBase<Syllabus> {
 
     public final QProfessor professor;
 
+    public final NumberPath<Integer> semester = createNumber("semester", Integer.class);
+
     public final EnumPath<com.seohauniv.constant.ProcedureStatus> status = createEnum("status", com.seohauniv.constant.ProcedureStatus.class);
 
     public final StringPath textbook = createString("textbook");
 
     public final ListPath<WeeklyPlan, QWeeklyPlan> weeklyPlans = this.<WeeklyPlan, QWeeklyPlan>createList("weeklyPlans", WeeklyPlan.class, QWeeklyPlan.class, PathInits.DIRECT2);
+
+    public final NumberPath<Integer> year = createNumber("year", Integer.class);
 
     public QSyllabus(String variable) {
         this(Syllabus.class, forVariable(variable), INITS);

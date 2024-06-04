@@ -9,13 +9,7 @@ import lombok.Data;
 public class Course {
     @Id
     @Column(name = "course_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private int year;
-    private int semester;
-
-    private int capacity; // 수강정원
+    private String id;
 
     @Column(name = "rest_seat")
     private int restSeat; // 여석

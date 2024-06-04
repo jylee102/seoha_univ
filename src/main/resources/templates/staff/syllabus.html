@@ -2,7 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
-
 <head>
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
@@ -58,23 +57,15 @@
 <main layout:fragment="content">
     <div class="card">
         <div class="card-body px-5 py-5">
-            <h1>강의 계획서</h1>
+            <h1>강의계획서 검토</h1>
             <div class="split--div"></div>
 
             <form name="syllabusForm">
                 <table class="table--container table">
-                    <tr class="type-form">
-
-                        <td><label for="name">강좌명</label></td>
+                    <tr>
+                        <td><label th:for="courseName">강좌명</label></td>
                         <td>
-                            <div class="row type-form">
-                                <div class="col-md-8">
-                                    <input type="text" id="name" name="courseName" class="input--box" placeholder="강좌명"/>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" id="capacity" name="capacity" class="input--box" placeholder="수강정원"/>
-                                </div>
-                            </div>
+                            <input type="text" class="input--box" placeholder="강좌명"/>
                         </td>
                     </tr>
                     <tr>
@@ -188,77 +179,7 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-                document.querySelector('.addWeeklyPlan').addEventListener('click', function() {
-                    var weeklyPlan = document.getElementById('weeklyPlan');
-                    var isCollapsed = weeklyPlan.classList.contains('collapse');
-                    var icon = document.querySelector('.weekly-icon i');
-
-                    weeklyPlan.classList.toggle('collapse', !isCollapsed);
-                    icon.className = isCollapsed ? 'mdi mdi-minus' : 'mdi mdi-plus';
-                });
-
-                var lineHeight = parseInt($('.auto-resize').css('line-height'), 10);
-
-                // 입력 이벤트를 감지하여 높이를 조정하는 함수
-                function adjustHeight() {
-                    this.style.height = 'auto';
-                    this.style.height = this.scrollHeight + 'px';
-                }
-
-                $('textarea.auto-resize').on('input', adjustHeight);
-                $('textarea.auto-resize').each(adjustHeight); // 페이지 로드 시 각 textarea의 높이를 초기화
-
-                var token = $("meta[name='_csrf']").attr("content");
-                var header = $("meta[name='_csrf_header']").attr("content");
-
-                function beforeSubmit() {
-                    const f = document.syllabusForm;
-
-                    var courseTimes = [];
-                    $('input[type="checkbox"]:checked').each(function() {
-                        var day = $(this).val().trim();
-                        var startTime = $(this).closest('tr').find('.input--box[type="time"]').eq(0).val();
-                        var endTime = $(this).closest('tr').find('.input--box[type="time"]').eq(1).val();
-                        courseTimes.push({ day: day, startTime: startTime, endTime: endTime });
-                    });
-
-                    var weeklyPlans = [];
-
-                    $('#weeklyPlan tr:not(:first)').each(function() {
-                        var week = parseInt($(this).find('td:first').text().replace('주차', ''));
-                        var content = $(this).find('td:last textarea').val();
-                        weeklyPlans.push({ week: week, content: content });
-                    });
-
-                    var paramData = {
-                        courseName : f.courseName.value,
-                        courseType : f.type.value ? f.type.value : null,
-                        credit: f.credit.value,
-                        overview: f.overview.value,
-                        objective: f.objective.value,
-                        textbook: f.textbook.value,
-
-                        courseTimes: courseTimes,
-                        weeklyPlans: weeklyPlans
-                    };
-
-                    $.ajax({
-                        url: '/professor/applyForSyllabus',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(paramData),
-                        beforeSend : function(xhr) {
-                            xhr.setRequestHeader(header, token);
-                        },
-                        success: function(response) {
-                            alert("강의 계획서가 등록되었습니다.");
-                            location.reload();
-                        },
-                        error: function(jqXHR, status, error) {
-                            alert(jqXHR.responseText);
-                        }
-                    });
-                }
     </script>
 </th:block>
+
 </html>

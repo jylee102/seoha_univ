@@ -100,9 +100,17 @@ public class MemberController {
                 sb.append(fieldError.getDefaultMessage()).append("\n");
             }
 
-            model.addAttribute("errorMessage", sb.toString());
+            model.addAttribute("message", sb.toString());
 
             model.addAttribute("memberFormDto", new MemberFormDto());
+            model.addAttribute("deptList", deptList);
+            return "staff/memberForm";
+        }
+
+        // 이메일 중복 검사
+        if (memberService.existsByEmail(memberFormDto.getEmail())) {
+            model.addAttribute("message", "이미 사용중인 이메일입니다.");
+            model.addAttribute("memberFormDto", memberFormDto);
             model.addAttribute("deptList", deptList);
             return "staff/memberForm";
         }
@@ -123,13 +131,13 @@ public class MemberController {
                     memberService.createMember(professor);
                     break;
             }
-            model.addAttribute("errorMessage", "구성원 등록에 성공했습니다.");
+            model.addAttribute("message", "구성원 등록에 성공했습니다.");
 
             model.addAttribute("memberFormDto", new MemberFormDto());
             model.addAttribute("deptList", deptList);
             return "staff/memberForm";
         } catch (IllegalStateException e) { // 회원가입이 이미 되어있다면
-            model.addAttribute("errorMessage", "구성원 등록에 실패했습니다.");
+            model.addAttribute("message", "구성원 등록에 실패했습니다.");
 
             model.addAttribute("memberFormDto", new MemberFormDto());
             model.addAttribute("deptList", deptList);

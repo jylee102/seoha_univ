@@ -12,6 +12,12 @@
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <style>
+        .clickable-row:hover {
+            cursor: pointer;
+            background-color: #e0e0e0;
+        }
+    </style>
 </th:block>
 
 <main layout:fragment="content">
@@ -21,7 +27,6 @@
             <div class="split--div"></div>
 
             <form name="syllabusForm">
-                <input type="hidden" id="role" name="role" value="STUDENT">
                 <table class="table--container table">
                     <thead>
                     <tr>
@@ -80,14 +85,18 @@
                 return;
             }
 
+            // 페이지당 항목 수와 현재 페이지를 고려한 전체 번호 계산
+            var totalItems = data.totalElements;
+            var itemsPerPage = data.size;
+
             // 받아온 데이터를 반복하여 테이블에 추가
             $.each(data.content, function(index, item) {
                 var row = $("<tr></tr>");
 
-                console.log(item.courseTimesDescription)
-
                 // 각 열에 데이터 추가
-                row.append("<td>" + item.id + "</td>");
+                var descendingIndex = totalItems - ((currentPage - 1) * itemsPerPage + index);
+
+                row.append("<td>" + descendingIndex + "</td>");
                 row.append("<td>" + item.courseName + "</td>");
                 row.append("<td>" + item.major + "/" + item.courseTypeDescription + "</td>");
                 row.append("<td>" + item.credit + "학점</td>");

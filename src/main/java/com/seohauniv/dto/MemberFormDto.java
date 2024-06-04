@@ -2,6 +2,7 @@ package com.seohauniv.dto;
 
 import com.seohauniv.entity.Dept;
 import com.seohauniv.entity.Member;
+import com.seohauniv.validation.DeptNotRequiredForStaff;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@DeptNotRequiredForStaff // 커스텀 어노테이션(dept가 필수입력값인지)
 public class MemberFormDto {
 
     @NotBlank(message = "이름은 필수 입력 값입니다.")

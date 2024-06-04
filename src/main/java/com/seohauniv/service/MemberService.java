@@ -85,6 +85,14 @@ public class MemberService implements UserDetailsService {
         return memberRepository.count();
     }
 
+    public boolean existsById(String id) {
+        return memberRepository.existsById(id);
+    }
+
+    public boolean existsByEmail(String email) {
+        return memberRepository.findByEmail(email) != null;
+    }
+
     // 학번/교번으로 회원 찾기
     public Member getMember(String id) {
         return memberRepository.findById(id).orElseThrow(EntityNotFoundException::new);

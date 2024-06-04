@@ -34,6 +34,12 @@ public class Syllabus {
     private String objective; // 강의 목표
 
     private String textbook; // 교재
+    
+    private int year; // 연도
+    private int semester; // 학기
+
+    private int capacity; // 수강정원
+    
 
     @Enumerated(EnumType.STRING)
     private ProcedureStatus status;
