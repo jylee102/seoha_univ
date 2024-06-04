@@ -12,6 +12,7 @@ import com.seohauniv.repository.MemberRepository;
 import com.seohauniv.repository.ProfessorRepository;
 import com.seohauniv.repository.StaffRepository;
 import com.seohauniv.repository.StudentRepository;
+import com.seohauniv.util.IdGenerator;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,12 +44,20 @@ public class MemberService implements UserDetailsService {
     public Member createMember(Object entity) {
         Member member = new Member();
         String rawPw = generateRawPassword(entity);
+        LocalDateTime now = LocalDateTime.now();
 
         if (entity instanceof Staff staff) {
             member.setId(staff.getId());
             member.setName(staff.getName());
             member.setEmail(staff.getEmail());
             member.setRole(Role.STAFF);
+            
+            // 초기 멤버 등록시 아이디 고정
+            if (staff.getEmail().equals("lilydodo11@gmail.com"))
+                member.setId("000000");
+            else
+                member.setId(generateUniqueStaffId(now));
+            
             staff.setMember(member);
             member.setStaff(staff);
         } else if (entity instanceof Student student) {
@@ -55,13 +65,17 @@ public class MemberService implements UserDetailsService {
             member.setName(student.getName());
             member.setEmail(student.getEmail());
             member.setRole(Role.STUDENT);
+            member.setId(generateUniqueStudentId(now));
             student.setMember(member);
+            student.setGrade(1);
+            student.setSemester(1);
             member.setStudent(student);
         } else if (entity instanceof Professor professor) {
             member.setId(professor.getId());
             member.setName(professor.getName());
             member.setEmail(professor.getEmail());
             member.setRole(Role.PROFESSOR);
+            member.setId(generateUniqueProfessorId(now));
             professor.setMember(member);
             member.setProfessor(professor);
         }
@@ -100,6 +114,30 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findByEmail(email) != null;
     }
 
+    public String generateUniqueStudentId(LocalDateTime regDate) {
+        String studentId;
+        do {
+            studentId = IdGenerator.generateStudentId(regDate);
+        } while (existsById(studentId));
+        return studentId;
+    }
+
+    public String generateUniqueStaffId(LocalDateTime regDate) {
+        String staffId;
+        do {
+            staffId = IdGenerator.generateStaffId(regDate);
+        } while (existsById(staffId));
+        return staffId;
+    }
+
+    public String generateUniqueProfessorId(LocalDateTime regDate) {
+        String professorId;
+        do {
+            professorId = IdGenerator.generateProfessorId(regDate);
+        } while (existsById(professorId));
+        return professorId;
+    }
+
     // 학번/교번으로 회원 찾기
     public Member getMember(String id) {
         return memberRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -116,7 +154,7 @@ public class MemberService implements UserDetailsService {
         member.setPassword(password);
     }
 
-    public Member updateInfo(MemberFormDto memberFormDto,String memberId){
+    public Member updateInfo(MemberFormDto memberFormDto, String memberId) {
         Member member = getMember(memberId);
         if (member.getRole().equals(Role.STAFF)) {
             Staff staff = member.getStaff();
@@ -171,23 +209,28 @@ public class MemberService implements UserDetailsService {
             case "STUDENT":
                 if (memberSearchDto.getSearchBy().equals("id")) {
                     if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Student> memberPage = studentRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
+                        Page<Student> memberPage =
+                                studentRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
                         return memberPage;
                     } else {
-                        Page<Student> memberPage = studentRepository.getPageById(memberSearchDto.getSearchQuery(), pageable);
+                        Page<Student> memberPage = studentRepository.getPageById(memberSearchDto.getSearchQuery(),
+                                pageable);
                         return memberPage;
                     }
                 } else if (memberSearchDto.getSearchBy().equals("name")) {
-                    Page<Student> memberPage = studentRepository.getPageByName(memberSearchDto.getSearchQuery(), pageable);
+                    Page<Student> memberPage = studentRepository.getPageByName(memberSearchDto.getSearchQuery(),
+                            pageable);
                     return memberPage;
                 }
             case "STAFF":
                 if (memberSearchDto.getSearchBy().equals("id")) {
                     if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Staff> memberPage = staffRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
+                        Page<Staff> memberPage = staffRepository.getPageByRegYear(memberSearchDto.getSearchQuery(),
+                                pageable);
                         return memberPage;
                     } else {
-                        Page<Staff> memberPage = staffRepository.getPageById(memberSearchDto.getSearchQuery(), pageable);
+                        Page<Staff> memberPage = staffRepository.getPageById(memberSearchDto.getSearchQuery(),
+                                pageable);
                         return memberPage;
                     }
                 } else if (memberSearchDto.getSearchBy().equals("name")) {
@@ -197,14 +240,17 @@ public class MemberService implements UserDetailsService {
             case "PROFESSOR":
                 if (memberSearchDto.getSearchBy().equals("id")) {
                     if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Professor> memberPage = professorRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
+                        Page<Professor> memberPage =
+                                professorRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
                         return memberPage;
                     } else {
-                        Page<Professor> memberPage = professorRepository.getPageById(memberSearchDto.getSearchQuery(), pageable);
+                        Page<Professor> memberPage = professorRepository.getPageById(memberSearchDto.getSearchQuery()
+                                , pageable);
                         return memberPage;
                     }
                 } else if (memberSearchDto.getSearchBy().equals("name")) {
-                    Page<Professor> memberPage = professorRepository.getPageByName(memberSearchDto.getSearchQuery(), pageable);
+                    Page<Professor> memberPage = professorRepository.getPageByName(memberSearchDto.getSearchQuery(),
+                            pageable);
                     return memberPage;
                 }
         }
