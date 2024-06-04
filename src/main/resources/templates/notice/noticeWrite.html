@@ -32,7 +32,7 @@
                             <div class="form-group row">
                                 <div class="col-md-12">
                                     <label th:for="content" class="text-black">내용</label>
-                                    <textarea rows="20" type="text" class="form-control" id="content" th:field="*{content}" onkeyup="inputNumberFormat(this)"></textarea>
+                                    <textarea rows="20" type="text" class="form-control" id="content" th:field="*{content}"></textarea>
                                     <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="fieldError">Incorrect Data</p>
                                 </div>
                             </div>

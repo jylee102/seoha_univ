@@ -3,7 +3,7 @@ package com.seohauniv.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.seohauniv.dto.MainNoticeDto;
+
 import com.seohauniv.dto.NoticeSearchDto;
 import com.seohauniv.entity.Notice;
 import com.seohauniv.entity.QNotice;
@@ -61,18 +61,13 @@ public class NoticeRepositoryCustomImpl implements NoticeRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory
+        Long total = queryFactory
                 .select(Wildcard.count).from(QNotice.notice)
                 .where(regDtsAfter(noticeSearchDto.getSearchDateType()),
                         searchByLike(noticeSearchDto.getSearchBy(),noticeSearchDto.getSearchQuery()))
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total);
-    }
-
-    @Override
-    public Page<MainNoticeDto> getMainNoticePage(NoticeSearchDto noticeSearchDto, Pageable pageable) {
-        return null;
     }
 
     private  BooleanExpression noticeTitleLike(String searchQuery){

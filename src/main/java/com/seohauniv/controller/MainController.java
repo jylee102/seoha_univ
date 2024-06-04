@@ -2,10 +2,13 @@ package com.seohauniv.controller;
 
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.dto.MemberSearchDto;
+import com.seohauniv.dto.NoticeSearchDto;
 import com.seohauniv.entity.Dept;
 import com.seohauniv.entity.Member;
+import com.seohauniv.entity.Notice;
 import com.seohauniv.service.DeptService;
 import com.seohauniv.service.MemberService;
+import com.seohauniv.service.NoticeService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +31,7 @@ public class MainController {
 
     private final DeptService deptService;
     private final MemberService memberService;
+    private final NoticeService noticeService;
 
     @GetMapping(value = "/")
     public String main(HttpServletRequest request, Model model, Principal principal) {
@@ -36,6 +40,11 @@ public class MainController {
         if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
             return "/members/login";
 
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Page<Notice> notices = noticeService.getAdminNoticePage(new NoticeSearchDto("all", "title", ""), pageable);
+        System.out.println(notices);
+        model.addAttribute("notices", notices);
         return "index";
     }
 

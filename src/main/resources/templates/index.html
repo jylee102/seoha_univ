@@ -53,35 +53,9 @@
                   </h3>
                   <div class="main--page--split"></div>
                   <table>
-                     <tr>
-                        <td>
-                           <a>긴급&nbsp;입학</a> <!--  href="/notice/read?id=${notice.id}" -->
-                        </td>
-                        <td>2024-05-23</td>
-                     </tr>
-                     <tr>
-                        <td>
-                           <a>긴급&nbsp;입학</a>
-                        </td>
-                        <td>2024-05-23</td>
-                     </tr>
-                     <tr>
-                        <td>
-                           <a>긴급&nbsp;입학</a>
-                        </td>
-                        <td>2024-05-23</td>
-                     </tr>
-                     <tr>
-                        <td>
-                           <a>긴급&nbsp;입학</a>
-                        </td>
-                        <td>2024-05-23</td>
-                     </tr>
-                     <tr>
-                        <td>
-                           <a>긴급&nbsp;입학</a>
-                        </td>
-                        <td>2024-05-23</td>
+                     <tr th:each="notice, status: ${notices.getContent()}">
+                        <td><a th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}"></a></td>
+                        <td th:text="${notice.regDate}"></td>
                      </tr>
                   </table>
                </div>
