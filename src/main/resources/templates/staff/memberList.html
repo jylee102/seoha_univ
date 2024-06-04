@@ -75,22 +75,23 @@
                          aria-label="Page navigation example">
                         <ul>
                             <li>
-                                <a href="javascript:goToFirstPage()">&laquo;</a>
+                                <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
                             </li>
-                            <li th:classappend="${members.first}?'disabled'">
-                                <a th:onclick="'javascript:page(' + ${members.number - 1} +')'">&lt;</a>
+                            <li th:classappend="${members.first} ? 'disabled' : ''"
+                                th:attr="onclick=${!members.first} ? 'location.href=\'/staffs/manageMember/' + (${members.number - 1}) + '?searchBy=' + ${memberSearchDto.searchBy} + '&searchQuery=' + ${memberSearchDto.searchQuery} + '&tabValue=' + ${memberSearchDto.tabValue} + '\'' : ''">
+                                <a><i class="fa-solid fa-angle-left"></i></a>
                             </li>
-                            <li class="page-active" th:inline="text"
-                                th:each="page: ${#numbers.sequence(start, end)}"
-                                th:classappend="${members.number eq page-1}?'active':''"
-                                th:onclick="'javascript:page(' + ${page - 1} +')'">
+                            <li th:each="page: ${#numbers.sequence(start, end)}"
+                                th:classappend="${members.number eq page - 1} ? 'page-active' : 'page'"
+                                th:onclick="'javascript:page(' + (${page - 1}) + ')'">
                                 <a>[[${page}]]</a>
                             </li>
-                            <li th:classappend="${members.last}?'disabled'">
-                                <a th:onclick="'javascript:page(' + ${members.number + 1} +')'">&gt;</a>
+                            <li th:classappend="${members.last} ? 'disabled' : ''"
+                                th:attr="onclick=${!members.last} ? 'location.href=\'/staffs/manageMember/' + (${members.number + 1}) + '?searchBy=' + ${memberSearchDto.searchBy} + '&searchQuery=' + ${memberSearchDto.searchQuery} + '&tabValue=' + ${memberSearchDto.tabValue} + '\'' : ''">
+                                <a><i class="fa-solid fa-angle-right"></i></a>
                             </li>
                             <li>
-                                <a href="javascript:goToLastPage()">&raquo;</a>
+                                <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
                             </li>
                         </ul>
                     </div>

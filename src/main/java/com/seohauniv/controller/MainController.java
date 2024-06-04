@@ -64,11 +64,6 @@ public class MainController {
         return "staff/memberForm";
     }
 
-    //    @GetMapping(value = "/staffs/manageMember")
-    //    public String memberList(Model model) {
-    //        return "staff/memberList";
-    //    }
-
     // 구성원 명단 페이지
     @GetMapping(value = {"/staffs/manageMember", "/staffs/manageMember/{page}"})
     public String memberList(MemberSearchDto memberSearchDto,
@@ -76,7 +71,7 @@ public class MainController {
 
         //PageRequest.of(페이지 번호, 한 페이지당 조회할 데이터 갯수);
         //URL path에 페이지가 있으면 해당 페이지 번호를 조회하고, 페이지 번호가 없다면 0 페이지(첫번째 페이지)를 조회
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 20);
 
         Page<?> members = memberService.getMemberListPage(memberSearchDto, pageable);
 
