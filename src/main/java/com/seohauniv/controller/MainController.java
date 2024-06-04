@@ -98,4 +98,8 @@ public class MainController {
         return "professor/syllabus";
     }
 
+    @GetMapping("/staffs/createCourse")
+    public String courseList() {
+        return "staff/courseList";
+    }
 }
