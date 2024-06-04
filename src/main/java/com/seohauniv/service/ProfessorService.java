@@ -1,6 +1,7 @@
 package com.seohauniv.service;
 
 import com.seohauniv.entity.Professor;
+import com.seohauniv.repository.ProfessorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

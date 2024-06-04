@@ -10,9 +10,7 @@
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
         @media screen and (min-width: 1024px) {
-            .input-search {
-                width: 70%;
-            }
+
         }
     </style>
 </th:block>
@@ -22,26 +20,27 @@
         <div class="card-body px-5 py-5">
             <h1>구성원 명단</h1>
             <div class="div-split"></div>
-            <form action="/staffs/manageMember" method="get" th:object="${member}">
-                <div class="d-flex align-items-center" th:object="${memberSearchDto}" style="padding-left: 3rem; padding-bottom: 1rem;">
+            <form action="/staffs/manageMember" method="get" th:object="${memberSearchDto}">
+                <div class="d-flex align-items-center" style="padding-left: 3rem; padding-bottom: 1rem;">
                     <div style="padding-right: 10px;">
-                        <select class="input-search select-search">
-                            <option value="id">학번/교번</option>
+                        <select class="input-search select-search" id="searchBy" name="searchBy">
+                            <option value="id" selected>학번/교번</option>
                             <option value="name">이름</option>
                         </select>
                     </div>
                     <div>
-                        <input type="text" class="input-search" />
+                        <input type="text" class="input-search" id="searchQuery" />
                     </div>
                     <div class="btn-search">
                         <button id="searchBtn" type="submit" class="btn btn-sm btn-info mb-3">조회</button>
                     </div>
                 </div>
                 <nav class="nav nav-tabs">
-                    <button class="nav-link active" data-bs-toggle="tab" role="tab" value="STUDENT">학생</button>
-                    <button class="nav-link" data-bs-toggle="tab" role="tab" value="PROFESSOR">교수</button>
-                    <button class="nav-link" data-bs-toggle="tab" role="tab" value="STAFF">교직원</button>
+                    <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="STUDENT">학생</button>
+                    <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="PROFESSOR">교수</button>
+                    <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="STAFF">교직원</button>
                 </nav>
+            </form>
                 <!-- 여기에 내용 넣기 -->
 
                 <div class="table-div">
@@ -56,33 +55,45 @@
                             <th>학과명</th>
                             <th>학년</th>
                             <th>입학일</th>
-                            <th>졸업예정일</th>
                         </tr>
                         <tr th:each="member, status: ${members.getContent()}">
                             <td th:text="${member.id}">246727</td>
                             <td th:text="${member.name}">최볼키</td>
-                            <td>2013-10-29</td>
-                            <td>서울 구로구 경인로 557 하이미디어 5동 1202호</td>
-                            <td>010-1111-1111</td>
-                            <td>volki131029@gmail.cpm</td>
+                            <td th:text="${member.birth}">2013-10-29</td>
+                            <td th:text="${member.address}">서울 구로구 경인로 557 하이미디어 5동 1202호</td>
+                            <td th:text="${member.phone}">010-1111-1111</td>
+                            <td th:text="${member.email}">volki131029@gmail.cpm</td>
                             <td>경영학과</td>
                             <td>1학년</td>
-                            <td>2024-03-03</td>
-                            <td>2028-02-28</td>
+                            <td th:text="${member.member.regDate}">2024-03-03</td>
                         </tr>
                     </table>
+                </div>
 
-                    <div class="pagination">
+                    <div class="pagination" th:with="start=${(members.number/maxPage)*maxPage + 1},
+			                 end=(${(members.totalPages == 0) ? 1 : (start + (maxPage - 1) < members.totalPages ? start + (maxPage - 1) : members.totalPages)})"
+                         aria-label="Page navigation example">
                         <ul>
-                            <li>&laquo;</li>
-                            <li>&lt;</li>
-                            <li class="page-active">1</li>
-                            <li>&gt;</li>
-                            <li>&raquo;</li>
+                            <li>
+                                <a href="javascript:goToFirstPage()">&laquo;</a>
+                            </li>
+                            <li th:classappend="${members.first}?'disabled'">
+                                <a th:onclick="'javascript:page(' + ${members.number - 1} +')'">&lt;</a>
+                            </li>
+                            <li class="page-active" th:inline="text"
+                                th:each="page: ${#numbers.sequence(start, end)}"
+                                th:classappend="${members.number eq page-1}?'active':''"
+                                th:onclick="'javascript:page(' + ${page - 1} +')'">
+                                <a>[[${page}]]</a>
+                            </li>
+                            <li th:classappend="${members.last}?'disabled'">
+                                <a th:onclick="'javascript:page(' + ${members.number + 1} +')'">&gt;</a>
+                            </li>
+                            <li>
+                                <a href="javascript:goToLastPage()">&raquo;</a>
+                            </li>
                         </ul>
                     </div>
-                </div>
-            </form>
         </div>
     </div>
 </main>
@@ -93,21 +104,54 @@
         var errorMessage = [[${errorMessage}]];
         if(errorMessage != null || errorMessage == "") alert(errorMessage);
 
+        var searchDto = [[${memberSearchDto}]];
+        $(`.nav-link[value=${searchDto.tabValue}]`).addClass('active');
+
+        const currentPath = window.location.pathname;
+        var tabValue = searchDto.tabValue;
+        $("#searchBy").val(searchDto.searchBy);
+        $("#searchQuery").val(searchDto.searchQuery);
+
         $('.nav-link[role="tab"]').on('click', function() {
-            $('#role').val($('.nav-link.active[role="tab"]').val());
-
-            if ($('.nav-link.active[role="tab"]').val() == 'STAFF') {
-                $('.dept-form').css('display', 'none');
-            } else $('.dept-form').css('display', 'table-row');
+            tabValue = $('.nav-link[role="tab"].active').val();
+            page(currentPath.split('/')[3] == null ? 0 : currentPath.split('/')[3]);
         });
 
-        $('#deptInput').on('input', function() {
-            var inputVal = $(this).val();
-            var deptId = $('#dept_titles option').filter(function() {
-                return $(this).val() === inputVal;
-            }).data('id');
-            $('#dept').val(deptId);
+        $("#searchBtn").on("click", function(e) {
+            e.preventDefault(); // submit 방지
+            page(0); // 검색 이후엔 검색한 페이지의 시작페이지부터 보여준다.
         });
+
+        function page(page) {
+            // 입력한 값을 전부 가지고 온다.
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+            if (searchBy == "id") {
+                if (searchQuery.length == 7) { // 학생
+                    tabValue = "STUDENT";
+                } else if (searchQuery.length == 6) { // 교직원
+                    tabValue = "STAFF";
+                } else if (searchQuery.length == 5) { // 교수
+                    tabValue = "PROFESSOR";
+                }
+            }
+
+            // 주소 이동
+            location.href = "/staffs/manageMember/" + page
+                          + "?searchBy=" + searchBy
+                          + "&searchQuery=" + searchQuery
+                          + "&tabValue=" + tabValue;
+        }
+
+        function goToFirstPage() {
+            page(0);
+        }
+
+        function goToLastPage() {
+            var lastPage = [[${members.totalPages}]] - 1; // 마지막 페이지 번호는 총 페이지 수 - 1
+            page(lastPage);
+        }
     </script>
 </th:block>
 
