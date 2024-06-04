@@ -9,14 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -111,4 +111,13 @@ public class NoticeController {
         return "redirect:/notice/list";
     }
 
+    //공지삭제
+    @DeleteMapping("/notice/{noticeId}/delete")
+    public @ResponseBody ResponseEntity deleteNotice(@PathVariable("noticeId") Long noticeId
+            ) {
+
+        noticeService.deleteNotice(noticeId);
+
+        return new ResponseEntity<Long>(noticeId, HttpStatus.OK);
+    }
 }
