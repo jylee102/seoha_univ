@@ -25,7 +25,7 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     //작성 페이지
-    @GetMapping(value = "/notice/write")
+    @GetMapping(value = "/staff/notice/write")
     public String noticeWrite (Model model){
         model.addAttribute("noticeFormDto", new NoticeFormDto());
 
@@ -33,7 +33,7 @@ public class NoticeController {
     }
 
     //작성
-    @PostMapping(value = "/notice/write/new")
+    @PostMapping(value = "/staff/notice/write/new")
     public String noticeWriteNew (@Valid NoticeFormDto noticeFormDto, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors())
             return "notice/noticeWrite";
@@ -119,13 +119,5 @@ public class NoticeController {
         noticeService.deleteNotice(noticeId);
 
         return new ResponseEntity<Long>(noticeId, HttpStatus.OK);
-    }
-
-    //학사일정작성 페이지
-    @GetMapping(value = "/schedule/write")
-    public String scheduleWrite (Model model){
-        model.addAttribute("noticeFormDto", new NoticeFormDto());
-
-        return "notice/noticeWrite";
     }
 }
