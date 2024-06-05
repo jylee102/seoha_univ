@@ -42,7 +42,7 @@
                                 <th th:text="${notice.id}" scope="row"></th>
                                 <td><a th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}"></a></td>
                                 <td th:text="${notice.staff.name}"></td>
-                                <td th:text="${notice.regDate}"></td>
+                                <td th:text="${notice.formattedRegTime}"></td>
                                 <td th:text="${notice.views}"></td>
                                 <td><button type="button" class="btn btn-primary"
                                         th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])">삭제하기</button></td>

@@ -120,4 +120,12 @@ public class NoticeController {
 
         return new ResponseEntity<Long>(noticeId, HttpStatus.OK);
     }
+
+    //학사일정작성 페이지
+    @GetMapping(value = "/schedule/write")
+    public String scheduleWrite (Model model){
+        model.addAttribute("noticeFormDto", new NoticeFormDto());
+
+        return "notice/noticeWrite";
+    }
 }
