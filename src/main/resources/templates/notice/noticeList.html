@@ -19,16 +19,21 @@
             .sName{
                 display:none;
             }
-
-            .ellipsis {
-                display: inline-block;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                width: 80px;
-            }
         }
 
+        .ellipsis {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        .table {
+            width: 100%;
+        }
+
+        .table th, .table td {
+            overflow: hidden;
+        }
     </style>
 </th:block>
 
@@ -39,7 +44,7 @@
 
 <div layout:fragment="content">
     <div class="site-section card">
-        <div class="container card-body">
+        <div class="card-body px-5 py-5">
             <h1 style="font-weight:bolder">공지사항</h1>
             <div class="row">
                 <div class="col-md-12">
@@ -49,58 +54,59 @@
                         <table class="table table-responsive-md" style="overflow-x:hidden;">
                             <thead>
                             <tr>
-                                <th scope="col" style="min-width:62px;">번호</th>
-                                <th scope="col" style="min-width:62px;">제목</th>
-                                <th scope="col" style="min-width:77px;" class="sName">등록자</th>
-                                <th scope="col" style="min-width:77px;">등록일</th>
-                                <th scope="col" style="min-width:77px;">조회수</th>
+                                <th scope="col" style="min-width:62px; width: 10%;">번호</th>
+                                <th scope="col" style="min-width:62px; width: 40%;">제목</th>
+                                <th scope="col" style="min-width:77px; width: 10%;" class="sName">등록자</th>
+                                <th scope="col" style="min-width:77px; width: 10%;">등록일</th>
+                                <th scope="col" style="min-width:77px; width: 10%;" class="sName">조회수</th>
+                                <th scope="col" style="width: 10%;"></th>
                             </tr>
                             </thead>
                             <tbody>
                             <!-- 조회된 데이터를 출력한다. -->
                             <tr th:each="notice, status: ${notices.getContent()}">
                                 <th th:text="${notice.id}" style="padding-left:23px;"></th>
-                                <td ><a class="ellipsis" th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}" style="min-width:50px;"></a></td>
+                                <td><a class="ellipsis" th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}" style="min-width:50px;"></a></td>
                                 <td th:text="${notice.staff.name}" style="padding-left:18px;" class="sName"></td>
                                 <td th:text="${notice.formattedRegTime}" style="padding-left:3px;  min-width:91px;"></td>
-                                <td th:text="${notice.views}" style="padding-left:32px;"></td>
+                                <td th:text="${notice.views}" style="padding-left:32px;" class="sName"></td>
                                 <td><button type="button" class="btn btn-seoha"
-                                        th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])" style="min-width:56px;">삭제</button></td>
+                                            th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])" style="min-width:56px;">삭제</button></td>
 
                             </tr>
                             </tbody>
                         </table>
-<!--                        <nav aria-label="Page navigation example"-->
-<!--                             th:with="start=${(notices.number/maxPage) * maxPage + 1},-->
-<!--  end= (${(notices.totalPages == 0) ? 1 : (start + (maxPage - 1) < notices.totalPages ? start + (maxPage - 1) : notices.totalPages)}) "-->
-<!--                        style="margin-top: 30px;">-->
-<!--                            <ul class="pagination d-flex justify-content-center">-->
-<!--                                <li class="page-item" th:classappend="${notices.first} ? ' disabled'">-->
-<!--                                    <a class="page-link"-->
-<!--                                       th:onclick="'javascript:page(' + ${notices.number - 1} + ')'"-->
-<!--                                    >이전</a>-->
-<!--                                </li>-->
+                        <!--                        <nav aria-label="Page navigation example"-->
+                        <!--                             th:with="start=${(notices.number/maxPage) * maxPage + 1},-->
+                        <!--  end= (${(notices.totalPages == 0) ? 1 : (start + (maxPage - 1) < notices.totalPages ? start + (maxPage - 1) : notices.totalPages)}) "-->
+                        <!--                        style="margin-top: 30px;">-->
+                        <!--                            <ul class="pagination d-flex justify-content-center">-->
+                        <!--                                <li class="page-item" th:classappend="${notices.first} ? ' disabled'">-->
+                        <!--                                    <a class="page-link"-->
+                        <!--                                       th:onclick="'javascript:page(' + ${notices.number - 1} + ')'"-->
+                        <!--                                    >이전</a>-->
+                        <!--                                </li>-->
 
-<!--                                <li class="page-item"-->
-<!--                                    th:each="page: ${#numbers.sequence(start, end)}"-->
-<!--                                    th:classappend="${notices.number eq page-1} ? 'active' : ''"-->
-<!--                                >-->
-<!--                                    <a class="page-link" th:inline="text"-->
-<!--                                       th:onclick="'javascript:page(' + ${page - 1} + ')'"-->
-<!--                                    >[[${page}]]</a>-->
-<!--                                </li>-->
+                        <!--                                <li class="page-item"-->
+                        <!--                                    th:each="page: ${#numbers.sequence(start, end)}"-->
+                        <!--                                    th:classappend="${notices.number eq page-1} ? 'active' : ''"-->
+                        <!--                                >-->
+                        <!--                                    <a class="page-link" th:inline="text"-->
+                        <!--                                       th:onclick="'javascript:page(' + ${page - 1} + ')'"-->
+                        <!--                                    >[[${page}]]</a>-->
+                        <!--                                </li>-->
 
-<!--                                <li class="page-item" th:classappend="${notices.last}?' disabled'">-->
-<!--                                    <a class="page-link"-->
-<!--                                       th:onclick="'javascript:page(' + ${notices.number + 1} + ')'"-->
-<!--                                    >다음</a>-->
-<!--                                </li>-->
-<!--                            </ul>-->
-<!--                        </nav>-->
+                        <!--                                <li class="page-item" th:classappend="${notices.last}?' disabled'">-->
+                        <!--                                    <a class="page-link"-->
+                        <!--                                       th:onclick="'javascript:page(' + ${notices.number + 1} + ')'"-->
+                        <!--                                    >다음</a>-->
+                        <!--                                </li>-->
+                        <!--                            </ul>-->
+                        <!--                        </nav>-->
 
 
                         <div class="pagination" th:with="start=${(notices.number/maxPage)*maxPage + 1},
-			                 end=(${(notices.totalPages == 0) ? 1 : (start + (maxPage - 1) < notices.totalPages ? start + (maxPage - 1) : notices.totalPages)})"
+                           end=(${(notices.totalPages == 0) ? 1 : (start + (maxPage - 1) < notices.totalPages ? start + (maxPage - 1) : notices.totalPages)})"
                              aria-label="Page navigation example">
                             <ul>
                                 <li>
@@ -180,7 +186,7 @@
               + "&searchQuery=" + searchQuery;
         }
 
-   function goToFirstPage() {
+        function goToFirstPage() {
             page(0);
         }
 
@@ -195,39 +201,39 @@
 
 
          function deleteNotice(noticeId) {
-			const deleteConf = confirm("삭제하시겠습니까?");
-			if(!deleteConf) return; //취소버튼 누르면
+          const deleteConf = confirm("삭제하시겠습니까?");
+          if(!deleteConf) return; //취소버튼 누르면
 
-			var token = $("meta[name='_csrf']").attr("content");
-			var header = $("meta[name='_csrf_header']").attr("content");
+          var token = $("meta[name='_csrf']").attr("content");
+          var header = $("meta[name='_csrf_header']").attr("content");
 
-			//request URL
-			var url = "/notice/" + noticeId + "/delete";
+          //request URL
+          var url = "/notice/" + noticeId + "/delete";
 
 
-			$.ajax({
-				url : url, //request URL
-				type : "DELETE", //전송방식
-				contentType : "application/json",
-				beforeSend : function(xhr) {
-					//데이터를 전송하기 전에 헤더에 csrf 값을 설정
-					xhr.setRequestHeader(header, token);
-				},
-				dataType : "json",
-				cache : false,
-				success : function(result, status) {
-					location.href = '/notice/list';
-				},
-				error : function(jqXHR, status, error) {
-					if(jqXHR.status == '401') {
-						alert('로그인 후 이용해주세요.');
-						location.href = '/notices/login';
-					} else {
-						alert(jqXHR.responseText);
-					}
-				}
-			});
-		}
+          $.ajax({
+             url : url, //request URL
+             type : "DELETE", //전송방식
+             contentType : "application/json",
+             beforeSend : function(xhr) {
+                //데이터를 전송하기 전에 헤더에 csrf 값을 설정
+                xhr.setRequestHeader(header, token);
+             },
+             dataType : "json",
+             cache : false,
+             success : function(result, status) {
+                location.href = '/notice/list';
+             },
+             error : function(jqXHR, status, error) {
+                if(jqXHR.status == '401') {
+                   alert('로그인 후 이용해주세요.');
+                   location.href = '/notices/login';
+                } else {
+                   alert(jqXHR.responseText);
+                }
+             }
+          });
+       }
     </script>
 </th:block>
 </html>
