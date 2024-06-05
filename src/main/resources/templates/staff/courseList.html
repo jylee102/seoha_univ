@@ -12,6 +12,7 @@
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
         .clickable-row:hover {
             cursor: pointer;
@@ -117,15 +118,15 @@
             var paginationUl = $("<ul></ul>").addClass("pagination d-flex justify-content-center");
             for (var i = start; i <= end; i++) {
                 var activeClass = i === currentPage ? 'page-item active' : 'page-item';
-                var buttonClass = (i === start) ? "page-link" : "page-link clickable-page";
+                var aClass = (i === start) ? "page-link" : "page-link clickable-page";
 
                 var li = $("<li></li>").addClass(activeClass);
-                var button = $("<button></button>")
-                    .addClass(buttonClass)
+                var a = $("<a></a>")
+                    .addClass(aClass)
                     .attr("onclick", `loadData(${i}, '${searchValue}');`)
                     .attr("data-page", i - 1)
                     .text(i);
-                li.append(button);
+                li.append(a);
                 paginationUl.append(li);
             }
             return paginationUl;
@@ -145,14 +146,24 @@
             var end = Math.min(totalPages, start + maxPage - 1);
 
             var prevLi = $("<li></li>").addClass("page-item").addClass(currentPage === 1 ? "disabled" : "");
-            var prevLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${currentPage - 1}, '${searchValue}');`).attr("data-page", currentPage - 2).text("이전");
+            var prevLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${currentPage - 1}, '${searchValue}');`).attr("data-page", currentPage - 2).html('<i class="fa-solid fa-angle-left"></i>');
             prevLi.append(prevLink);
 
             var nextLi = $("<li></li>").addClass("page-item").addClass(currentPage === totalPages ? "disabled" : "");
-            var nextLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${currentPage + 1}, '${searchValue}');`).attr("data-page", currentPage).text("다음");
+            var nextLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${currentPage + 1}, '${searchValue}');`).attr("data-page", currentPage).html('<i class="fa-solid fa-angle-right"></i>');
             nextLi.append(nextLink);
 
-            paginationContainer.append(renderPageButtons(start, end, currentPage).prepend(prevLi).append(nextLi));
+            var firstLi = $("<li></li>").addClass("page-item");
+            var firstLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(1, '${searchValue}');`).attr("data-page", 0).html('<i class="fa-solid fa-angles-left"></i>');
+            firstLi.append(firstLink);
+
+            var lastLi = $("<li></li>").addClass("page-item");
+            var lastLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${totalPages - 1}, '${searchValue}');`).attr("data-page", totalPages - 1).html('<i class="fa-solid fa-angles-right"></i>');
+            lastLi.append(lastLink);
+
+            paginationContainer.append(renderPageButtons(start, end, currentPage)
+                .prepend(prevLi).prepend(firstLi)
+                .append(nextLi).append(lastLi));
         }
     </script>
 </th:block>
