@@ -54,6 +54,7 @@ public class ScheduleController {
     public String scheduleManage (ScheduleFormDto scheduleFormDto, Model model){
         List<Schedule> schedules = scheduleService.getAdminSchedule(scheduleFormDto);
 
+
         model.addAttribute("schedules", schedules);
         return "schedule/scheduleList";
     }
