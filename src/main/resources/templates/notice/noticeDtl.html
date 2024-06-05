@@ -19,7 +19,7 @@
 <div layout:fragment="content">
     <div class="site-section card">
         <div class="container card-body">
-            <h1>공지사항</h1>
+            <h1 style="font-weight:600">공지사항</h1>
             <form role="form" th:action="@{'/notice/detail/' + ${noticeId}}" method="post" enctype="multipart/form-data"
                   th:object="${noticeFormDto}" name="noticeForm">
                 <div class="split--div"></div>

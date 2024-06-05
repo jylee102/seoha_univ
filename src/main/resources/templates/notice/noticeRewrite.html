@@ -23,7 +23,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h2 class="h3 mb-3 text-black">포스트 수정</h2>
+                    <h1 style="font-weight:600">공지사항 수정</h1>
                     <div class="p-3 p-lg-5 border">
                         <form role="form" th:action="@{'/notice/rewrite/' + ${noticeId}}" method="post" enctype="multipart/form-data"
                               name="noticeForm" th:object="${noticeFormDto}">
