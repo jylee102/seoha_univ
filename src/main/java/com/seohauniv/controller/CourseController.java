@@ -7,11 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -21,9 +22,8 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping("/staff/course/create")
-    public @ResponseBody ResponseEntity createCourse(@RequestBody @Valid CourseFormDto courseFormDto, BindingResult bindingResult) {
-
-        System.out.println(courseFormDto);
+    public String createCourse(@ModelAttribute @Valid CourseFormDto courseFormDto, BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes) {
 
         if(bindingResult.hasErrors()) {
             StringBuilder sb = new StringBuilder();
@@ -35,15 +35,19 @@ public class CourseController {
                 sb.append(fieldError.getDefaultMessage()).append("\n"); //에러메세지를 가지고온다.
             }
 
-            return new ResponseEntity(sb.toString(), HttpStatus.BAD_REQUEST);
+            redirectAttributes.addFlashAttribute("message", sb.toString());
+            return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId(); // 리다이렉트하여 페이지를 리로드합니다.
         }
 
         try {
+            courseService.create(courseFormDto);
 
-            return new ResponseEntity(null, HttpStatus.OK);
+            redirectAttributes.addFlashAttribute("message", "해당 강의가 개설되었습니다.");
+            return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId(); // 리다이렉트하여 페이지를 리로드합니다.
         } catch (Exception e) {
-
-            return new ResponseEntity(null, HttpStatus.BAD_REQUEST);
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("message", "강의 개설 도중 문제가 발생했습니다.");
+            return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId(); // 리다이렉트하여 페이지를 리로드합니다.
         }
     }
 }

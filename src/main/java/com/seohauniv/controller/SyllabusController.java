@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -58,8 +59,8 @@ public class SyllabusController {
     }
 
     @GetMapping("/staff/loadCourseList")
-    public @ResponseBody ResponseEntity loadCourseList(@RequestParam(value = "page") Optional<Integer> page,
-                                                       @RequestParam("searchValue") String searchValue) {
+    public @ResponseBody ResponseEntity loadCourseList(@RequestParam(value = "page", defaultValue = "0") Optional<Integer> page,
+                                                       @RequestParam(value = "searchValue", defaultValue = "") String searchValue) {
         try {
             Pageable pageable = PageRequest.of(page.orElse(0), 10);
             Page<SyllabusFormDto> syllabusPage = syllabusService.getAllSyllabusToRead(pageable, searchValue);
@@ -84,5 +85,16 @@ public class SyllabusController {
         model.addAttribute("courseTimesDescription", courseTimesDescription);
         model.addAttribute("roomList",roomList);
         return "staff/syllabus";
+    }
+
+    @PostMapping("/staff/refuse/syllabus")
+    public @ResponseBody ResponseEntity refuseSyllabus(@RequestParam("id") Long id) {
+        try {
+            syllabusService.refuseSyllabus(id);
+            return new ResponseEntity("해당 강의 계획서가 반려 처리되었습니다.", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("반려 처리에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 }

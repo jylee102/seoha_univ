@@ -120,6 +120,9 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        var message = [[${message}]];
+        if (message != null) alert(message);
+
         document.querySelector('.addWeeklyPlan').addEventListener('click', function() {
             var weeklyPlan = document.getElementById('weeklyPlan');
             var isCollapsed = weeklyPlan.classList.contains('collapse');
@@ -129,7 +132,27 @@
             icon.className = isCollapsed ? 'mdi mdi-minus' : 'mdi mdi-plus';
         });
 
+        // ★ 헤더에 있는 토큰 값을 가지고 온다. (반드시 같이 전송해야 함)
+        var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+
         function refuse() {
+            $.ajax({
+                url: "/staff/refuse/syllabus",
+                method: "POST",
+                data: { id: $('input[name="syllabus"]').val() },
+				beforeSend : function(xhr) {
+				    // 데이터를 전송하기 전에 헤더에 csrf 토큰을 설정
+				    xhr.setRequestHeader(header, token);
+				},
+                success: function(res) {
+                    alert(res);
+                    location.href = "/staffs/createCourse";
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText);
+                }
+            });
         }
     </script>
 </th:block>
