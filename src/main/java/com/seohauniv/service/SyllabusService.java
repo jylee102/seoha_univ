@@ -29,6 +29,7 @@ public class SyllabusService {
         return syllabusRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
+    // 강의계획서 등록
     public Syllabus create(SyllabusFormDto syllabusFormDto, Professor professor) {
 
         Syllabus syllabus = syllabusFormDto.toEntity();
@@ -53,6 +54,7 @@ public class SyllabusService {
         return syllabusRepository.save(syllabus);
     }
 
+    // 강의 계획서 리스트(with 페이징 처리)
     public Page<SyllabusFormDto> getAllSyllabusToRead(Pageable pageable, String searchValue) {
         Page<SyllabusFormDto> syllabusPage = syllabusRepository.getSyllabuses(pageable, searchValue);
         syllabusPage.forEach(this::setCourseTimes);
@@ -71,5 +73,13 @@ public class SyllabusService {
 
     private CourseTimeDto convertToDto(CourseTime courseTime) {
         return new CourseTimeDto(courseTime.getDay(), courseTime.getStartTime(), courseTime.getEndTime());
+    }
+
+    // 강의 계획서 반려 처리
+    public Syllabus refuseSyllabus(Long id) {
+        Syllabus syllabus = findById(id);
+        syllabus.setStatus(ProcedureStatus.REFUSAL);
+
+        return syllabus;
     }
 }
