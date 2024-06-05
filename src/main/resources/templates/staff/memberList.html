@@ -9,33 +9,71 @@
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
-        @media screen and (min-width: 1024px) {
+        @media screen and (max-width: 1680px) {
+            .table-div tr > th:nth-child(9),
+            .table-div tr > td:nth-child(9) {
+	            display: none;
+            }
+        }
 
+        @media screen and (max-width: 1550px) {
+            .table-div tr > th:nth-child(4),
+            .table-div tr > td:nth-child(4) {
+	            display: none;
+            }
+        }
+
+        @media screen and (max-width: 1140px) {
+            .table-div tr > th:nth-child(8),
+            .table-div tr > td:nth-child(8),
+            .table-div tr > th:nth-child(5),
+            .table-div tr > td:nth-child(5) {
+	            display: none;
+            }
+        }
+
+        @media screen and (max-width: 650px) {
+            .table-div tr > th:nth-child(6),
+            .table-div tr > td:nth-child(6) {
+	            display: none;
+            }
+
+            .search {
+                padding-left: 0;
+                padding-bottom: 1rem;
+            }
+        }
+
+        @media screen and (max-width: 500px) {
+            .select-search {
+	            width: 100px;
+            }
         }
     </style>
 </th:block>
 
-<main layout:fragment="content">
+<main layout:fragment="content" style="margin:0;">
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1>구성원 명단</h1>
-            <div class="div-split"></div>
+            <div class="div-split" style="min-width: 380px;"></div>
             <form action="/staffs/manageMember" method="get" th:object="${memberSearchDto}">
-                <div class="d-flex align-items-center" style="padding-left: 3rem; padding-bottom: 1rem;">
+                <div class="d-flex align-items-center search">
                     <div style="padding-right: 10px;">
                         <select class="input-search select-search" id="searchBy" name="searchBy">
                             <option value="id" selected>학번/교번</option>
                             <option value="name">이름</option>
                         </select>
                     </div>
-                    <div>
+                    <div class="input-container">
                         <input type="text" class="input-search" id="searchQuery" />
+                        <i class="fa-solid fa-xmark" onclick="clearSearch()"></i>
                     </div>
                     <div class="btn-search">
-                        <button id="searchBtn" type="submit" class="btn btn-sm btn-info mb-3">조회</button>
+                        <button id="searchBtn" type="submit" class="btn btn-sm btn-info mb-3" style="min-width: 54px;">조회</button>
                     </div>
                 </div>
-                <nav class="nav nav-tabs">
+                <nav class="nav nav-tabs" style="min-width: 380px;">
                     <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="STUDENT">학생</button>
                     <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="PROFESSOR">교수</button>
                     <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="STAFF">교직원</button>
@@ -47,25 +85,27 @@
                     <table>
                         <tr>
                             <th>학번</th>
-                            <th>이름</th>
-                            <th>생년월일</th>
+                            <th style="min-width: 72px;">이름</th>
+                            <th style="min-width: 103px;">생년월일</th>
                             <th>주소</th>
                             <th>전화번호</th>
                             <th>이메일</th>
-                            <th>학과명</th>
-                            <th>학년</th>
-                            <th>입학일</th>
+                            <th th:unless="${memberSearchDto != null and memberSearchDto.tabValue == 'STAFF'}" style="min-width: 121px;">학과명</th>
+                            <th th:if="${memberSearchDto != null and memberSearchDto.tabValue == 'STUDENT'}">학년</th>
+                            <th th:text="${memberSearchDto != null and memberSearchDto.tabValue == 'STUDENT' ? '입학일' : '입사일'}" id="test" style="min-width: 103px;"></th>
                         </tr>
                         <tr th:each="member, status: ${members.getContent()}">
-                            <td th:text="${member.id}">246727</td>
-                            <td th:text="${member.name}">최볼키</td>
-                            <td th:text="${member.birth}">2013-10-29</td>
-                            <td th:text="${member.address}">서울 구로구 경인로 557 하이미디어 5동 1202호</td>
-                            <td th:text="${member.phone}">010-1111-1111</td>
-                            <td th:text="${member.email}">volki131029@gmail.cpm</td>
-                            <td>경영학과</td>
-                            <td>1학년</td>
-                            <td th:text="${member.member.regDate}">2024-03-03</td>
+                            <td th:text="${member.id}"></td>
+                            <td th:text="${member.name}"></td>
+                            <td th:text="${member.birth}"></td>
+                            <td th:text="${member.address}"></td>
+                            <td th:text="${member.phone}"></td>
+                            <td th:text="${member.email}"></td>
+                            <td th:unless="${memberSearchDto != null and memberSearchDto.tabValue == 'STAFF'}"
+                                th:text="${member.major.title}"></td>
+                            <td th:if="${memberSearchDto != null and memberSearchDto.tabValue == 'STUDENT'}"
+                                th:text="${member.grade}"></td>
+                            <td th:text="${#temporals.format(member.member.regDate, 'yyyy-MM-dd')}"></td>
                         </tr>
                     </table>
                 </div>
@@ -152,6 +192,10 @@
         function goToLastPage() {
             var lastPage = [[${members.totalPages}]] - 1; // 마지막 페이지 번호는 총 페이지 수 - 1
             page(lastPage);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchQuery').value = '';
         }
     </script>
 </th:block>

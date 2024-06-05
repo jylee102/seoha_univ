@@ -2,8 +2,10 @@ package com.seohauniv.controller;
 
 import com.seohauniv.dto.SyllabusFormDto;
 import com.seohauniv.entity.Professor;
+import com.seohauniv.entity.Room;
 import com.seohauniv.entity.Syllabus;
 import com.seohauniv.service.ProfessorService;
+import com.seohauniv.service.RoomService;
 import com.seohauniv.service.SyllabusService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import java.util.Optional;
 public class SyllabusController {
     private final SyllabusService syllabusService;
     private final ProfessorService professorService;
+    private final RoomService roomService;
 
     @PostMapping("/professor/applyForSyllabus")
     public @ResponseBody ResponseEntity applyForSyllabus(@RequestBody @Valid SyllabusFormDto syllabusFormDto,
@@ -71,7 +74,15 @@ public class SyllabusController {
     public String viewSyllabus(@PathVariable("syllabusId") Long syllabusId,
                                Model model) {
         Syllabus syllabus = syllabusService.findById(syllabusId);
+
+        SyllabusFormDto syllabusFormDto = SyllabusFormDto.of(syllabus);
+        String courseTimesDescription = syllabusFormDto.getCourseTimesDescription().replace("<br>", " | ");
+
+        List<Room> roomList = roomService.findAllRoom();
+
         model.addAttribute("syllabusForm", syllabus);
+        model.addAttribute("courseTimesDescription", courseTimesDescription);
+        model.addAttribute("roomList",roomList);
         return "staff/syllabus";
     }
 }

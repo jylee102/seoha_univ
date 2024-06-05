@@ -55,6 +55,11 @@ public class Syllabus {
     @OneToMany(mappedBy = "syllabus", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseTime> courseTimes;
 
+    // CourseType의 설명을 얻는 메소드
+    public String getCourseTypeDescription() {
+        return this.courseType.getDescription();
+    }
+
     @Override
     public String toString() {
         return "Syllabus{" +

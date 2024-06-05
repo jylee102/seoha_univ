@@ -5,6 +5,11 @@
     margin: 20px 0 20px;
 }
 
+.search {
+   padding-left: 3rem;
+   padding-bottom: 1rem;
+}
+
 .input-search {
     border: 1px solid #d2d1d1;
     border-radius: 3px;
@@ -33,6 +38,29 @@
 
 .table-div td {
     text-align: center;
+}
+
+/* input 안의 X */
+.input-container {
+    position: relative;
+    display: inline-block;
+}
+
+.input-search {
+    padding-right: 30px; /* 공간 확보 */
+}
+
+.input-container .fa-xmark {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+}
+
+.input-container .fa-xmark:hover {
+    color: #000;
 }
 
 /* Pagination container */

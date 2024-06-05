@@ -3,6 +3,7 @@ package com.seohauniv.dto;
 import com.seohauniv.constant.Day;
 import com.seohauniv.entity.CourseTime;
 import com.seohauniv.entity.Syllabus;
+import com.seohauniv.validation.StartTimeBeforeEndTime;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
+@StartTimeBeforeEndTime(message = "시작 시간은 종료 시간보다 앞서야 합니다.")
 public class CourseTimeDto {
     private Day day;
 

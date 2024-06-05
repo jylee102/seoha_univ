@@ -4,13 +4,17 @@ import com.seohauniv.constant.Role;
 import com.seohauniv.util.IdGenerator;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "member")
-@Data
-//@Inheritance(strategy = InheritanceType.JOINED)
+@Getter
+@Setter
+@ToString
 public class Member extends BaseTimeEntity {
     @Id
     @Column(name = "member_id", updatable = false, nullable = false)
@@ -35,13 +39,4 @@ public class Member extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Staff staff;
-
-    @PrePersist
-    public void prePersist() {
-        if (this.id == null) {
-            if (this.staff != null) this.id = IdGenerator.generateStaffId(this.getRegDate());
-            else if (this.student != null) this.id = IdGenerator.generateStudentId(this.getRegDate());
-            else if (this.professor != null) this.id = IdGenerator.generateProfessorId(this.getRegDate());
-        }
-    }
 }
