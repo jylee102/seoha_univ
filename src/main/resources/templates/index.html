@@ -52,10 +52,10 @@
                      <a href="/notice">공지사항</a>
                   </h3>
                   <div class="main--page--split"></div>
-                  <table>
+                  <table th:if="${notices}!=null">
                      <tr th:each="notice, status: ${notices.getContent()}">
                         <td><a th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}"></a></td>
-                        <td th:text="${notice.regDate}"></td>
+                        <td th:text="${notice.formattedRegTime}"></td>
                      </tr>
                   </table>
                </div>
@@ -64,32 +64,32 @@
                      <a href="/schedule">학사일정</a>
                   </h3>
                   <div class="main--page--split"></div>
-                  <table class="schedule-tb">
-                     <tr>
-                        <td>수업수업수업수업수업수업</td>
-                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
-                     </tr>
-                     <tr>
-                        <td>수업수업수업수업수업수업</td>
-                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
-                     </tr>
-                     <tr>
-                        <td>수업수업수업수업수업수업</td>
-                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
-                     </tr>
-                     <tr>
-                        <td>수업수업수업수업수업수업</td>
-                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
-                     </tr>
-                     <tr>
-                        <td>수업수업수업수업수업수업</td>
-                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
-                     </tr>
-                     <tr>
-                        <td>수업수업수업수업수업수업</td>
-                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>
-                     </tr>
-                  </table>
+<!--                  <table class="schedule-tb">-->
+<!--                     <tr>-->
+<!--                        <td>수업수업수업수업수업수업</td>-->
+<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
+<!--                     </tr>-->
+<!--                     <tr>-->
+<!--                        <td>수업수업수업수업수업수업</td>-->
+<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
+<!--                     </tr>-->
+<!--                     <tr>-->
+<!--                        <td>수업수업수업수업수업수업</td>-->
+<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
+<!--                     </tr>-->
+<!--                     <tr>-->
+<!--                        <td>수업수업수업수업수업수업</td>-->
+<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
+<!--                     </tr>-->
+<!--                     <tr>-->
+<!--                        <td>수업수업수업수업수업수업</td>-->
+<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
+<!--                     </tr>-->
+<!--                     <tr>-->
+<!--                        <td>수업수업수업수업수업수업</td>-->
+<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
+<!--                     </tr>-->
+<!--                  </table>-->
                </div>
             </div>
          </div>

@@ -13,9 +13,17 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <style>
+        html {
+            min-width: 580px;
+        }
+
         @media screen and (min-width: 1380px) {
             .input--box, .type-form {
                 width: 70%;
+            }
+
+            .selections {
+                width: 77%;
             }
 
             .type-text {
@@ -23,8 +31,8 @@
             }
         }
 
-        @media screen and (max-width: 745px) {
-            .table--container > tbody > tr:not(.nav-add_plan) > td:first-of-type {
+        @media screen and (max-width: 787px) {
+            .table--container > tbody > tr:not(.nav-add_plan) > td:first-of-type{
                 display: none;
             }
 
@@ -38,6 +46,13 @@
             resize: none; /* 사용자가 크기 조정하지 못하게 함 */
             overflow: hidden; /* 스크롤 바 감추기 */
             line-height: 1.5; /* 줄 간격 설정 */
+        }
+
+        .selections > select {
+            padding: 0.2rem;
+            margin: 0.5rem;
+            border: 1px solid #d2d1d1;
+            color: #666666;
         }
 
         .input--box::placeholder {
@@ -62,19 +77,19 @@
             <div class="split--div"></div>
 
             <form name="syllabusForm">
-                <table class="table--container table">
-                    <tr class="type-form">
+                <div class="selections" style="display: flex; justify-content: flex-end; padding: 0 1rem 1rem 0;">
+                    <select name="year" id="yearSelect"></select>
+                    <select name="semester">
+                        <option value="1">1학기</option>
+                        <option value="2">2학기</option>
+                    </select>
+                </div>
 
+                <table class="table--container table">
+                    <tr>
                         <td><label for="name">강좌명</label></td>
                         <td>
-                            <div class="row type-form">
-                                <div class="col-md-8">
-                                    <input type="text" id="name" name="courseName" class="input--box" placeholder="강좌명"/>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" id="capacity" name="capacity" class="input--box" placeholder="수강정원"/>
-                                </div>
-                            </div>
+                            <input type="text" id="name" name="courseName" class="input--box" placeholder="강좌명"/>
                         </td>
                     </tr>
                     <tr>
@@ -116,33 +131,37 @@
                     </tr>
 
                     <tr class="dept-form">
-                        <td><label th:for="type">구분 / 이수학점</label></td>
+                        <td><label th:for="type" style="min-width: 105px;">구분 / 학점 / 인원</label></td>
                         <td>
                             <div class="row type-form">
-                                <div class="col" style="display: flex; align-items: center;">
-                                    <input type="radio" name="type" value="MAJOR"> 전공</input>
+                                <div class="col-2" style="display: flex; align-items: center; line-height: 1px;">
+                                    <input type="radio" name="type" value="MAJOR">&nbsp;전공</input>
                                 </div>
-                                <div class="col" style="display: flex; align-items: center;">
-                                    <input type="radio" name="type" value="LIBERAL"> 교양</input>
+                                <div class="col-2" style="display: flex; align-items: center; line-height: 1px;">
+                                    <input type="radio" name="type" value="LIBERAL">&nbsp;교양</input>
                                 </div>
-                                <div class="col" style="min-width: 182px;">
-                                    <input class="input--box" type="number" name="credit" min="1" max="3" placeholder="이수학점">
-                                    <span class="type-text" style="display: none;">학점</span>
+                                <div class="col-4" style="display: flex; align-items: center;">
+                                    <input class="input--box" type="number" name="credit" min="1" max="3">
+                                    <span class="type-text" style="min-width: 26px;">학점</span>
+                                </div>
+                                <div class="col-4" style="display: flex; align-items: center;">
+                                    <input type="number" id="capacity" name="capacity" class="input--box"/>
+                                    <span class="type-text">명</span>
                                 </div>
                             </div>
                         </td>
                     </tr>
 
                     <tr>
-                        <td><label th:for="address">수업 개요</label></td>
+                        <td><label for="overview">수업 개요</label></td>
                         <td>
-                            <textarea name="overview" class="input--box auto-resize" placeholder="수업 개요"></textarea>
+                            <textarea id="overview" name="overview" class="input--box auto-resize" placeholder="수업 개요"></textarea>
                         </td>
                     </tr>
                     <tr>
-                        <td><label th:for="phone">강의 목표</label></td>
+                        <td><label for="objective">강의 목표</label></td>
                         <td>
-                            <textarea name="objective" class="input--box auto-resize" placeholder="강의 목표"></textarea>
+                            <textarea id="objective" name="objective" class="input--box auto-resize" placeholder="강의 목표"></textarea>
                         </td>
                     </tr>
 
@@ -154,7 +173,7 @@
                         </td>
                     </tr>
                     <tr id="weeklyPlan" class="collapse">
-                        <td><label th:for="email">주별 계획</label></td>
+                        <td><label>주별 계획</label></td>
                         <td>
                             <table class="table input--box">
                                 <tr>
@@ -174,7 +193,7 @@
                     <tr>
                         <td><label th:for="textbook">수업 교재</label></td>
                         <td>
-                            <input type="text" name="textbook" class="input--box" placeholder="수업 교재"/>
+                            <input type="text" id="textbook" name="textbook" class="input--box" placeholder="수업 교재"/>
                         </td>
                     </tr>
                 </table>
@@ -208,6 +227,18 @@
                 $('textarea.auto-resize').on('input', adjustHeight);
                 $('textarea.auto-resize').each(adjustHeight); // 페이지 로드 시 각 textarea의 높이를 초기화
 
+                // 현재 연도 구하기
+                var currentYear = new Date().getFullYear();
+                var selectElement = document.getElementById("yearSelect");
+
+                // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
+                for (var i = 0; i < 3; i++) {
+                    var option = document.createElement("option");
+                    option.value = currentYear + i;
+                    option.textContent = (currentYear + i) + "학년도";
+                    selectElement.appendChild(option);
+                }
+
                 var token = $("meta[name='_csrf']").attr("content");
                 var header = $("meta[name='_csrf_header']").attr("content");
 
@@ -237,6 +268,9 @@
                         overview: f.overview.value,
                         objective: f.objective.value,
                         textbook: f.textbook.value,
+                        capacity: f.capacity.value,
+                        year: f.year.value,
+                        semester: f.semester.value,
 
                         courseTimes: courseTimes,
                         weeklyPlans: weeklyPlans

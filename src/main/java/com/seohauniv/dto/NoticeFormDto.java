@@ -29,11 +29,6 @@ public class NoticeFormDto {
 
     private static ModelMapper modelMapper = new ModelMapper();
 
-    public String getFormattedRegTime() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return regTime != null ? regTime.format(formatter) : "";
-    }
-
     public Notice creatNotice() {
         return modelMapper.map(this, Notice.class);
     }
