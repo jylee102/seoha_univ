@@ -48,10 +48,10 @@
                             <td><input type="text" th:text="${member.email}" id="email" class="input--box" readonly/></td>
                         </tr>
                         <tr>
-                            <td><label for="reasonType"/>휴학내역</td>
+                            <td><label>휴학내역</label></td>
                             <td th:each="break, status:${breaks}">
-                                <input type="text" th:value="${break.status.getDescription}" id="reasonType" class="input--box" readonly/>
-                                <input>
+                                <input type="text" th:value="${break.fromYear} + ' 년도 ' + ${break.fromSemester} + ' 학기부터 ' + ${break.toYear} + ' 년도 ' + ${break.toSemester} + ' 학기까지 ' + ${break.status.getDescription} " class="input--box" readonly/>
+
                             </td>
                         </tr>
 <!--                        th:if="${#authentication.principal.role == 'STUDENT'}"-->
