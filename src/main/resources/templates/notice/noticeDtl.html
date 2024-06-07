@@ -13,21 +13,25 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <style>
+        .card {
+           padding-left:20px;
+           margin-top:20px;
+       }
     </style>
 </th:block>
 
 <div layout:fragment="content">
-    <div class="site-section card">
-        <div class="container card-body">
+    <div class="card">
+        <div class="card-body px-5 py-5">
             <h1 style="font-weight:600">공지사항</h1>
+            <div class="split--div"></div>
             <form role="form" th:action="@{'/notice/detail/' + ${noticeId}}" method="post" enctype="multipart/form-data"
                   th:object="${noticeFormDto}" name="noticeForm">
-                <div class="split--div"></div>
                 <div class="site-section">
                     <div class="container">
                         <div class="row">
                             <input type="hidden" id="noticeId" th:value="${notice.id}">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <h2 class="text-black" th:text="${notice.title}"></h2>
                                 <span th:text="${notice.content}" id="content" name="content"></span>
                             </div>

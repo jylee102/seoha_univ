@@ -12,17 +12,22 @@
             .input--box{
                border-color: transparent;
             }
+
+            .card {
+                padding-left:20px;
+                margin-top:20px;
+            }
         </style>
     </th:block>
 </head>
 <div layout:fragment="content" class="wrap">
-
     <div class="grid-margin stretch-card">
         <div class="card">
-            <div class="card-body" style="height: 100%;">
-                <h1 style="margin-left: 28px;">내 정보 조회</h1>
-                <form role="form" action="/myInfo" method="get" enctype="multipart/form-data" name="infoForm">
+            <div class="card-body px-5 py-5">
+                <h1 style="font-weight:600">내 정보 조회</h1>
                 <div class="split--div"></div>
+                <form role="form" action="/myInfo" method="get" enctype="multipart/form-data" name="infoForm">
+
                     <table class="table--container table">
                         <tr>
                             <td><label for="name">이름</label></td>
@@ -46,7 +51,7 @@
                             <td><input type="text" th:text="${member.email}" id="email" class="input--box" readonly/></td>
                         </tr>
                     </table>
-                <button type="button" style="display:flex; margin:auto; margin-top:50px;" onclick="location.href = '/myInfo/update'" class="btn btn-dark update--button">수정하기</button>
+                <button type="button" style="display:flex; margin:auto; margin-top:50px;" onclick="location.href = '/myInfo/update'" class="btn btn-seoha mb-3">수정</button>
 
                 <table border="1" style=" margin:auto" class="input--table" th:if="${#authentication.principal.role == 'STUDENT'}" >
                     <colgroup>

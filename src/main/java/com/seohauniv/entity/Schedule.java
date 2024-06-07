@@ -1,5 +1,7 @@
 package com.seohauniv.entity;
 
+import com.seohauniv.dto.NoticeFormDto;
+import com.seohauniv.dto.ScheduleFormDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,4 +26,10 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Staff staff;
+
+    public void updateSchedule(ScheduleFormDto scheduleFormDto){
+        this.start = scheduleFormDto.getStart();
+        this.end = scheduleFormDto.getEnd();
+        this.content = scheduleFormDto.getContent();
+    }
 }

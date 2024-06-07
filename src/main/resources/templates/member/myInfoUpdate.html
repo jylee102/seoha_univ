@@ -2,26 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
-<head>
-    <link rel="stylesheet" th:href="@{/css/myInfo.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+
     <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/myInfo.css}">
+        <link rel="stylesheet" th:href="@{/css/main.css}">
+        <link rel="stylesheet" th:href="@{/css/main_page.css}">
         <style>
             .input--box{
                border-color: transparent;
             }
+
+             .card {
+                padding-left:20px;
+                margin-top:20px;
+             }
         </style>
     </th:block>
-</head>
 <div layout:fragment="content" class="wrap">
-
     <div class="grid-margin stretch-card">
         <div class="card">
-            <div class="card-body" style="height: 100%;">
-                <h1 style="margin-left:28px;">내 정보 수정하기</h1>
+            <div class="card-body px-5 py-5">
+                <h1 style="font-weight:600">내 정보 수정하기</h1>
+                <div class="split--div"></div>
                 <form role="form" th:action="@{'/myInfo/update'}" th:object="${memberFormDto}" method="post" enctype="multipart/form-data" name="infoForm">
-                    <div class="split--div"></div>
+
                     <table class="table--container table">
                         <tr>
                             <td><label th:for="name">이름</label></td>
@@ -44,7 +48,7 @@
                             <td><input type="text" th:field="*{email}"/></td>
                         </tr>
                     </table>
-                    <button type="button" style="display:flex; margin:auto; margin-top:50px;" onclick="location.href = '/myInfo'" class="btn btn-dark update--button">수정하기</button>
+                    <button type="button" style="display:flex; margin:auto; margin-top:50px;" onclick="location.href = '/myInfo'" class="btn btn-seoha mb-3">수정하기</button>
 
                     <table border="1" style=" margin:auto" class="input--table" th:if="${#authentication.principal.role == 'STUDENT'}" >
                         <colgroup>

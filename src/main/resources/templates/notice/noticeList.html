@@ -34,6 +34,11 @@
         .table th, .table td {
             overflow: hidden;
         }
+
+        .card {
+            padding-left:20px;
+            margin-top:20px;
+        }
     </style>
 </th:block>
 
@@ -46,14 +51,14 @@
     <div class="site-section card">
         <div class="card-body px-5 py-5">
             <h1 style="font-weight:600">공지사항</h1>
-            <div>
+            <div class="split--div"></div>
+            <div class="row">
                 <div class="col-md-12">
                     <form th:action="@{'/notice/rewrite/' + ${notices.number}}"
                           method="get" th:object="${notices}">
-                        <div class="split--div"></div>
                         <table class="table table-responsive-md" style="overflow-x:hidden;">
                             <thead>
-                            <tr>
+                            <tr style="text-align:center;">
                                 <th scope="col" style="min-width:62px; width: 10%;">번호</th>
                                 <th scope="col" style="min-width:62px; width: 40%;">제목</th>
                                 <th scope="col" style="min-width:77px; width: 10%;" class="sName">등록자</th>
@@ -65,46 +70,17 @@
                             <tbody>
                             <!-- 조회된 데이터를 출력한다. -->
                             <tr th:each="notice, status: ${notices.getContent()}">
-                                <th th:text="${notice.id}" style="padding-left:23px;"></th>
+                                <th th:text="${notice.id}" style="text-align:center;"></th>
                                 <td><a class="ellipsis" th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}" style="min-width:50px;"></a></td>
-                                <td th:text="${notice.staff.name}" style="padding-left:18px;" class="sName"></td>
-                                <td th:text="${notice.formattedRegTime}" style="padding-left:3px;  min-width:91px;"></td>
-                                <td th:text="${notice.views}" style="padding-left:32px;" class="sName"></td>
+                                <td th:text="${notice.staff.name}" style="text-align:center;" class="sName"></td>
+                                <td th:text="${notice.formattedRegTime}" style="text-align:center;  min-width:110px;"></td>
+                                <td th:text="${notice.views}" style="text-align:center;" class="sName"></td>
                                 <td><button type="button" class="btn btn-seoha"
                                             th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])" style="min-width:56px;">삭제</button></td>
 
                             </tr>
                             </tbody>
                         </table>
-                        <!--                        <nav aria-label="Page navigation example"-->
-                        <!--                             th:with="start=${(notices.number/maxPage) * maxPage + 1},-->
-                        <!--  end= (${(notices.totalPages == 0) ? 1 : (start + (maxPage - 1) < notices.totalPages ? start + (maxPage - 1) : notices.totalPages)}) "-->
-                        <!--                        style="margin-top: 30px;">-->
-                        <!--                            <ul class="pagination d-flex justify-content-center">-->
-                        <!--                                <li class="page-item" th:classappend="${notices.first} ? ' disabled'">-->
-                        <!--                                    <a class="page-link"-->
-                        <!--                                       th:onclick="'javascript:page(' + ${notices.number - 1} + ')'"-->
-                        <!--                                    >이전</a>-->
-                        <!--                                </li>-->
-
-                        <!--                                <li class="page-item"-->
-                        <!--                                    th:each="page: ${#numbers.sequence(start, end)}"-->
-                        <!--                                    th:classappend="${notices.number eq page-1} ? 'active' : ''"-->
-                        <!--                                >-->
-                        <!--                                    <a class="page-link" th:inline="text"-->
-                        <!--                                       th:onclick="'javascript:page(' + ${page - 1} + ')'"-->
-                        <!--                                    >[[${page}]]</a>-->
-                        <!--                                </li>-->
-
-                        <!--                                <li class="page-item" th:classappend="${notices.last}?' disabled'">-->
-                        <!--                                    <a class="page-link"-->
-                        <!--                                       th:onclick="'javascript:page(' + ${notices.number + 1} + ')'"-->
-                        <!--                                    >다음</a>-->
-                        <!--                                </li>-->
-                        <!--                            </ul>-->
-                        <!--                        </nav>-->
-
-
                         <div class="pagination" th:with="start=${(notices.number/maxPage)*maxPage + 1},
                            end=(${(notices.totalPages == 0) ? 1 : (start + (maxPage - 1) < notices.totalPages ? start + (maxPage - 1) : notices.totalPages)})"
                              aria-label="Page navigation example">
