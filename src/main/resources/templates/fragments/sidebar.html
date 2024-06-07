@@ -41,7 +41,8 @@
                             비밀번호 변경
                         </a>
                     </li>
-                    <li class="nav-item" th:if="${#authentication.principal.role == 'STUDENT'}">
+<!--                    th:if="${#authentication.principal.role == 'STUDENT'}"-->
+                    <li class="nav-item">
                         <a class="nav-link" href="/students/applyForLeave">
                             휴학신청
                         </a>

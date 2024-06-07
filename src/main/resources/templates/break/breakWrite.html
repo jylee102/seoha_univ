@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="css">
+  <link rel="stylesheet" th:href="@{/css/myInfo.css}">
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+  <link rel="stylesheet" th:href="@{/css/main_page.css}">
+
+  <style>
+    .input--box{
+         border-color: transparent;
+    }
+
+    .card {
+         padding-left:20px;
+         margin-top:20px;
+    }
+  </style>
+</th:block>
+<div layout:fragment="content" class="wrap">
+  <div class="grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body px-5 py-5">
+        <h1 style="font-weight:600">휴학신청</h1>
+        <div class="split--div"></div>
+          <table class="table--container table">
+            <tr>
+              <td><label for="name">이름</label></td>
+              <td><input type="text" th:text="${member.name}" id="name" class="input--box" readonly/></td>
+            </tr>
+            <tr>
+              <td><label for="birth">생년월일</label></td>
+              <td><input type="text" th:text="${member.birth}" id="birth" class="input--box" readonly/></td>
+            </tr>
+            <tr>
+              <td><label for="address">주소</label></td>
+              <td><input type="text" th:text="${member.address}" id="address" class="input--box" readonly/></td>
+            </tr>
+
+            <tr>
+              <td><label for="phone">전화번호</label></td>
+              <td><input type="text" th:text="${member.phone}" id="phone" class="input--box" readonly/></td>
+            </tr>
+            <tr>
+              <td><label for="email">이메일</label></td>
+              <td><input type="text" th:text="${member.email}" id="email" class="input--box" readonly/></td>
+            </tr>
+            <form role="form" action="/break/write/new" method="post" enctype="multipart/form-data" name="breakForm" th:object="${breakFormDto}">
+              <tr>
+              <td><label>기간</label></td>
+              <td style="display:flex">
+                  <select th:text="${break.fromYear}" style="margin-right:5px;"></select>
+                  <select th:text="${break.Semester}" style="margin-right:20px;">
+                    <option value="1">1학기</option>
+                    <option value="2">2학기</option>
+                  </select>
+                <p style="margin-right:20px; margin-bottom:0; place-content:center;">부터</p>
+                <select th:field="*{toYear}" style="margin-right:5px;"></select>
+                <select th:field="*{toSemester}" style="margin-right:20px;">
+                  <option value="1" >1학기</option>
+                  <option value="2">2학기</option>
+                </select>
+                <p style="margin-right:20px; margin-bottom:0; place-content:center;">까지</p>
+              </td>
+              <!--                            th:if="${#authentication.principal.role == 'STUDENT'}"-->
+            </tr>
+            <tr>
+              <td>
+                <label th:for="reasonType">휴학구분</label>
+                </td>
+              <td style="display: flex;">
+                <div style="display: flex; margin-right:10px;">
+                  <input type="radio" name="reasonType" value="OTHER">&nbsp;일반</input>
+                </div>
+                <div style="display: flex; margin-right:10px;">
+                  <input type="radio" name="reasonType" value="PARENTAL">&nbsp;임신·출산·육아</input>
+                </div>
+                <div  style="display: flex; margin-right:10px;">
+                  <input type="radio" name="reasonType" value="MEDICAL">&nbsp;질병</input>
+                </div>
+                <div  style="display: flex; margin-right:10px;">
+                  <input type="radio" name="reasonType" value="ENTREPRENEURSHIP">&nbsp;창업</input>
+                </div>
+                <div  style="display: flex; margin-right:10px;">
+                  <input type="radio" name="reasonType" value="MILITARY">&nbsp;군입대</input>
+                </div>
+              </td>
+            </tr>
+          </table>
+          <div style="display:flex; place-content:center;">
+            <button type="submit" style="margin-top:50px;" class="btn btn-seoha mb-3">신청</button>
+          </div>
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+    var message = [[${message}]];
+    if(message != null) alert(message);
+
+    // 현재 연도 구하기
+                var currentYear = new Date().getFullYear();
+                var selectElement = document.getElementById("fromYear");
+
+                // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
+                for (var i = 0; i < 3; i++) {
+                    var option = document.createElement("option");
+                    option.value = currentYear + i;
+                    option.textContent = (currentYear + i) + "학년도";
+                    selectElement.appendChild(option);
+                }
+                var currentYear = new Date().getFullYear();
+                var selectElement = document.getElementById("toYear");
+
+                // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
+                for (var i = 0; i < 3; i++) {
+                    var option = document.createElement("option");
+                    option.value = currentYear + i;
+                    option.textContent = (currentYear + i) + "학년도";
+                    selectElement.appendChild(option);
+                }
+  </script>
+</th:block>
+
+</html>
