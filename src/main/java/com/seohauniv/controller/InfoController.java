@@ -1,7 +1,10 @@
 package com.seohauniv.controller;
 
 import com.seohauniv.dto.MemberFormDto;
+import com.seohauniv.entity.Break;
 import com.seohauniv.entity.Member;
+import com.seohauniv.entity.Student;
+import com.seohauniv.service.BreakService;
 import com.seohauniv.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,18 +22,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InfoController {
     private final MemberService memberService;
+    private final BreakService breakService;
 
     //내정보 페이지 보기
     @GetMapping(value = "/myInfo")
     public String InfoForm(Model model, Principal principal) {
 
         Member member = memberService.getMember(principal.getName());
+        List<Break> breaks = breakService.getBreakInfo(principal.getName());
         switch (member.getRole().toString()) {
             case "STAFF":
                 model.addAttribute("member", member.getStaff());
                 break;
             case "STUDENT":
                 model.addAttribute("member", member.getStudent());
+                model.addAttribute("breaks",breaks);
                 break;
             case "PROFESSOR":
                 model.addAttribute("member", member.getProfessor());

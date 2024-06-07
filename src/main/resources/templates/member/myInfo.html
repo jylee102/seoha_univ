@@ -49,7 +49,7 @@
                         </tr>
                         <tr>
                             <td><label for="reasonType"/>휴학내역</td>
-                            <td><input type="text" id="reasonType" class="input--box" readonly/></td>
+                            <td><input type="text" th:value="${breaks.status}" id="reasonType" class="input--box" readonly/></td>
 <!--                            th:if="${#authentication.principal.role == 'STUDENT'}"-->
                         </tr>
                     </table>
