@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "student")
@@ -44,6 +45,9 @@ public class Student extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     @JsonIgnore
     private Member member;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Enroll> enrolls;
 
     public Student() {
     }
