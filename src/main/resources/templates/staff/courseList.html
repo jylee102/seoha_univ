@@ -117,15 +117,13 @@
         function renderPageButtons(start, end, currentPage) {
             var paginationUl = $("<ul></ul>").addClass("pagination d-flex justify-content-center");
             for (var i = start; i <= end; i++) {
-                var activeClass = i === currentPage ? 'page-item active' : 'page-item';
-                var aClass = (i === start) ? "page-link" : "page-link clickable-page";
+                var activeClass = i === currentPage ? 'page-item page-active' : 'page-item';
+                var aClass = (i === start) ? "" : "clickable-page";
 
-                var li = $("<li></li>").addClass(activeClass);
-                var a = $("<a></a>")
-                    .addClass(aClass)
-                    .attr("onclick", `loadData(${i}, '${searchValue}');`)
-                    .attr("data-page", i - 1)
-                    .text(i);
+                var li = $("<li></li>").addClass(activeClass).addClass(aClass)
+                        .attr("onclick", `loadData(${i}, '${searchValue}');`)
+                        .attr("data-page", i - 1);
+                var a = $("<a></a>").text(i);
                 li.append(a);
                 paginationUl.append(li);
             }
@@ -145,20 +143,37 @@
             var start = Math.max(1, currentPage - Math.floor(maxPage / 2));
             var end = Math.min(totalPages, start + maxPage - 1);
 
-            var prevLi = $("<li></li>").addClass("page-item").addClass(currentPage === 1 ? "disabled" : "");
-            var prevLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${currentPage - 1}, '${searchValue}');`).attr("data-page", currentPage - 2).html('<i class="fa-solid fa-angle-left"></i>');
+            if (start > 1 && end === totalPages) {
+                start = Math.max(1, totalPages - maxPage + 1);
+            }
+            console.log("start: " + start + ", end: " + end);
+
+            var prevLi = $("<li></li>").addClass("page-item");
+            if (currentPage === 1) {
+                prevLi.addClass("disabled");
+            } else {
+                prevLi.attr("onclick", `loadData(${currentPage - 1}, '${searchValue}');`).attr("data-page", currentPage - 2);
+            }
+            var prevLink = $("<a></a>").html('<i class="fa-solid fa-angle-left"></i>');
             prevLi.append(prevLink);
 
-            var nextLi = $("<li></li>").addClass("page-item").addClass(currentPage === totalPages ? "disabled" : "");
-            var nextLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${currentPage + 1}, '${searchValue}');`).attr("data-page", currentPage).html('<i class="fa-solid fa-angle-right"></i>');
+            var nextLi = $("<li></li>").addClass("page-item");
+            if (currentPage === totalPages) {
+                nextLi.addClass("disabled");
+            } else {
+                nextLi.attr("onclick", `loadData(${currentPage + 1}, '${searchValue}');`).attr("data-page", currentPage);
+            }
+            var nextLink = $("<a></a>").html('<i class="fa-solid fa-angle-right"></i>');
             nextLi.append(nextLink);
 
-            var firstLi = $("<li></li>").addClass("page-item");
-            var firstLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(1, '${searchValue}');`).attr("data-page", 0).html('<i class="fa-solid fa-angles-left"></i>');
+            var firstLi = $("<li></li>").addClass("page-item")
+                        .attr("onclick", `loadData(1, '${searchValue}');`).attr("data-page", 0);
+            var firstLink = $("<a></a>").html('<i class="fa-solid fa-angles-left"></i>');
             firstLi.append(firstLink);
 
-            var lastLi = $("<li></li>").addClass("page-item");
-            var lastLink = $("<button></button>").addClass("page-link").attr("onclick", `loadData(${totalPages - 1}, '${searchValue}');`).attr("data-page", totalPages - 1).html('<i class="fa-solid fa-angles-right"></i>');
+            var lastLi = $("<li></li>").addClass("page-item")
+                        .attr("onclick", `loadData(${totalPages}, '${searchValue}');`).attr("data-page", totalPages - 1);
+            var lastLink = $("<a></a>").html('<i class="fa-solid fa-angles-right"></i>');
             lastLi.append(lastLink);
 
             paginationContainer.append(renderPageButtons(start, end, currentPage)
