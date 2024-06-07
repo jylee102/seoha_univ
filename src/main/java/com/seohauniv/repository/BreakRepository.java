@@ -11,9 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface BreakRepository extends JpaRepository<Break, Long>,
-        QuerydslPredicateExecutor<Break> {
-
-//    @Query("SELECT b FROM break b WHERE b.student.id = :memberId")
-//    List<Break> getBreakInfo(@Param("memberId") String memberId);
+public interface BreakRepository extends JpaRepository<Break, Long> {
+    @Query("SELECT b FROM Break b WHERE b.student.id = :memberId")
+    List<Break> getBreakInfo(@Param("memberId") String memberId);
 }

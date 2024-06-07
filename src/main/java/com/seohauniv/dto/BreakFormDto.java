@@ -13,11 +13,9 @@ import org.modelmapper.ModelMapper;
 public class BreakFormDto {
     private Student student;
 
-    private String memberId;
-
     private Long id;
 
-//    private int studentGrade;
+    private int grade;
 
     private int fromYear;
 
