@@ -1,4 +1,4 @@
-package com.seohauniv.config;
+package com.seohauniv.init;
 
 import com.seohauniv.service.DeptService;
 import lombok.RequiredArgsConstructor;

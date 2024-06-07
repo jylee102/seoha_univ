@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <style>
+        .card {
+            padding-left:20px;
+            margin-top:20px;
+        }
+    </style>
+</th:block>
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1 style="font-weight:600">학사일정</h1>
+            <div class="split--div"></div>
+            <form role="form" th:action="@{'/schedule/detail/' + ${scheduleId}}" method="post" enctype="multipart/form-data"
+                  th:object="${scheduleFormDto}" name="scheduleForm">
+                <div class="site-section">
+                    <div class="container">
+                        <div class="row">
+                            <input type="hidden" id="scheduleId" th:value="${schedule.id}">
+                            <div class="col-md-12" style="display:grid">
+                                <h6 class="text-black" th:text="${schedule.start} + ' ~ ' + ${schedule.end}"></h6>
+                                <span th:text="${schedule.content}" id="content" name="content"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <a th:href="@{'/schedule/rewrite/' + ${scheduleId}}" type="button" class="btn btn-seoha mb-3"
+                           style="width: 100px; margin-top:50px;">수정</a>
+                        <button type="button" class="btn btn-seoha"
+                                th:value="${schedule.id}" th:onclick="deleteSchedule([[${schedule.id}]])" style="width:100px; height:39px; margin-top:50px; margin-left:30px;">삭제</button>
+                    </div>
+                </div>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        function deleteSchedule(scheduleId) {
+                  const deleteConf = confirm("삭제하시겠습니까?");
+                  if(!deleteConf) return; //취소버튼 누르면
+
+                  var token = $("meta[name='_csrf']").attr("content");
+                  var header = $("meta[name='_csrf_header']").attr("content");
+
+                  //request URL
+                  var url = "/schedule/" + scheduleId + "/delete";
+
+
+                  $.ajax({
+                     url : url, //request URL
+                     type : "DELETE", //전송방식
+                     contentType : "application/json",
+                     beforeSend : function(xhr) {
+                        //데이터를 전송하기 전에 헤더에 csrf 값을 설정
+                        xhr.setRequestHeader(header, token);
+                     },
+                     dataType : "json",
+                     cache : false,
+                     success : function(result, status) {
+                        location.href = '/schedule/list';
+                     },
+                     error : function(jqXHR, status, error) {
+                        if(jqXHR.status == '401') {
+                           alert('로그인 후 이용해주세요.');
+                           location.href = '/members/login';
+                        } else {
+                           alert(jqXHR.responseText);
+                        }
+                     }
+                  });
+               }
+    </script>
+</th:block>
+
+</html>

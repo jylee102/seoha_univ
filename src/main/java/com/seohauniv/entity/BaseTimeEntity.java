@@ -9,7 +9,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @EntityListeners(value = {AuditingEntityListener.class}) // audit 기능을 사용하기 위해 작성
 @MappedSuperclass
@@ -21,6 +23,12 @@ public abstract class BaseTimeEntity {
     @Column(updatable = false) // 해당 컬럼에 대한 값은 업데이트 X
     private LocalDateTime regDate; //등록일
 
+
     @LastModifiedDate // 수정한 날짜를 저장 및 감지
     private LocalDateTime updateDate; //수정일
+
+    public String getFormattedRegTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return regDate != null ? regDate.format(formatter) : "";
+    }
 }

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <style>
+        #weeklyPlan {
+            transition: max-height 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+        #weeklyPlan.collapse {
+            max-height: none; /* 축소되었을 때 요소가 사라지지 않도록 함 */
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>강의 계획서 검토</h1>
+            <div class="split--div"></div>
+
+            <form name="syllabusForm" th:object="${syllabusForm}" action="/staff/course/create" method="post">
+                <input type="hidden" name="syllabus" th:value="*{id}">
+                <input type="hidden" name="professor" th:value="*{professor.id}">
+                <table class="table--container table">
+                    <tr>
+                        <td>학기</td>
+                        <td th:text="*{year} + '년도 ' + *{semester} + '학기'"></td>
+                    </tr>
+                    <tr>
+                        <td>강좌명</td>
+                        <td th:text="*{courseName}"></td>
+                    </tr>
+                    <tr>
+                        <td>담당 교수</td>
+                        <td th:text="*{professor.name}"></td>
+                    </tr>
+                    <tr>
+                        <td>강의 시간</td>
+                        <td th:text="${courseTimesDescription}"></td>
+                    </tr>
+
+                    <tr>
+                        <td style="min-width: 140px;">구분 / 학점 / 인원</td>
+                        <td th:text="*{courseTypeDescription} + ' / ' + *{credit} + '학점 / ' + *{capacity} + '명'"></td>
+                    </tr>
+
+                    <tr>
+                        <td>수업 개요</td>
+                        <td th:text="*{overview}"></td>
+                    </tr>
+                    <tr>
+                        <td>강의 목표</td>
+                        <td th:text="*{objective}"></td>
+                    </tr>
+
+                    <tr class="nav-add_plan">
+                        <td colspan="2" style="text-align: -webkit-center;">
+                            <a class="nav-link addWeeklyPlan collapsed" style="width: fit-content; cursor: pointer;">
+                                주별 계획 보기 <span class="weekly-icon"><i class="mdi mdi-plus" style="font-size: larger;"></i></span>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr id="weeklyPlan" class="collapse">
+                        <td><label th:for="email">주별 계획</label></td>
+                        <td>
+                            <table class="table">
+                                <tr>
+                                    <th>주차</th>
+                                    <th>내용</th>
+                                </tr>
+                                <tr th:each="weeklyPlan : *{weeklyPlans}">
+                                    <td th:text="${weeklyPlan.week} + '주차'" style="width: 100px;"></td>
+                                    <td th:text="${weeklyPlan.content}"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>수업 교재</td>
+                        <td th:text="*{textbook}"></td>
+                    </tr>
+
+                    <tr>
+                        <td>강의코드</td>
+                        <td>
+                            <input type="text" name="id" class="input--box" style="width: 30%; min-width: 113px;"
+                            placeholder="00000000-000">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>강의실</td>
+                        <td>
+                            <select name="room" class="input--box" style="width: 30%; min-width: 113px;">
+                                <option th:each="room : ${roomList}" th:value="${room.id}">[[${room.buildingName} + ' ' + ${room.roomNo} + '호']]</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div class="button--container">
+                    <button class="btn btn-secondary" type="button" onclick="refuse()">반려</button>
+                    <button class="btn btn-seoha" type="submit">승인</button>
+                </div>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            </form>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        var message = [[${message}]];
+        if (message != null) alert(message);
+
+        document.querySelector('.addWeeklyPlan').addEventListener('click', function() {
+            var weeklyPlan = document.getElementById('weeklyPlan');
+            var isCollapsed = weeklyPlan.classList.contains('collapse');
+            var icon = document.querySelector('.weekly-icon i');
+
+            weeklyPlan.classList.toggle('collapse', !isCollapsed);
+            icon.className = isCollapsed ? 'mdi mdi-minus' : 'mdi mdi-plus';
+        });
+
+        // ★ 헤더에 있는 토큰 값을 가지고 온다. (반드시 같이 전송해야 함)
+        var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+
+        function refuse() {
+            $.ajax({
+                url: "/staff/refuse/syllabus",
+                method: "POST",
+                data: { id: $('input[name="syllabus"]').val() },
+				beforeSend : function(xhr) {
+				    // 데이터를 전송하기 전에 헤더에 csrf 토큰을 설정
+				    xhr.setRequestHeader(header, token);
+				},
+                success: function(res) {
+                    alert(res);
+                    location.href = "/staffs/createCourse";
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText);
+                }
+            });
+        }
+    </script>
+</th:block>
+
+</html>

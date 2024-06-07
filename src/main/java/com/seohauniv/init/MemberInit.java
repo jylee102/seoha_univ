@@ -1,8 +1,7 @@
-package com.seohauniv.config;
+package com.seohauniv.init;
 
 import com.seohauniv.entity.Staff;
 import com.seohauniv.service.MemberService;
-import com.seohauniv.service.StaffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

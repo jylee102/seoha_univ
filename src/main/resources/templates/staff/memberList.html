@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <style>
+        @media screen and (max-width: 1680px) {
+            .table-div tr > th:nth-child(9),
+            .table-div tr > td:nth-child(9) {
+	            display: none;
+            }
+        }
+
+        @media screen and (max-width: 1550px) {
+            .table-div tr > th:nth-child(4),
+            .table-div tr > td:nth-child(4) {
+	            display: none;
+            }
+        }
+
+        @media screen and (max-width: 1140px) {
+            .table-div tr > th:nth-child(8),
+            .table-div tr > td:nth-child(8),
+            .table-div tr > th:nth-child(5),
+            .table-div tr > td:nth-child(5) {
+	            display: none;
+            }
+        }
+
+        @media screen and (max-width: 650px) {
+            .table-div tr > th:nth-child(6),
+            .table-div tr > td:nth-child(6) {
+	            display: none;
+            }
+
+            .search {
+                padding-left: 0;
+                padding-bottom: 1rem;
+            }
+        }
+
+        @media screen and (max-width: 500px) {
+            .select-search {
+	            width: 100px;
+            }
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content" style="margin:0;">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>구성원 명단</h1>
+            <div class="div-split" style="min-width: 380px;"></div>
+            <form action="/staffs/manageMember" method="get" th:object="${memberSearchDto}">
+                <div class="d-flex align-items-center search">
+                    <div style="padding-right: 10px;">
+                        <select class="input-search select-search" id="searchBy" name="searchBy">
+                            <option value="id" selected>학번/교번</option>
+                            <option value="name">이름</option>
+                        </select>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" class="input-search" id="searchQuery" />
+                        <i class="fa-solid fa-xmark" onclick="clearSearch()"></i>
+                    </div>
+                    <div class="btn-search">
+                        <button id="searchBtn" type="submit" class="btn btn-sm btn-info mb-3" style="min-width: 54px;">조회</button>
+                    </div>
+                </div>
+                <nav class="nav nav-tabs" style="min-width: 380px;">
+                    <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="STUDENT">학생</button>
+                    <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="PROFESSOR">교수</button>
+                    <button type="button" class="nav-link" data-bs-toggle="tab" role="tab" value="STAFF">교직원</button>
+                </nav>
+            </form>
+                <!-- 여기에 내용 넣기 -->
+
+                <div class="table-div">
+                    <table>
+                        <tr>
+                            <th>학번</th>
+                            <th style="min-width: 72px;">이름</th>
+                            <th style="min-width: 103px;">생년월일</th>
+                            <th>주소</th>
+                            <th>전화번호</th>
+                            <th>이메일</th>
+                            <th th:unless="${memberSearchDto != null and memberSearchDto.tabValue == 'STAFF'}" style="min-width: 121px;">학과명</th>
+                            <th th:if="${memberSearchDto != null and memberSearchDto.tabValue == 'STUDENT'}">학년</th>
+                            <th th:text="${memberSearchDto != null and memberSearchDto.tabValue == 'STUDENT' ? '입학일' : '입사일'}" id="test" style="min-width: 103px;"></th>
+                        </tr>
+                        <tr th:each="member, status: ${members.getContent()}">
+                            <td th:text="${member.id}"></td>
+                            <td th:text="${member.name}"></td>
+                            <td th:text="${member.birth}"></td>
+                            <td th:text="${member.address}"></td>
+                            <td th:text="${member.phone}"></td>
+                            <td th:text="${member.email}"></td>
+                            <td th:unless="${memberSearchDto != null and memberSearchDto.tabValue == 'STAFF'}"
+                                th:text="${member.major.title}"></td>
+                            <td th:if="${memberSearchDto != null and memberSearchDto.tabValue == 'STUDENT'}"
+                                th:text="${member.grade}"></td>
+                            <td th:text="${#temporals.format(member.member.regDate, 'yyyy-MM-dd')}"></td>
+                        </tr>
+                    </table>
+                </div>
+
+                    <div class="pagination" th:with="start=${(members.number/maxPage)*maxPage + 1},
+			                 end=(${(members.totalPages == 0) ? 1 : (start + (maxPage - 1) < members.totalPages ? start + (maxPage - 1) : members.totalPages)})"
+                         aria-label="Page navigation example">
+                        <ul>
+                            <li>
+                                <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+                            </li>
+                            <li th:classappend="${members.first} ? 'disabled' : ''"
+                                th:attr="onclick=${!members.first} ? 'location.href=\'/staffs/manageMember/' + (${members.number - 1}) + '?searchBy=' + ${memberSearchDto.searchBy} + '&searchQuery=' + ${memberSearchDto.searchQuery} + '&tabValue=' + ${memberSearchDto.tabValue} + '\'' : ''">
+                                <a><i class="fa-solid fa-angle-left"></i></a>
+                            </li>
+                            <li th:each="page: ${#numbers.sequence(start, end)}"
+                                th:classappend="${members.number eq page - 1} ? 'page-active' : 'page'"
+                                th:onclick="'javascript:page(' + (${page - 1}) + ')'">
+                                <a>[[${page}]]</a>
+                            </li>
+                            <li th:classappend="${members.last} ? 'disabled' : ''"
+                                th:attr="onclick=${!members.last} ? 'location.href=\'/staffs/manageMember/' + (${members.number + 1}) + '?searchBy=' + ${memberSearchDto.searchBy} + '&searchQuery=' + ${memberSearchDto.searchQuery} + '&tabValue=' + ${memberSearchDto.tabValue} + '\'' : ''">
+                                <a><i class="fa-solid fa-angle-right"></i></a>
+                            </li>
+                            <li>
+                                <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+
+        var searchDto = [[${memberSearchDto}]];
+        $(`.nav-link[value=${searchDto.tabValue}]`).addClass('active');
+
+        const currentPath = window.location.pathname;
+        var tabValue = searchDto.tabValue;
+        $("#searchBy").val(searchDto.searchBy);
+        $("#searchQuery").val(searchDto.searchQuery);
+
+        $('.nav-link[role="tab"]').on('click', function() {
+            tabValue = $('.nav-link[role="tab"].active').val();
+            page(currentPath.split('/')[3] == null ? 0 : currentPath.split('/')[3]);
+        });
+
+        $("#searchBtn").on("click", function(e) {
+            e.preventDefault(); // submit 방지
+            page(0); // 검색 이후엔 검색한 페이지의 시작페이지부터 보여준다.
+        });
+
+        function page(page) {
+            // 입력한 값을 전부 가지고 온다.
+            var searchBy = $("#searchBy").val();
+            var searchQuery = $("#searchQuery").val();
+
+            if (searchBy == "id") {
+                if (searchQuery.length == 7) { // 학생
+                    tabValue = "STUDENT";
+                } else if (searchQuery.length == 6) { // 교직원
+                    tabValue = "STAFF";
+                } else if (searchQuery.length == 5) { // 교수
+                    tabValue = "PROFESSOR";
+                }
+            }
+
+            // 주소 이동
+            location.href = "/staffs/manageMember/" + page
+                          + "?searchBy=" + searchBy
+                          + "&searchQuery=" + searchQuery
+                          + "&tabValue=" + tabValue;
+        }
+
+        function goToFirstPage() {
+            page(0);
+        }
+
+        function goToLastPage() {
+            var lastPage = [[${members.totalPages}]] - 1; // 마지막 페이지 번호는 총 페이지 수 - 1
+            page(lastPage);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchQuery').value = '';
+        }
+    </script>
+</th:block>
+
+</html>

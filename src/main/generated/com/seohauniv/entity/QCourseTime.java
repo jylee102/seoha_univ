@@ -22,8 +22,6 @@ public class QCourseTime extends EntityPathBase<CourseTime> {
 
     public static final QCourseTime courseTime = new QCourseTime("courseTime");
 
-    public final QCourse course;
-
     public final EnumPath<com.seohauniv.constant.Day> day = createEnum("day", com.seohauniv.constant.Day.class);
 
     public final TimePath<java.time.LocalTime> endTime = createTime("endTime", java.time.LocalTime.class);
@@ -31,6 +29,8 @@ public class QCourseTime extends EntityPathBase<CourseTime> {
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final TimePath<java.time.LocalTime> startTime = createTime("startTime", java.time.LocalTime.class);
+
+    public final QSyllabus syllabus;
 
     public QCourseTime(String variable) {
         this(CourseTime.class, forVariable(variable), INITS);
@@ -50,7 +50,7 @@ public class QCourseTime extends EntityPathBase<CourseTime> {
 
     public QCourseTime(Class<? extends CourseTime> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.course = inits.isInitialized("course") ? new QCourse(forProperty("course"), inits.get("course")) : null;
+        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus"), inits.get("syllabus")) : null;
     }
 
 }

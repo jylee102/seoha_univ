@@ -29,19 +29,20 @@
                 <span class="menu-title">My Page</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="ui-myPage">
+            <div class="collapse" id="ui-myPage"  th:classappend="${activePage == 'myInfo' || activePage == 'changePw' ? ' show' : ''}">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                        <a class="nav-link" href="/myInfo">
+                        <a class="nav-link" href="/myInfo" th:classappend="${activePage == 'myInfo' ? ' active' : ''}">
                             내 정보 조회
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/changePw">
+                        <a class="nav-link" href="/changePw" th:classappend="${activePage == 'changePw' ? ' active' : ''}">
                             비밀번호 변경
                         </a>
                     </li>
-                    <li class="nav-item" th:if="${#authentication.principal.role == 'STUDENT'}">
+<!--                    th:if="${#authentication.principal.role == 'STUDENT'}"-->
+                    <li class="nav-item">
                         <a class="nav-link" href="/students/applyForLeave">
                             휴학신청
                         </a>
@@ -156,7 +157,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/staffs/manageMember">
-                            구성원 관리
+                            구성원 명단
                         </a>
                     </li>
                     <li class="nav-item">
@@ -176,13 +177,21 @@
             </a>
             <div class="collapse" id="ui-univInfo">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/notice">
-                            공지사항
+                    <li class="nav-item" th:if="${#authentication.principal.role == 'STAFF'}">
+                        <a class="nav-link" href="/staff/notice/write">
+                            공지사항 작성
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/schedule">
+                        <a class="nav-link" href="/notice/list">
+                            공지사항
+                        </a>
+                    </li>
+                    <li class="nav-item" th:if="${#authentication.principal.role == 'STAFF'}">
+                        <a class="nav-link" href="/staff/schedule/write">학사일정 작성</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/schedule/list">
                             학사일정
                         </a>
                     </li>

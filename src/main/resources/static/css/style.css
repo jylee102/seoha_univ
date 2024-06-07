@@ -21968,20 +21968,20 @@ dl li {
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link:hover {
-  color: #495057;
+  color: #B3E5FC;
   background: transparent;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link:hover::before {
-  border: 1px solid #495057;
+  border: 2px solid #B3E5FC;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link.active {
-  color: #495057;
+  color: #B3E5FC;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link.active::before {
-  border: 1px solid #495057;
+  border: 2px solid #B3E5FC;
 }
 
 .sidebar .nav.sub-menu .nav-item .nav-link::before {
@@ -22327,7 +22327,7 @@ dl li {
 
 .navbar .navbar-menu-wrapper .navbar-nav .nav-item.dropdown .count-indicator .count {
   position: absolute;
-  left: 35%;
+  left: 66%;
   width: 6px;
   height: 6px;
   border-radius: 100%;

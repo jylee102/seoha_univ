@@ -22,15 +22,7 @@ public class QCourse extends EntityPathBase<Course> {
 
     public static final QCourse course = new QCourse("course");
 
-    public final NumberPath<Integer> capacity = createNumber("capacity", Integer.class);
-
-    public final EnumPath<com.seohauniv.constant.CourseType> courseType = createEnum("courseType", com.seohauniv.constant.CourseType.class);
-
-    public final NumberPath<Integer> credit = createNumber("credit", Integer.class);
-
-    public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final StringPath name = createString("name");
+    public final StringPath id = createString("id");
 
     public final QProfessor professor;
 
@@ -38,11 +30,7 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final QRoom room;
 
-    public final NumberPath<Integer> semester = createNumber("semester", Integer.class);
-
     public final QSyllabus syllabus;
-
-    public final NumberPath<Integer> year = createNumber("year", Integer.class);
 
     public QCourse(String variable) {
         this(Course.class, forVariable(variable), INITS);
@@ -64,7 +52,7 @@ public class QCourse extends EntityPathBase<Course> {
         super(type, metadata, inits);
         this.professor = inits.isInitialized("professor") ? new QProfessor(forProperty("professor"), inits.get("professor")) : null;
         this.room = inits.isInitialized("room") ? new QRoom(forProperty("room")) : null;
-        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus")) : null;
+        this.syllabus = inits.isInitialized("syllabus") ? new QSyllabus(forProperty("syllabus"), inits.get("syllabus")) : null;
     }
 
 }

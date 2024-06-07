@@ -2,16 +2,19 @@ package com.seohauniv.dto;
 
 import com.seohauniv.entity.Dept;
 import com.seohauniv.entity.Member;
+import com.seohauniv.validation.DeptNotRequiredForStaff;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.modelmapper.ModelMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@DeptNotRequiredForStaff // 커스텀 어노테이션(dept가 필수입력값인지)
 public class MemberFormDto {
 
     @NotBlank(message = "이름은 필수 입력 값입니다.")
@@ -27,6 +30,7 @@ public class MemberFormDto {
     private String address;
 
     @NotNull(message = "생일은 필수 입력 값입니다.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
 
     private Dept dept;

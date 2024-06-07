@@ -1,5 +1,6 @@
 package com.seohauniv.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seohauniv.dto.MemberFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 @Table(name = "staff")
 @Getter
 @Setter
-@ToString
 public class Staff extends BaseTimeEntity {
     @Id
     @Column(name = "member_id")
@@ -31,6 +31,7 @@ public class Staff extends BaseTimeEntity {
     @MapsId
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;
 
     public Staff() {
@@ -42,5 +43,17 @@ public class Staff extends BaseTimeEntity {
         this.birth = memberFormDto.getBirth();
         this.phone = memberFormDto.getPhone();
         this.address = memberFormDto.getAddress();
+    }
+
+    @Override
+    public String toString() {
+        return "Staff{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", birth=" + birth +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                '}';
     }
 }
