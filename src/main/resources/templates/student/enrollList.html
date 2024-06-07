@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <style>
+        .input-search {
+            width: 300px;
+        }
+
+        @media screen and (max-width: 1300px) {
+            .table-div tr > th:nth-child(3),
+            .table-div tr > td:nth-child(3),
+            .table-div tr > th:nth-child(6),
+            .table-div tr > td:nth-child(6) {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 1127px) {
+            .table-div tr > th:nth-child(1),
+            .table-div tr > td:nth-child(1) {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 735px) {
+            .table-div tr > th:nth-child(4),
+            .table-div tr > td:nth-child(4) {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 650px) {
+            .input-search {
+                width: 230px;
+            }
+        }
+
+        .search {
+                padding-left: 0;
+                padding-bottom: 1rem;
+            }
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content" style="margin:0;">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>수강 신청</h1>
+            <div class="div-split" style="min-width: 410px;"></div>
+            <form action="/students/enroll" method="get" th:object="${courseSearchDto}">
+                <div class="d-flex align-items-center search">
+                    <div style="padding-right: 10px;">
+                        <select class="input-search select-search" id="searchCourseType" name="searchCourseType"
+                            style="width: 100px;">
+                            <option value="" selected>전체</option>
+                            <option value="MAJOR">전공</option>
+                            <option value="LIBERAL">교양</option>
+                        </select>
+                    </div>
+                    <div class="input-container">
+                        <input type="text" class="input-search" id="searchQuery" name="searchQuery"
+                            placeholder="강의명 또는 교수 이름으로 검색하세요."/>
+                        <i class="fa-solid fa-xmark" onclick="clearSearch()"></i>
+                    </div>
+                    <div class="btn-search">
+                        <button id="searchBtn" type="submit" class="btn btn-sm btn-info mb-3" style="min-width: 54px;">조회</button>
+                    </div>
+                </div>
+            </form>
+                <!-- 여기에 내용 넣기 -->
+
+                <div class="table-div">
+                    <table style="min-width: 410px;">
+                        <tr>
+                            <th>강의코드</th>
+                            <th>강의명</th>
+                            <th>구분</th>
+                            <th>담당교수</th>
+                            <th>강의시간</th>
+                            <th>강의실</th>
+                            <th>여석</th>
+                            <th>신청</th>
+                        </tr>
+                        <tr th:each="courses, status: ${courses.getContent()}">
+                            <td id="courseId" th:text="${courses.id}"></td>
+                            <td th:text="${courses.syllabus.courseName}"></td>
+                            <td th:text="${courses.syllabus.courseTypeDescription}"></td>
+                            <td th:text="${courses.professorName}"></td>
+                            <td th:text="${courses.courseTimeDescription}"></td>
+                            <td th:text="${courses.room.buildingName} + ' ' + ${courses.room.roomNo} + '호'"></td>
+                            <td th:text="${courses.restSeat} + '/' + ${courses.syllabus.capacity}"></td>
+                            <td>
+                                <button class="btn btn-seoha" type="button" onclick="beforeSubmit()">신청</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            <div class="pagination" th:with="start=${(courses.number/maxPage)*maxPage + 1},
+			                 end=(${(courses.totalPages == 0) ? 1 : (start + (maxPage - 1) < courses.totalPages ? start + (maxPage - 1) : courses.totalPages)})"
+                 aria-label="Page navigation example">
+                <ul>
+                    <li>
+                        <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+                    </li>
+                    <li th:classappend="${courses.first} ? 'disabled' : ''" onclick="javascript:goLeft()">
+                        <a><i class="fa-solid fa-angle-left"></i></a>
+                    </li>
+                    <li th:each="page: ${#numbers.sequence(start, end)}"
+                        th:classappend="${courses.number eq page - 1} ? 'page-active' : 'page'"
+                        th:onclick="'javascript:page(' + (${page - 1}) + ')'">
+                        <a>[[${page}]]</a>
+                    </li>
+                    <li th:classappend="${courses.last} ? 'disabled' : ''" onclick="javascript:goRight()">
+                        <a><i class="fa-solid fa-angle-right"></i></a>
+                    </li>
+                    <li>
+                        <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+
+        function updatePlaceholder() {
+            var inputSearch = document.querySelector('.input-search');
+                if (window.innerWidth <= 650) {
+                   inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색');
+                } else {
+                   inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색하세요.');
+                }
+        }
+
+        // 초기 로드 시 실행
+        updatePlaceholder();
+
+        // 창 크기가 변경될 때마다 실행
+        window.addEventListener('resize', updatePlaceholder);
+
+        $("#searchBtn").on("click", function(e) {
+            e.preventDefault(); // submit 방지
+            var searchQuery = $("#searchQuery").val();
+            localStorage.setItem("searchQuery", searchQuery); // 검색어 저장
+            page(0); // 검색 이후엔 검색한 페이지의 시작페이지부터 보여준다.
+        });
+
+        $(document).ready(function() {
+            // 페이지가 로드될 때 localStorage에서 검색어를 가져와서 인풋 창에 표시
+            var savedSearchQuery = localStorage.getItem("searchQuery");
+            if (savedSearchQuery) {
+                $("#searchQuery").val(savedSearchQuery);
+            }
+        });
+
+        function page(page) {
+            // 입력한 값을 전부 가지고 온다.
+            var searchCourseType = $("#searchCourseType").val();
+            var searchQuery = $("#searchQuery").val();
+
+            // 주소 이동
+            location.href = "/students/enroll/" + page
+                          + "?searchCourseType=" + searchCourseType
+                          + "&searchQuery=" + searchQuery;
+        }
+
+        function goToFirstPage() {
+            page(0);
+        }
+
+        function goToLastPage() {
+            var lastPage = [[${courses.totalPages}]] - 1; // 마지막 페이지 번호는 총 페이지 수 - 1
+            page(lastPage);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchQuery').value = '';
+        }
+
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
+        function beforeSubmit() {
+            var courseId = $('#courseId').text();
+
+            $.ajax({
+                url: "/student/enrollCourse/" + courseId,
+                method: "POST",
+                contentType: 'application/json',
+                beforeSend : function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function(response) {
+                    alert("수강신청이 완료되었습니다.");
+                    location.reload();
+                },
+                error: function(jqXHR, status, error) {
+                     alert(jqXHR.responseText);
+                }
+            });
+        }
+
+        var courses = [[${courses}]];
+        var courseSearchDto = [[${courseSearchDto}]];
+        if (courseSearchDto.searchCourseType == null) courseSearchDto.searchCourseType = '';
+
+        function goLeft() {
+            if (!courses.first) {
+                location.href = '/students/enroll/' + (courses.number - 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
+            }
+        }
+
+        function goRight() {
+            if (!courses.last) {
+                location.href = '/students/enroll/' + (courses.number + 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
+            }
+        }
+    </script>
+</th:block>
+
+</html>

@@ -30,6 +30,8 @@ public class QStudent extends EntityPathBase<Student> {
 
     public final StringPath email = createString("email");
 
+    public final ListPath<Enroll, QEnroll> enrolls = this.<Enroll, QEnroll>createList("enrolls", Enroll.class, QEnroll.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> grade = createNumber("grade", Integer.class);
 
     public final DatePath<java.time.LocalDate> graduationDate = createDate("graduationDate", java.time.LocalDate.class);
