@@ -47,11 +47,11 @@
                             <td><label for="email">이메일</label></td>
                             <td><input type="text" th:text="${member.email}" id="email" class="input--box" readonly/></td>
                         </tr>
-                        <tr>
-                            <td><label for="reasonType"/>휴학내역</td>
-                            <td><input type="text" th:value="${breaks.status}" id="reasonType" class="input--box" readonly/></td>
+<!--                        <tr>-->
+<!--                            <td><label for="reasonType"/>휴학내역</td>-->
+<!--                            <td><input type="text" th:value="${breaks.status}" id="reasonType" class="input&#45;&#45;box" readonly/></td>-->
 <!--                            th:if="${#authentication.principal.role == 'STUDENT'}"-->
-                        </tr>
+<!--                        </tr>-->
                     </table>
                     <div style="display:flex; place-content:center;">
                         <button type="button" style="margin-top:50px;" onclick="location.href = '/myInfo/update'" class="btn btn-seoha mb-3">수정</button>

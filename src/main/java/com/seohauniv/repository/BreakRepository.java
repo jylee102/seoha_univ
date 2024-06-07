@@ -14,6 +14,6 @@ import java.util.List;
 public interface BreakRepository extends JpaRepository<Break, Long>,
         QuerydslPredicateExecutor<Break> {
 
-    @Query("SELECT b FROM break b WHERE b.member.id = :memberId")
-    List<Break> getBreakInfo(@Param("memberId") String memberId);
+//    @Query("SELECT b FROM break b WHERE b.student.id = :memberId")
+//    List<Break> getBreakInfo(@Param("memberId") String memberId);
 }

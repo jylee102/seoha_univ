@@ -29,14 +29,14 @@ public class InfoController {
     public String InfoForm(Model model, Principal principal) {
 
         Member member = memberService.getMember(principal.getName());
-        List<Break> breaks = breakService.getBreakInfo(principal.getName());
+//        List<Break> breaks = breakService.getBreakInfo(principal.getName());
         switch (member.getRole().toString()) {
             case "STAFF":
                 model.addAttribute("member", member.getStaff());
                 break;
             case "STUDENT":
                 model.addAttribute("member", member.getStudent());
-                model.addAttribute("breaks",breaks);
+//                model.addAttribute("breaks",breaks);
                 break;
             case "PROFESSOR":
                 model.addAttribute("member", member.getProfessor());

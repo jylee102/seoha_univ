@@ -27,11 +27,11 @@ public class BreakService {
         return breaks.getId(); // 저장된 post id를 반화나한다. getId(): 저장된 포스트id를 반환하여 다른 곳에서 활용할수 있다.
     }
 
-@Transactional(readOnly = true)
-public List<Break> getBreakInfo(String memberId){
-    List<Break> breakList = breakRepository.getBreakInfo(memberId);
-
-    return breakList;
-}
+//@Transactional(readOnly = true)
+//public List<Break> getBreakInfo(String memberId){
+//    List<Break> breakList = breakRepository.getBreakInfo(memberId);
+//
+//    return breakList;
+//}
 
 }

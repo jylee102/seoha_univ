@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -40,5 +42,9 @@ public class CourseService {
 
     public void updateRestSeat(Course course) {
         course.setRestSeat(course.getRestSeat() - 1);
+    }
+    @Transactional(readOnly = true)
+    public List<Course> myCourse(String memberId){
+        return courseRepository.getCourseById(memberId);
     }
 }
