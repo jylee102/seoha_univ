@@ -31,9 +31,9 @@
       <div class="card-body px-5 py-5">
         <h1 style="font-weight:600">휴학신청</h1>
         <div class="split--div"></div>
-        <form role="form" action="/break/write/new" method="post" enctype="multipart/form-data" name="breakForm" th:object="${breakFormDto}">
+        <form role="form" action="/break/write/new" method="post" enctype="multipart/form-data" name="breakForm">
           <table class="table--container table">
-            <input type="hidden" th:field="*{memberId}" id="memberId" th:value="${member.id}">
+            <input type="hidden" name="student" id="student" th:value="${member.id}">
             <tr>
               <td><label for="name">이름</label></td>
               <td><input type="text" th:value="${member.name}" id="name" class="input--box" readonly /></td>
@@ -57,14 +57,14 @@
             <tr>
               <td><label>기간</label></td>
               <td style="display:flex">
-                <select name="fromYear" id="fromYear" th:field="*{fromYear}" style="margin-right:5px;"></select>
-                <select name="fromSemester" th:field="*{fromSemester}" style="margin-right:20px;">
+                <select name="fromYear" id="fromYear" style="margin-right:5px;"></select>
+                <select name="fromSemester" id="fromSemester" style="margin-right:20px;">
                   <option value="1">1학기</option>
                   <option value="2">2학기</option>
                 </select>
                 <p style="margin-right:20px; margin-bottom:0; place-content:center;">부터</p>
-                <select name="toYear" id="toYear" th:field="*{toYear}" style="margin-right:5px;"></select>
-                <select name="toSemester" th:field="*{toSemester}" style="margin-right:20px;">
+                <select name="toYear" id="toYear" style="margin-right:5px;"></select>
+                <select name="toSemester" id="toSemester" style="margin-right:20px;">
                   <option value="1">1학기</option>
                   <option value="2">2학기</option>
                 </select>
@@ -75,19 +75,19 @@
               <td><label th:for="reasonType">휴학구분</label></td>
               <td style="display: flex;">
                 <div style="display: flex; margin-right:10px;">
-                  <input type="radio" name="reasonType" th:field="*{reasonType}" value="OTHER">&nbsp;일반</input>
+                  <input type="radio" name="reasonType" value="OTHER">&nbsp;일반</input>
                 </div>
                 <div style="display: flex; margin-right:10px;">
-                  <input type="radio" name="reasonType" th:field="*{reasonType}" value="PARENTAL">&nbsp;임신·출산·육아</input>
+                  <input type="radio" name="reasonType" value="PARENTAL">&nbsp;임신·출산·육아</input>
                 </div>
                 <div style="display: flex; margin-right:10px;">
-                  <input type="radio" name="reasonType" th:field="*{reasonType}" value="MEDICAL">&nbsp;질병</input>
+                  <input type="radio" name="reasonType" value="MEDICAL">&nbsp;질병</input>
                 </div>
                 <div style="display: flex; margin-right:10px;">
-                  <input type="radio" name="reasonType" th:field="*{reasonType}" value="ENTREPRENEURSHIP">&nbsp;창업</input>
+                  <input type="radio" name="reasonType" value="ENTREPRENEURSHIP">&nbsp;창업</input>
                 </div>
                 <div style="display: flex; margin-right:10px;">
-                  <input type="radio" name="reasonType" th:field="*{reasonType}" value="MILITARY">&nbsp;군입대</input>
+                  <input type="radio" name="reasonType" value="MILITARY">&nbsp;군입대</input>
                 </div>
               </td>
             </tr>
