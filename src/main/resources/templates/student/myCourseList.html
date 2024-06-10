@@ -66,7 +66,7 @@
                             <td th:text="*{room.buildingName} + ' ' + *{room.roomNo} + '호'"></td>
                             <td th:text="*{restSeat} + '/' + *{syllabus.capacity}"></td>
                             <td>
-                                <button class="btn btn-seoha" type="button"
+                                <button class="btn btn-inverse-dark" type="button"
                                         th:onclick="deleteEnroll([[${enroll.id}]], [[*{id}]])">취소</button>
                             </td>
                         </tr>

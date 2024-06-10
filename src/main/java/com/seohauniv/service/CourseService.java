@@ -6,6 +6,7 @@ import com.seohauniv.dto.CourseEnrollDto;
 import com.seohauniv.dto.CourseSearchDto;
 import com.seohauniv.dto.MyCourseSearchDto;
 import com.seohauniv.entity.Course;
+import com.seohauniv.entity.Enroll;
 import com.seohauniv.repository.CourseRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -56,5 +57,10 @@ public class CourseService {
     @Transactional(readOnly = true)
     public Page<Course> myCourseSearch(String memberId, MyCourseSearchDto myCourseSearchDto, Pageable pageable){
         return courseRepository.getCourseByYearAndSemester(memberId,myCourseSearchDto.getSearchYear(),myCourseSearchDto.getSearchSemester(),pageable);
+    }
+
+    public boolean isAlreadyEnrolled(Course course, String id) {
+        List<Enroll> enrolls = courseRepository.findByCourseAndUser(course, id);
+        return !enrolls.isEmpty();
     }
 }

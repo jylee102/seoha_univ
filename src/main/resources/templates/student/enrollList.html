@@ -72,7 +72,7 @@
                     </div>
                     <div class="input-container">
                         <input type="text" class="input-search" id="searchQuery" name="searchQuery"
-                            placeholder="강의명 또는 교수 이름으로 검색하세요."/>
+                            placeholder="강의명 또는 교수명으로 검색하세요."/>
                         <i class="fa-solid fa-xmark" onclick="clearSearch()"></i>
                     </div>
                     <div class="btn-search">
@@ -103,7 +103,11 @@
                             <td th:text="${courses.room.buildingName} + ' ' + ${courses.room.roomNo} + '호'"></td>
                             <td th:text="${courses.restSeat} + '/' + ${courses.syllabus.capacity}"></td>
                             <td>
-                                <button class="btn btn-seoha" type="button" th:onclick="beforeSubmit([[${courses.id}]])">신청</button>
+                                <button class="btn btn-seoha" type="button"
+                                        th:onclick="beforeSubmit([[${courses.id}]])"
+                                        th:unless="${enrollStatus.get(courses.id)}">신청</button>
+                                <button class="btn btn-inverse-dark" type="button"
+                                        th:if="${enrollStatus.get(courses.id)}">취소</button>
                             </td>
                         </tr>
                     </table>
@@ -147,9 +151,9 @@
             function updatePlaceholder() {
                 var inputSearch = document.querySelector('#searchQuery');
                 if (window.innerWidth <= 650) {
-                    inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색');
+                    inputSearch.setAttribute('placeholder', '강의명 또는 교수명으로 검색');
                 } else {
-                    inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색하세요.');
+                    inputSearch.setAttribute('placeholder', '강의명 또는 교수명으로 검색하세요.');
                 }
             }
 
@@ -175,6 +179,7 @@
             }
         });
 
+        // input창의 x 클릭시 검색어 삭제
         function clearSearch() {
             document.getElementById('searchQuery').value = '';
         }
@@ -218,6 +223,7 @@
         var token = $("meta[name='_csrf']").attr("content");
         var header = $("meta[name='_csrf_header']").attr("content");
 
+        // 수강신청
         function beforeSubmit(courseId) {
 
             $.ajax({

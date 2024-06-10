@@ -67,7 +67,7 @@ public class EnrollController {
 
     // 수강신청 취소
     @DeleteMapping("/students/myCourse/{enrollId}/delete")
-    public @ResponseBody ResponseEntity deleteEnroll(@PathVariable("enrollId") Long enrollId,
+    public @ResponseBody ResponseEntity deleteMyEnroll(@PathVariable("enrollId") Long enrollId,
                                                      @RequestBody Map<String, String> map, Principal principal) {
 
         String courseId = map.get("courseId");
