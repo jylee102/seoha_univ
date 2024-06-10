@@ -87,12 +87,12 @@
                         <tr>
                             <th>강의코드</th>
                             <th>강의명</th>
-                            <th>구분</th>
-                            <th>담당교수</th>
-                            <th>강의시간</th>
-                            <th>강의실</th>
+                            <th style="min-width: 56px;">구분</th>
+                            <th style="min-width: 82px;">담당교수</th>
+                            <th style="min-width: 147px;">강의시간</th>
+                            <th style="min-width: 109px;">강의실</th>
                             <th>여석</th>
-                            <th>신청</th>
+                            <th style="min-width: 86px;">신청</th>
                         </tr>
                         <tr th:each="courses, status: ${courses.getContent()}">
                             <td id="courseId" th:text="${courses.id}"></td>
@@ -143,20 +143,23 @@
         var errorMessage = [[${errorMessage}]];
         if(errorMessage != null || errorMessage == "") alert(errorMessage);
 
-        function updatePlaceholder() {
-            var inputSearch = document.querySelector('.input-search');
+        document.addEventListener('DOMContentLoaded', function() {
+            function updatePlaceholder() {
+                var inputSearch = document.querySelector('#searchQuery');
                 if (window.innerWidth <= 650) {
-                   inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색');
+                    inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색');
                 } else {
-                   inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색하세요.');
+                    inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색하세요.');
                 }
-        }
+                console.log('updatePlaceholder called, window.innerWidth:', window.innerWidth, 'placeholder:', inputSearch.getAttribute('placeholder'));
+            }
 
-        // 초기 로드 시 실행
-        updatePlaceholder();
+            // 초기 로드 시 실행
+            updatePlaceholder();
 
-        // 창 크기가 변경될 때마다 실행
-        window.addEventListener('resize', updatePlaceholder);
+            // 창 크기가 변경될 때마다 실행
+            window.addEventListener('resize', updatePlaceholder);
+        });
 
         $("#searchBtn").on("click", function(e) {
             e.preventDefault(); // submit 방지
