@@ -4,6 +4,7 @@ import com.seohauniv.constant.ProcedureStatus;
 import com.seohauniv.dto.CourseFormDto;
 import com.seohauniv.dto.CourseEnrollDto;
 import com.seohauniv.dto.CourseSearchDto;
+import com.seohauniv.dto.MyCourseSearchDto;
 import com.seohauniv.entity.Course;
 import com.seohauniv.repository.CourseRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -49,7 +50,11 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public List<Course> myCourse(String memberId){
-        return courseRepository.getCourseById(memberId);
+    public Page<Course> myCourse(String memberId,Pageable pageable){
+        return courseRepository.getCourseById(memberId,pageable);
+    }
+    @Transactional(readOnly = true)
+    public Page<Course> myCourseSearch(String memberId, MyCourseSearchDto myCourseSearchDto, Pageable pageable){
+        return courseRepository.getCourseByYearAndSemester(memberId,myCourseSearchDto.getSearchYear(),myCourseSearchDto.getSearchSemester(),pageable);
     }
 }
