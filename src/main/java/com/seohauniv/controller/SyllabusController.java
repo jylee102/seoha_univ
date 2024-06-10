@@ -62,7 +62,7 @@ public class SyllabusController {
     public @ResponseBody ResponseEntity loadCourseList(@RequestParam(value = "page", defaultValue = "0") Optional<Integer> page,
                                                        @RequestParam(value = "searchValue", defaultValue = "") String searchValue) {
         try {
-            Pageable pageable = PageRequest.of(page.orElse(0), 1);
+            Pageable pageable = PageRequest.of(page.orElse(0), 10);
             Page<SyllabusFormDto> syllabusPage = syllabusService.getAllSyllabusToRead(pageable, searchValue);
             return new ResponseEntity(syllabusPage, HttpStatus.OK);
         } catch (Exception e) {

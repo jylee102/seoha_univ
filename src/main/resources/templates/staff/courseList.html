@@ -27,7 +27,19 @@
             <h1>강의 계획서 목록</h1>
             <div class="split--div"></div>
 
-            <form name="syllabusForm">
+            <form name="syllabusForm" onsubmit="return false;">
+                <div class="d-flex align-items-center search">
+                    <div class="input-container">
+                        <input type="text" class="input-search" id="searchValue"
+                               placeholder="강의명 또는 교수명으로 검색" />
+                        <i class="fa-solid fa-xmark" onclick="$('#searchValue').val('')"></i>
+                    </div>
+                    <div class="btn-search">
+                        <button id="searchBtn" type="button" class="btn btn-sm btn-info mb-3"
+                                style="min-width: 54px;" onclick="loadData(1, $('#searchValue').val())">조회</button>
+                    </div>
+                </div>
+
                 <table class="table--container table">
                     <thead>
                     <tr>
@@ -61,7 +73,13 @@
             loadData(currentPage, searchValue);
         });
 
+        $(document.syllabusForm).on('submit', function() {
+            loadData(currentPage, searchValue);
+        })
+
         function loadData(page, searchValue) {
+            searchValue = $('#searchValue').val();
+
             $.ajax({
                 url: "/staff/loadCourseList",
                 method: "GET",

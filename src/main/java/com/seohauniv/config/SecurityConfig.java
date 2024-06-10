@@ -20,7 +20,7 @@ public class SecurityConfig {
         // 1. 페이지 접근에 관한 설정(인증, 인가 - 로그인 이후에)
         httpSecurity.authorizeHttpRequests(authorize -> authorize
                         // 모든 사용자가 로그인(인증)없이 접근할 수 있도록 설정
-                        .requestMatchers("/css/**", "/js/**", "/docs/**", "/images/**", "/fonts/**", "/scss/**", "/vendors/**", "/partials/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/scss/**", "/vendors/**", "/excels/**").permitAll()
                         .requestMatchers( "/members/**").permitAll()
                         .requestMatchers("/favicon.ico", "/error").permitAll()
 
