@@ -33,4 +33,9 @@ public class ProfessorService {
 
         return new PageImpl<>(enrolls, pageable, totalCount);
     }
+
+    @Transactional(readOnly = true)
+    public Enroll findStudentsByCourseIdAnd(String courseId,Long studentId) {
+        return enrollRepository.findStudentsByCourseIdAnd(courseId,studentId);
+    }
 }

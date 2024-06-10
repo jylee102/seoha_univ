@@ -52,4 +52,11 @@ private final ProfessorService professorService;
 
         return "professor/myCourseStudent";
     }
+
+    @GetMapping(value = "professors/evaluation/{courseId}/{studentId}")
+    public String evaluation(Model model, @PathVariable("courseId") String courseId,@PathVariable("studentId")Long studentId){
+        Enroll enroll = professorService.findStudentsByCourseIdAnd(courseId,studentId);
+        model.addAttribute("enroll",enroll);
+        return "professor/evaluation";
+    }
 }
