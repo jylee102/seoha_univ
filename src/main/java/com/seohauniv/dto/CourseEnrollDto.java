@@ -23,11 +23,6 @@ public class CourseEnrollDto {
     public CourseEnrollDto() {
     }
 
-    public String getCourseTimeDescription() {
-        SyllabusFormDto syllabusFormDto = SyllabusFormDto.of(this.syllabus);
-        return syllabusFormDto.getCourseTimesDescription().replace("<br>", " / ");
-    }
-
     @QueryProjection
     public CourseEnrollDto(String id, Syllabus syllabus, String professorName, String major, int restSeat, Room room) {
         this.id = id;
@@ -36,5 +31,10 @@ public class CourseEnrollDto {
         this.major = major;
         this.restSeat = restSeat;
         this.room = room;
+    }
+
+    public String getCourseTimeDescription() {
+        SyllabusFormDto syllabusFormDto = SyllabusFormDto.of(this.syllabus);
+        return syllabusFormDto.getCourseTimesDescription().replace("<br>", " / ");
     }
 }

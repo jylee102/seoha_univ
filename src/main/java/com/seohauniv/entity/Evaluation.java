@@ -24,6 +24,6 @@ public class Evaluation {
     private Course course;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_detail_id")
-    private CourseDetail courseDetail;
+    @JoinColumn(name = "enroll_id")
+    private Enroll enroll;
 }
