@@ -43,10 +43,12 @@ private final ProfessorService professorService;
         model.addAttribute("maxPage", 5);
         return "professor/myCourse";
     }
-    @GetMapping(value = "professors/course/{courseId}")
-    public String myCourseStudent(Model model, @PathVariable("courseId") String courseId) {
-        List<Enroll> myCourseStudentList = professorService.getMyCourseStudent(courseId);
+    @GetMapping(value = {"professors/course/{courseId}","professors/course/{courseId}/{page}"})
+    public String myCourseStudent(Model model, @PathVariable("courseId") String courseId,@PathVariable("page") Optional<Integer> page) {
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
+        Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
         model.addAttribute("students", myCourseStudentList);
+        model.addAttribute("maxPage", 5);
 
         return "professor/myCourseStudent";
     }

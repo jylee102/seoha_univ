@@ -27,42 +27,69 @@
 </th:block>
 
 <main layout:fragment="content">
-    <h1 th:unless="${students.isEmpty()}" >[[${students[0].course.syllabus.courseName}]] 학생 리스트 조회</h1>
-    <div class="split--div"></div>
+    <th:block th:if="${not students.empty}">
+        <h1>[[${students[0].course.syllabus.courseName}]] 학생 리스트 조회</h1>
+        <div class="split--div"></div>
 
+        <table border="1" class="sub--list--table">
+            <thead>
+            <tr>
+                <th>학생 번호</th>
+                <th>이름</th>
+                <th>소속</th>
+                <th>결석</th>
+                <th>지각</th>
+                <th>과제점수</th>
+                <th>중간시험</th>
+                <th>기말시험</th>
+                <th>환산점수</th>
+                <th>점수 기입</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student : ${students.getContent}">
+                <td>[[${student.student.id}]]</td>
+                <td>[[${student.student.name}]]</td>
+                <td>[[${student.student.major.title}]]</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                <td><a th:href="'/professor/course/'+${student.course.id}+'/'+${student.student.id}">기입</a></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="pagination" th:with="start=${(students.number / maxPage) * maxPage + 1},
+                                     end=${(students.totalPages == 0) ? 1 : (start + (maxPage - 1) < students.totalPages ? start + (maxPage - 1) : students.totalPages)}"
+             aria-label="Page navigation example">
+            <ul>
+                <li>
+                    <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+                </li>
+                <li th:classappend="${students.first} ? 'disabled' : ''"
+                    th:onclick="'javascript:page(' + ${students.number - 1} +')'"
+                >
+                    <a  ><i class="fa-solid fa-angle-left"></i></a>
+                </li>
+                <li th:each="page: ${#numbers.sequence(start, end)}"
+                    th:classappend="${students.number eq page - 1} ? 'page-active' : 'page'"
+                >
+                    <a th:onclick="'javascript:page(' + ${page} +')'" th:text="${page}"></a>
+                </li>
+                <li th:classappend="${students.last} ? 'disabled' : ''"
+                    th:onclick="'javascript:page(' + ${students.number + 1} +')'"
+                >
+                    <a ><i class="fa-solid fa-angle-right"></i></a>
+                </li>
+                <li>
+                    <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+                </li>
+            </ul>
+        </div>
+    </th:block>
 
-    <table th:unless="${students.isEmpty()}"  border="1" class="sub--list--table">
-        <thead>
-        <tr>
-            <th>학생 번호</th>
-            <th>이름</th>
-            <th>소속</th>
-            <th>결석</th>
-            <th>지각</th>
-            <th>과제점수</th>
-            <th>중간시험</th>
-            <th>기말시험</th>
-            <th>환산점수</th>
-            <th>점수 기입</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <tr th:each="student , status:${students}">
-            <td>[[${student.student.id}]]</td>
-            <td>[[${student.student.name}]]</td>
-            <td>[[${student.student.major.title}]]</td>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
-            <td><a th:href="'/professor/course/'+${student.course.id}+'/'+${student.student.id}">기입</a></td>
-        </tr>
-
-        </tbody>
-    </table>
 
 
     <p th:if="${students.isEmpty()}" class="no--list--p">해당 강의를 수강하는 학생이 존재하지 않습니다.</p>
@@ -76,17 +103,25 @@
         var errorMessage = [[${errorMessage}]];
         if(errorMessage != null || errorMessage == "") alert(errorMessage);
 
-        // 현재 연도 구하기
-        var currentYear = new Date().getFullYear();
-        var selectElement = document.getElementById("yearSelect");
+         function page(page) {
+            var searchYear = document.getElementById("yearSelect").value;
+            var searchSemester = document.querySelector("select[name='searchSemester']").value;
+            // 페이지 이동
+            location.href = "/professors/course/" + [[${students.content[0].course.id}]]+"/"+page;
+        }
 
-        // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
-                for (var i = 0; i < 3; i++) {
-                    var option = document.createElement("option");
-                    option.value = currentYear + i;
-                    option.textContent = (currentYear + i) + "학년도";
-                    selectElement.appendChild(option);
-                }
+        function goToFirstPage() {
+
+            page(0);
+        }
+
+        function goToLastPage() {
+            var totalPages = [[${student.totalPages}]];
+            var searchYear = document.getElementById("yearSelect").value;
+            var searchSemester = document.querySelector("select[name='searchSemester']").value;
+            page(totalPages - 1);
+        }
+
     </script>
 </th:block>
 
