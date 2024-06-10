@@ -13,7 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,8 +50,12 @@ public class ScheduleController {
     public String scheduleManage (ScheduleFormDto scheduleFormDto, Model model){
         List<Schedule> schedules = scheduleService.getAdminSchedule(scheduleFormDto);
 
-
-        model.addAttribute("schedules", schedules);
+        Map<String, List<Schedule>> map = new LinkedHashMap<>();
+        for (Schedule schedule : schedules) {
+            String month = schedule.getStart().getMonthValue() + "월";
+            map.computeIfAbsent(month, k -> new ArrayList<>()).add(schedule);
+        }
+        model.addAttribute("schedules", map);
         return "schedule/scheduleList";
     }
 
