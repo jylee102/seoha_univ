@@ -4,6 +4,7 @@ import com.seohauniv.constant.LeaveReason;
 import com.seohauniv.constant.ProcedureStatus;
 import com.seohauniv.entity.Break;
 import com.seohauniv.entity.Student;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
@@ -25,22 +26,21 @@ public class BreakFormDto {
 
     private int toSemester;
 
+    @NotNull(message = "휴학구분은 필수 선택입니다.")
     private LeaveReason reasonType;
 
-    private ProcedureStatus status;
+    private ProcedureStatus status = ProcedureStatus.PROCESSING;
 
     private static ModelMapper modelMapper = new ModelMapper();
 
     public Break creatBreak(){
-        return modelMapper.map(this, Break.class);
+        Break breakEntity = modelMapper.map(this, Break.class);
+        breakEntity.setStatus(ProcedureStatus.PROCESSING); // 상태 값을 처리중으로 설정
+        return breakEntity;
     }
-    //postFormDto 클래스의 객체를 기반으로 post 객체를 생성한다. modelMapper 를 사용하여 객체 간의 매핑을 수행함
-    //postFormDto => post 엔티티로 변환
-
     public static BreakFormDto of(Break breaks) {
         return modelMapper.map(breaks, BreakFormDto.class);
     }
-    //post 객체를 postFromDto 객체로 변환
 
 
 

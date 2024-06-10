@@ -49,20 +49,6 @@
                         </tr>
                     </table>
                     <button type="button" style="display:flex; margin:auto; margin-top:50px;" onclick="location.href = '/myInfo'" class="btn btn-seoha mb-3">수정하기</button>
-
-                    <table border="1" style=" margin:auto" class="input--table" th:if="${#authentication.principal.role == 'STUDENT'}" >
-                        <colgroup>
-                            <col class="col1">
-                            <col class="col2">
-
-                        </colgroup>
-                        <tr>
-                            <th>휴학신청내역</th>
-                            <td>휴학내역</td>
-                        </tr>
-
-
-                    </table>
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 </form>
             </div>

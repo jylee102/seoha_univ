@@ -105,8 +105,8 @@
 <th:block layout:fragment="script">
   <script th:inline="javascript">
     document.addEventListener("DOMContentLoaded", function () {
-      var message = [[${message}]];
-      if (message != null) alert(message);
+      var errorMessage = [[${errorMessage}]];
+      if (errorMessage != null) alert(errorMessage);
 
       var currentYear = new Date().getFullYear();
       var fromYearSelect = document.getElementById("fromYear");
@@ -123,6 +123,26 @@
         toOption.textContent = (currentYear + i) + "학년도";
         toYearSelect.appendChild(toOption);
       }
+
+ // 이벤트 핸들러 추가
+      document.querySelector('form[name="breakForm"]').addEventListener('submit', function(event) {
+        // 시작 년도와 끝나는 년도 가져오기
+        var fromYear = parseInt(document.getElementById("fromYear").value);
+        var toYear = parseInt(document.getElementById("toYear").value);
+        var fromSemester = parseInt(document.getElementById("fromSemester").value);
+        var toSemester = parseInt(document.getElementById("toSemester").value);
+
+        // 시작 년도가 끝나는 년도보다 클 경우에만 데이터를 제출
+        if (fromYear < toYear || (fromYear === toYear && fromSemester <= toSemester)) {
+          // 유효한 경우에만 submit
+          return true;
+        } else {
+          // 비유효한 경우에는 submit을 막고 경고 메시지를 표시
+          alert("시작 학기는 종료 학기보다 빠를 수 없습니다.");
+          event.preventDefault(); // submit 방지
+          return false;
+        }
+      });
     });
   </script>
 </th:block>

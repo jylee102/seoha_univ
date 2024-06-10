@@ -4,6 +4,7 @@
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css}">
     <style>
         .fieldError {
           color: #bd2130;
@@ -28,13 +29,13 @@
                         <input type="hidden" name="memberId" th:value="${#authentication.principal.username}" />
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label th:for="start" class="text-black">시작일</label>
-                                <input type="date" class="form-control" id="start" th:field="*{start}"/>
+                                <label for="startDate">시작일</label>
+                                <input type="text" class="form-control" id="startDate" th:field="*{start}" style="background-color:white;"/>
                                 <p th:if="${#fields.hasErrors('start')}" th:errors="*{start}" class="fieldError"></p>
                             </div>
                             <div class="col-md-6">
-                                <label th:for="end" class="text-black">종료일</label>
-                                <input type="date" class="form-control" id="end" th:field="*{end}"/>
+                                <label>종료일</label>
+                                <input type="text" class="form-control" id="endDate" th:field="*{end}" style="background-color:white;"/>
                                 <p th:if="${#fields.hasErrors('end')}" th:errors="*{end}" class="fieldError"></p>
                             </div>
                         </div>
@@ -62,10 +63,18 @@
 </div>
 
 <th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/l10n/ko.js"></script> // 한국어
     <script th:inline="javascript">
         //에러메시지 출력
         var errorMessage = [[${errorMessage}]];
         if(errorMessage != null) alert(errorMessage);
+
+        flatpickr("#startDate", {
+            plugins: [new rangePlugin({ input: "#endDate" })],
+            locale: "ko"
+        });
     </script>
 </th:block>
 </html>
