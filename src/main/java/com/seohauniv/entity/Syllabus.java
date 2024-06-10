@@ -3,6 +3,7 @@ package com.seohauniv.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seohauniv.constant.CourseType;
 import com.seohauniv.constant.ProcedureStatus;
+import com.seohauniv.dto.SyllabusFormDto;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -58,6 +59,11 @@ public class Syllabus {
     // CourseType의 설명을 얻는 메소드
     public String getCourseTypeDescription() {
         return this.courseType.getDescription();
+    }
+
+    public String getCourseTimeDescription() {
+        SyllabusFormDto syllabusFormDto = SyllabusFormDto.of(this);
+        return syllabusFormDto.getCourseTimesDescription();
     }
 
     @Override

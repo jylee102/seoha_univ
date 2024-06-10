@@ -95,15 +95,15 @@
                             <th style="min-width: 86px;">신청</th>
                         </tr>
                         <tr th:each="courses, status: ${courses.getContent()}">
-                            <td id="courseId" th:text="${courses.id}"></td>
+                            <td th:text="${courses.id}"></td>
                             <td th:text="${courses.syllabus.courseName}"></td>
                             <td th:text="${courses.syllabus.courseTypeDescription}"></td>
                             <td th:text="${courses.professorName}"></td>
-                            <td th:text="${courses.courseTimeDescription}"></td>
+                            <td th:utext="${courses.courseTimeDescription}"></td>
                             <td th:text="${courses.room.buildingName} + ' ' + ${courses.room.roomNo} + '호'"></td>
                             <td th:text="${courses.restSeat} + '/' + ${courses.syllabus.capacity}"></td>
                             <td>
-                                <button class="btn btn-seoha" type="button" onclick="beforeSubmit()">신청</button>
+                                <button class="btn btn-seoha" type="button" th:onclick="beforeSubmit([[${courses.id}]])">신청</button>
                             </td>
                         </tr>
                     </table>
@@ -151,7 +151,6 @@
                 } else {
                     inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색하세요.');
                 }
-                console.log('updatePlaceholder called, window.innerWidth:', window.innerWidth, 'placeholder:', inputSearch.getAttribute('placeholder'));
             }
 
             // 초기 로드 시 실행
@@ -176,6 +175,10 @@
             }
         });
 
+        function clearSearch() {
+            document.getElementById('searchQuery').value = '';
+        }
+
         function page(page) {
             // 입력한 값을 전부 가지고 온다.
             var searchCourseType = $("#searchCourseType").val();
@@ -196,15 +199,26 @@
             page(lastPage);
         }
 
-        function clearSearch() {
-            document.getElementById('searchQuery').value = '';
+        var courses = [[${courses}]];
+        var courseSearchDto = [[${courseSearchDto}]];
+        if (courseSearchDto.searchCourseType == null) courseSearchDto.searchCourseType = '';
+
+        function goLeft() {
+            if (!courses.first) {
+                location.href = '/students/enroll/' + (courses.number - 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
+            }
+        }
+
+        function goRight() {
+            if (!courses.last) {
+                location.href = '/students/enroll/' + (courses.number + 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
+            }
         }
 
         var token = $("meta[name='_csrf']").attr("content");
         var header = $("meta[name='_csrf_header']").attr("content");
 
-        function beforeSubmit() {
-            var courseId = $('#courseId').text();
+        function beforeSubmit(courseId) {
 
             $.ajax({
                 url: "/student/enrollCourse/" + courseId,
@@ -221,22 +235,6 @@
                      alert(jqXHR.responseText);
                 }
             });
-        }
-
-        var courses = [[${courses}]];
-        var courseSearchDto = [[${courseSearchDto}]];
-        if (courseSearchDto.searchCourseType == null) courseSearchDto.searchCourseType = '';
-
-        function goLeft() {
-            if (!courses.first) {
-                location.href = '/students/enroll/' + (courses.number - 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
-            }
-        }
-
-        function goRight() {
-            if (!courses.last) {
-                location.href = '/students/enroll/' + (courses.number + 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
-            }
         }
     </script>
 </th:block>

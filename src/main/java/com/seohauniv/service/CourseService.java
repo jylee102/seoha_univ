@@ -40,9 +40,14 @@ public class CourseService {
         return courseRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
-    public void updateRestSeat(Course course) {
+    public void deleteRestSeat(Course course) {
         course.setRestSeat(course.getRestSeat() - 1);
     }
+
+    public void updateRestSeat(Course course) {
+        course.setRestSeat(course.getRestSeat() + 1);
+    }
+
     @Transactional(readOnly = true)
     public List<Course> myCourse(String memberId){
         return courseRepository.getCourseById(memberId);
