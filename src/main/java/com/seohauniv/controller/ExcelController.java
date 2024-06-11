@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 public class ExcelController {
     private final ExcelService excelService;
-
     private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/staff/upload/members")
@@ -37,6 +37,26 @@ public class ExcelController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("구성원 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/professor/upload/syllabus")
+    public @ResponseBody ResponseEntity uploadSyllabusFile(@RequestParam("file") MultipartFile file, Principal principal) {
+
+        try {
+            String isNotValid = excelService.readSyllabusFile(file, messagingTemplate, principal.getName());
+
+            if (isNotValid != null) { // 유효성 검사를 넘어가지 못함
+                return new ResponseEntity(isNotValid, HttpStatus.BAD_REQUEST);
+            } else {
+                return new ResponseEntity("강의계획서 등록에 성공했습니다.", HttpStatus.OK);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity("파일 접근에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("강의계획서 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 }

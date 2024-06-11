@@ -70,13 +70,17 @@
     </style>
 </th:block>
 
-<main layout:fragment="content">
+<main layout:fragment="content" id="drop_zone">
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1>강의 계획서</h1>
             <div class="split--div"></div>
 
-            <form name="syllabusForm">
+            <div id="progressWrapper" style="display: none;">
+                <div id="progressBar" style="width: 0; height: 30px; background-color: blue;"></div>
+            </div>
+
+            <form name="syllabusForm" id="syllabusForm">
                 <div class="selections" style="display: flex; justify-content: flex-end; padding: 0 1rem 1rem 0;">
                     <select name="year" id="yearSelect"></select>
                     <select name="semester">
@@ -205,94 +209,159 @@
     </div>
 </main>
 
-<th:block layout:fragment="script">
+<<th:block layout:fragment="script">
     <script th:inline="javascript">
-                document.querySelector('.addWeeklyPlan').addEventListener('click', function() {
-                    var weeklyPlan = document.getElementById('weeklyPlan');
-                    var isCollapsed = weeklyPlan.classList.contains('collapse');
-                    var icon = document.querySelector('.weekly-icon i');
+        var dropZone = document.getElementById('drop_zone');
 
-                    weeklyPlan.classList.toggle('collapse', !isCollapsed);
-                    icon.className = isCollapsed ? 'mdi mdi-minus' : 'mdi mdi-plus';
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '#cbcbcb';
+            dropZone.querySelectorAll('*').forEach(function(child) {
+                child.style.backgroundColor = '#cbcbcb';
+            });
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '';
+            dropZone.querySelectorAll('*').forEach(function(child) {
+                child.style.backgroundColor = '';
+            });
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            $('#syllabusForm').hide();
+            dropZone.style.backgroundColor = '';
+            dropZone.querySelectorAll('*').forEach(function(child) {
+                child.style.backgroundColor = '';
+            });
+
+            var files = e.dataTransfer.files;
+            if (files.length > 0) {
+                var formData = new FormData();
+                formData.append('file', files[0]);
+
+                $.ajax({
+                    url: '/professor/upload/syllabus',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(header, token);
+                    },
+                    xhr: function() {
+                        const xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function(evt) {
+                            if (evt.lengthComputable) {
+                                const percentComplete = evt.loaded / evt.total * 100;
+                                $("#progressWrapper").show();
+                                $("#progressBar").width(percentComplete + "%");
+                                $("#status").html("Uploading: " + Math.round(percentComplete) + "%");
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    success: function(response) {
+                        $("#status").html("Upload Complete");
+                        $('#syllabusForm').show();
+                        $("#progressWrapper").hide();
+                        alert(response);
+                    },
+                    error: function(xhr, status, error) {
+                        $("#status").html("Upload Failed");
+                        $('#syllabusForm').show();
+                        $("#progressWrapper").hide();
+                        alert(xhr.responseText);
+                    }
                 });
+            }
+        });
 
-                var lineHeight = parseInt($('.auto-resize').css('line-height'), 10);
+        // addWeeklyPlan 클릭 이벤트 리스너 등록
+        document.querySelector('.addWeeklyPlan').addEventListener('click', function() {
+            var weeklyPlan = document.getElementById('weeklyPlan');
+            var isCollapsed = weeklyPlan.classList.contains('collapse');
+            var icon = document.querySelector('.weekly-icon i');
 
-                // 입력 이벤트를 감지하여 높이를 조정하는 함수
-                function adjustHeight() {
-                    this.style.height = 'auto';
-                    this.style.height = this.scrollHeight + 'px';
+            weeklyPlan.classList.toggle('collapse', !isCollapsed);
+            icon.className = isCollapsed ? 'mdi mdi-minus' : 'mdi mdi-plus';
+        });
+
+        // auto-resize 클래스를 가진 textarea의 높이 자동 조절
+        var lineHeight = parseInt($('.auto-resize').css('line-height'), 10);
+        function adjustHeight() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        }
+        $('textarea.auto-resize').on('input', adjustHeight);
+        $('textarea.auto-resize').each(adjustHeight);
+
+        // 현재 연도 구하기 및 select 요소에 옵션 추가
+        var currentYear = new Date().getFullYear();
+        var selectElement = document.getElementById("yearSelect");
+        for (var i = 0; i < 3; i++) {
+            var option = document.createElement("option");
+            option.value = currentYear + i;
+            option.textContent = (currentYear + i) + "학년도";
+            selectElement.appendChild(option);
+        }
+
+        // CSRF 토큰 설정
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
+        // 폼 전송 전 데이터 처리
+        function beforeSubmit() {
+            const f = document.syllabusForm;
+            var courseTimes = [];
+            $('input[type="checkbox"]:checked').each(function() {
+                var day = $(this).val().trim();
+                var startTime = $(this).closest('tr').find('.input--box[type="time"]').eq(0).val();
+                var endTime = $(this).closest('tr').find('.input--box[type="time"]').eq(1).val();
+                courseTimes.push({ day: day, startTime: startTime, endTime: endTime });
+            });
+
+            var weeklyPlans = [];
+            $('#weeklyPlan tr:not(:first)').each(function() {
+                var week = parseInt($(this).find('td:first').text().replace('주차', ''));
+                var content = $(this).find('td:last textarea').val();
+                weeklyPlans.push({ week: week, content: content });
+            });
+
+            var paramData = {
+                courseName: f.courseName.value,
+                courseType: f.type.value ? f.type.value : null,
+                credit: f.credit.value,
+                overview: f.overview.value,
+                objective: f.objective.value,
+                textbook: f.textbook.value,
+                capacity: f.capacity.value,
+                year: f.year.value,
+                semester: f.semester.value,
+                courseTimes: courseTimes,
+                weeklyPlans: weeklyPlans
+            };
+
+            // AJAX를 통한 데이터 전송
+            $.ajax({
+                url: '/professor/applyForSyllabus',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(paramData),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function(response) {
+                    alert("강의 계획서가 등록되었습니다.");
+                    location.reload();
+                },
+                error: function(jqXHR, status, error) {
+                    alert(jqXHR.responseText);
                 }
-
-                $('textarea.auto-resize').on('input', adjustHeight);
-                $('textarea.auto-resize').each(adjustHeight); // 페이지 로드 시 각 textarea의 높이를 초기화
-
-                // 현재 연도 구하기
-                var currentYear = new Date().getFullYear();
-                var selectElement = document.getElementById("yearSelect");
-
-                // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
-                for (var i = 0; i < 3; i++) {
-                    var option = document.createElement("option");
-                    option.value = currentYear + i;
-                    option.textContent = (currentYear + i) + "학년도";
-                    selectElement.appendChild(option);
-                }
-
-                var token = $("meta[name='_csrf']").attr("content");
-                var header = $("meta[name='_csrf_header']").attr("content");
-
-                function beforeSubmit() {
-                    const f = document.syllabusForm;
-
-                    var courseTimes = [];
-                    $('input[type="checkbox"]:checked').each(function() {
-                        var day = $(this).val().trim();
-                        var startTime = $(this).closest('tr').find('.input--box[type="time"]').eq(0).val();
-                        var endTime = $(this).closest('tr').find('.input--box[type="time"]').eq(1).val();
-                        courseTimes.push({ day: day, startTime: startTime, endTime: endTime });
-                    });
-
-                    var weeklyPlans = [];
-
-                    $('#weeklyPlan tr:not(:first)').each(function() {
-                        var week = parseInt($(this).find('td:first').text().replace('주차', ''));
-                        var content = $(this).find('td:last textarea').val();
-                        weeklyPlans.push({ week: week, content: content });
-                    });
-
-                    var paramData = {
-                        courseName : f.courseName.value,
-                        courseType : f.type.value ? f.type.value : null,
-                        credit: f.credit.value,
-                        overview: f.overview.value,
-                        objective: f.objective.value,
-                        textbook: f.textbook.value,
-                        capacity: f.capacity.value,
-                        year: f.year.value,
-                        semester: f.semester.value,
-
-                        courseTimes: courseTimes,
-                        weeklyPlans: weeklyPlans
-                    };
-
-                    $.ajax({
-                        url: '/professor/applyForSyllabus',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(paramData),
-                        beforeSend : function(xhr) {
-                            xhr.setRequestHeader(header, token);
-                        },
-                        success: function(response) {
-                            alert("강의 계획서가 등록되었습니다.");
-                            location.reload();
-                        },
-                        error: function(jqXHR, status, error) {
-                            alert(jqXHR.responseText);
-                        }
-                    });
-                }
+            });
+        }
     </script>
 </th:block>
 </html>

@@ -1,18 +1,17 @@
 package com.seohauniv.service;
 
+import com.seohauniv.constant.CourseType;
+import com.seohauniv.constant.Day;
+import com.seohauniv.dto.CourseTimeDto;
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.dto.ProgressUpdate;
-import com.seohauniv.entity.Dept;
-import com.seohauniv.entity.Professor;
-import com.seohauniv.entity.Staff;
-import com.seohauniv.entity.Student;
+import com.seohauniv.dto.SyllabusFormDto;
+import com.seohauniv.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -21,10 +20,9 @@ import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +31,11 @@ public class ExcelService {
     private final MemberService memberService;
     private final Validator memberFormDtoValidator;
 
+    private final ProfessorService professorService;
+    private final SyllabusService syllabusService;
+    private final Validator syllabusFormDtoValidator;
+
+    // 구성원 파일 읽기
     public String readExcelFile(MultipartFile file, SimpMessagingTemplate messagingTemplate) throws IOException {
         List<Staff> staffs = new ArrayList<>();
         List<Student> students = new ArrayList<>();
@@ -117,6 +120,7 @@ public class ExcelService {
         }
     }
 
+    // 구성원 등록
     private void processDatabaseUpdates(List<Staff> staffs, List<Student> students, List<Professor> professors, SimpMessagingTemplate messagingTemplate) {
         // 학생 등록
         for (int i = 0; i < students.size(); i++) {
@@ -145,4 +149,92 @@ public class ExcelService {
             messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
         }
     }
+
+    // 강의 계획서 파일 읽기
+    public String readSyllabusFile(MultipartFile file, SimpMessagingTemplate messagingTemplate, String professorId) throws IOException {
+        Professor professor = professorService.findById(professorId);
+
+        List<SyllabusFormDto> syllabusFormDtoList = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+
+        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+            Sheet sheet = workbook.getSheetAt(0);
+
+            int dataRows = 0; // 데이터가 있는 행의 개수
+
+            // 데이터가 있는 행의 개수를 세는 반복문
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row != null && row.getCell(9) != null) {
+                    dataRows++; // 데이터가 있는 행이므로 개수를 증가시킴
+                }
+            }
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) { // 첫 번째 행은 헤더이므로 건너뜀
+                SyllabusFormDto syllabusFormDto = new SyllabusFormDto();
+
+                Row row = sheet.getRow(i);
+                if (row != null) {
+                    syllabusFormDto.setYear((int) row.getCell(0).getNumericCellValue());
+                    syllabusFormDto.setSemester((int) row.getCell(1).getNumericCellValue());
+                    syllabusFormDto.setCourseName(row.getCell(2).getStringCellValue());
+                    syllabusFormDto.setCourseType(CourseType.valueOf(row.getCell(3).getStringCellValue()));
+                    syllabusFormDto.setCredit((int) row.getCell(4).getNumericCellValue());
+                    syllabusFormDto.setCapacity((int) row.getCell(5).getNumericCellValue());
+                    syllabusFormDto.setOverview(row.getCell(6).getStringCellValue());
+                    syllabusFormDto.setObjective(row.getCell(7).getStringCellValue());
+                    syllabusFormDto.setTextbook(row.getCell(8).getStringCellValue());
+
+                    List<CourseTimeDto> courseTimes = new ArrayList<>();
+                    for (int j = 9; j < row.getLastCellNum(); j += 3) {
+                        if (row.getCell(j).getStringCellValue().isEmpty()) break;
+
+                        CourseTimeDto courseTimeDto = new CourseTimeDto();
+                        courseTimeDto.setDay(Day.valueOf(row.getCell(j).getStringCellValue()));
+                        courseTimeDto.setStartTime(LocalTime.parse(row.getCell(j + 1).getStringCellValue()));
+                        courseTimeDto.setEndTime(LocalTime.parse(row.getCell(j + 2).getStringCellValue()));
+                        courseTimes.add(courseTimeDto);
+                    }
+                    syllabusFormDto.setCourseTimes(courseTimes);
+
+                    // 유효성 검사 수행
+                    Errors validationErrors = new BeanPropertyBindingResult(syllabusFormDto, "syllabusFormDto");
+                    syllabusFormDtoValidator.validate(syllabusFormDto, validationErrors);
+
+                    if (validationErrors.hasErrors()) {
+                        StringBuilder errorMessage = new StringBuilder((i + 1) + "번째 행: ");
+                        validationErrors.getAllErrors().forEach(error -> errorMessage.append(error.getDefaultMessage()));
+                        errors.add(errorMessage.toString());
+                    } else {
+                        syllabusFormDtoList.add(syllabusFormDto);
+                    }
+                }
+
+                // 파일 읽는 것에 대한 진행 상황
+                int percentComplete = (int) ((i / (double) dataRows) * 100);
+                String message = "진행상황: " + (i + 1) + " / " + (dataRows + 1);
+                messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            return errors.toString().replaceAll(",", "\n");
+        } else {
+            processDatabaseUpdates(syllabusFormDtoList, professor, messagingTemplate);
+            return null;
+        }
+    }
+
+    // 강의 계획서 등록
+    private void processDatabaseUpdates(List<SyllabusFormDto> syllabusFormDtoList, Professor professor, SimpMessagingTemplate messagingTemplate) {
+        // 강의계획서 등록
+        for (int i = 0; i < syllabusFormDtoList.size(); i++) {
+            syllabusService.create(syllabusFormDtoList.get(i), professor);
+
+            int percentComplete = (int) (((i + 1) / (double) syllabusFormDtoList.size()) * 100);
+            String message = "강의계획서 등록 중: " + (i + 1) + " / " + syllabusFormDtoList.size();
+            messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
+        }
+    }
+
 }
