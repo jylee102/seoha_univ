@@ -35,7 +35,7 @@ public class ProfessorService {
     }
 
     @Transactional(readOnly = true)
-    public Enroll findStudentsByCourseIdAnd(String courseId,Long studentId) {
-        return enrollRepository.findStudentsByCourseIdAnd(courseId,studentId);
+    public Enroll findStudentsByCourseIdAndStudentId(String courseId,String studentId) {
+        return enrollRepository.findStudentsByCourseIdAndStudentId(courseId,studentId);
     }
 }

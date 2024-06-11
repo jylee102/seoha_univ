@@ -19,7 +19,7 @@ public interface EnrollRepository extends JpaRepository<Enroll, Long> {
     Long findStudentsByCourseId(@Param("courseId") String courseId);
 
     @Query("SELECT e FROM Enroll e WHERE e.course.id = :courseId AND e.student.id= :studentId")
-    Enroll findStudentsByCourseIdAnd(@Param("courseId") String courseId,@Param("studentId") Long studentId);
+    Enroll findStudentsByCourseIdAndStudentId(@Param("courseId") String courseId,@Param("studentId") String studentId);
 
 
     //현재 로그인한 학생의 수강 신청내역을 페이징 조건에 맞춰서 조회

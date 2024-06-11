@@ -26,4 +26,8 @@ public class Evaluation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enroll_id")
     private Enroll enroll;
+
+    public void calcConvertedScore(){
+        this.convertedScore = (0.2F*homework)+(0.3F*midExam)+(0.5F*finalExam);
+    }
 }

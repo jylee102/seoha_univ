@@ -1,9 +1,12 @@
 package com.seohauniv.controller;
 
+import com.seohauniv.dto.EvaluationFormDto;
 import com.seohauniv.dto.MyCourseSearchDto;
 import com.seohauniv.entity.Course;
 import com.seohauniv.entity.Enroll;
+import com.seohauniv.entity.Evaluation;
 import com.seohauniv.service.CourseService;
+import com.seohauniv.service.EvaluationService;
 import com.seohauniv.service.ProfessorService;
 import org.springframework.data.domain.Page;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
 import java.util.List;
@@ -25,6 +29,7 @@ import java.util.Optional;
 public class ProfessorController {
 private final CourseService courseService;
 private final ProfessorService professorService;
+private final EvaluationService evaluationService;
     @GetMapping(value = {"professors/myCourse","/professors/myCourse/{page}"})
     public String myCourse(@ModelAttribute MyCourseSearchDto myCourseSearchDto, Model model, Principal principal, @PathVariable("page") Optional<Integer> page){
         int searchYear = myCourseSearchDto.getSearchYear() != 0 ? myCourseSearchDto.getSearchYear() : -1;
@@ -54,9 +59,27 @@ private final ProfessorService professorService;
     }
 
     @GetMapping(value = "professors/evaluation/{courseId}/{studentId}")
-    public String evaluation(Model model, @PathVariable("courseId") String courseId,@PathVariable("studentId")Long studentId){
-        Enroll enroll = professorService.findStudentsByCourseIdAnd(courseId,studentId);
+    public String evaluation(Model model, @PathVariable("courseId") String courseId,@PathVariable("studentId")String studentId){
+        Enroll enroll = professorService.findStudentsByCourseIdAndStudentId(courseId,studentId);
         model.addAttribute("enroll",enroll);
+        model.addAttribute("evaluationFormDto",new EvaluationFormDto());
         return "professor/evaluation";
+    }
+    @PostMapping(value = "professors/evaluation/{courseId}/{studentId}")
+    public String saveEvaluation(EvaluationFormDto evaluationFormDto,Model model,@PathVariable("studentId")String studentId){
+        try {
+            List<Evaluation> evaluations = evaluationService.getEvaluationsByStudentId(studentId);
+            if(!evaluations.isEmpty()){
+                model.addAttribute("errorMessage","이미 기입된 기록이 있습니다.");
+                return "redirect:/professors/myCourse";
+            }
+            evaluationService.saveEvaluation(evaluationFormDto);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            model.addAttribute("errorMessage","오류가 발생했습니다.");
+            return "professor/evaluation";
+        }
+        return "redirect:/professors/myCourse";
     }
 }
