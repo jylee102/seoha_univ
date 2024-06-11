@@ -3,12 +3,15 @@ package com.seohauniv.controller;
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.dto.MemberSearchDto;
 import com.seohauniv.dto.NoticeSearchDto;
+import com.seohauniv.dto.ScheduleFormDto;
 import com.seohauniv.entity.Dept;
 import com.seohauniv.entity.Member;
 import com.seohauniv.entity.Notice;
+import com.seohauniv.entity.Schedule;
 import com.seohauniv.service.DeptService;
 import com.seohauniv.service.MemberService;
 import com.seohauniv.service.NoticeService;
+import com.seohauniv.service.ScheduleService;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,14 +35,21 @@ public class MainController {
     private final DeptService deptService;
     private final MemberService memberService;
     private final NoticeService noticeService;
+    private final ScheduleService scheduleService;
 
     @GetMapping(value = "/")
     public String main(Model model) {
         Pageable pageable = PageRequest.of(0, 5);
-
         Page<Notice> notices = noticeService.getAdminNoticePage(new NoticeSearchDto("all", "title", ""), pageable);
-        System.out.println(notices);
+        List<Schedule> schedules = scheduleService.getAdminSchedule(new ScheduleFormDto());
+
         model.addAttribute("notices", notices);
+        if (schedules.size() > 5) {
+            model.addAttribute("schedules", schedules.subList(0, 5));
+        } else {
+            model.addAttribute("schedules", schedules);
+        }
+
         return "index";
     }
 

@@ -20,7 +20,7 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "longtext")
     private String content;
 
     @Column(nullable = false)

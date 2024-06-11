@@ -50,6 +50,10 @@ public class ScheduleController {
     public String scheduleManage (ScheduleFormDto scheduleFormDto, Model model){
         List<Schedule> schedules = scheduleService.getAdminSchedule(scheduleFormDto);
 
+
+        if (schedules.isEmpty()){
+            return "schedule/scheduleList";
+        }
         Map<String, List<Schedule>> map = new LinkedHashMap<>();
         for (Schedule schedule : schedules) {
             String month = schedule.getStart().getMonthValue() + "월";
@@ -88,7 +92,10 @@ public class ScheduleController {
     @PostMapping(value = "/schedule/rewrite/{scheduleId}")
     public String scheduleUpdate(@Valid ScheduleFormDto scheduleFormDto, BindingResult bindingResult, Model model,
                                @PathVariable("scheduleId") Long scheduleId){
-        if (bindingResult.hasErrors()) return "schedule/list";
+        if (bindingResult.hasErrors()){
+            model.addAttribute("errorMessage", "입력하지 않은 내용이 있습니다.");
+            return "schedule/scheduleRewrite";
+        }
 
         ScheduleFormDto getScheduleFormDto = scheduleService.updateScheduleDtl(scheduleId);
 

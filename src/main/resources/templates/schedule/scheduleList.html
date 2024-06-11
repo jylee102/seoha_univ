@@ -66,11 +66,15 @@
                             <td th:text="${entry.key}" th:rowspan="${entry.value.size}"
                                 style="text-align:center; vertical-align:middle;"></td>
                             <td th:text="${#temporals.format(entry.value[0].start, 'MM-dd') + ' ~ ' + #temporals.format(entry.value[0].end, 'MM-dd')}" style="text-align:center;"></td>
-                            <td><a th:href="'/schedule/detail/'+${entry.value[0].id}">[[${entry.value[0].content}]]</a></td>
+                            <td th:if="${#authentication.principal.role == 'STAFF'}"><a th:href="'/schedule/detail/'+${entry.value[0].id}">[[${entry.value[0].content}]]</a></td>
+                            <td th:if="${#authentication.principal.role == 'STUDENT'}">[[${entry.value[0].content}]]</td>
+                            <td th:if="${#authentication.principal.role == 'PROFESSOR'}">[[${entry.value[0].content}]]</td>
                         </tr>
                         <tr th:each="schedule, status : ${entry.value}" th:if="${status.index > 0}">
                             <td th:text="${#temporals.format(schedule.start, 'MM-dd') + ' ~ ' + #temporals.format(schedule.end, 'MM-dd')}" style="text-align:center;"></td>
-                            <td><a th:href="'/schedule/detail/'+${schedule.id}">[[${schedule.content}]]</a></td>
+                            <td th:if="${#authentication.principal.role == 'STAFF'}"><a th:href="'/schedule/detail/'+${schedule.id}">[[${schedule.content}]]</a></td>
+                            <td th:if="${#authentication.principal.role == 'STUDENT'}">[[${schedule.content}]]</td>
+                            <td th:if="${#authentication.principal.role == 'PROFESSOR'}">[[${schedule.content}]]</td>
                         </tr>
                     </th:block>
                     </tbody>

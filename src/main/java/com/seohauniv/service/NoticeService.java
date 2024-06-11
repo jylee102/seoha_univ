@@ -4,10 +4,7 @@ import com.seohauniv.dto.NoticeFormDto;
 import com.seohauniv.dto.NoticeSearchDto;
 import com.seohauniv.entity.Notice;
 import com.seohauniv.repository.NoticeRepository;
-import com.seohauniv.repository.StaffRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class NoticeService {
     private final NoticeRepository noticeRepository;
-    private final StaffRepository staffRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
+
     public Long saveNotice(NoticeFormDto noticeFormDto) throws Exception{
         Notice notice = noticeFormDto.creatNotice();
         noticeRepository.save(notice);
@@ -50,11 +45,11 @@ public class NoticeService {
     }
 
     //상세페이지
-    public NoticeFormDto getNoticeDtl(Long noticeId) {
+    public Notice getNoticeDtl(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(EntityNotFoundException::new);
         notice.updateViews();
-        entityManager.flush();
-        return NoticeFormDto.of(notice);
+
+        return notice;
     }
 
     //공지 삭제

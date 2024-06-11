@@ -2,6 +2,7 @@ package com.seohauniv.controller;
 
 import com.seohauniv.dto.NoticeFormDto;
 import com.seohauniv.dto.NoticeSearchDto;
+import com.seohauniv.entity.Member;
 import com.seohauniv.entity.Notice;
 import com.seohauniv.service.NoticeService;
 import jakarta.validation.Valid;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.Optional;
 
 @Controller
@@ -52,6 +55,7 @@ public class NoticeController {
                                 @PathVariable("page") Optional<Integer> page, Model model){
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
 
+
         Page<Notice> notices = noticeService.getAdminNoticePage(noticeSearchDto, pageable);
         System.out.println(notices);
         model.addAttribute("notices", notices);
@@ -65,8 +69,8 @@ public class NoticeController {
     //상세페이지
     @GetMapping(value = "/notice/detail/{noticeId}")
     public String noticeDtl(Model model, @PathVariable("noticeId") Long noticeId){
-        NoticeFormDto noticeFormDto = noticeService.getNoticeDtl(noticeId);
-        model.addAttribute("notice",noticeFormDto);
+        Notice notice = noticeService.getNoticeDtl(noticeId);
+        model.addAttribute("notice",notice);
         return "notice/noticeDtl";
     }
 
@@ -92,7 +96,7 @@ public class NoticeController {
 
     //수정
     @PostMapping(value = "/notice/rewrite/{noticeId}")
-    public String noticeUpdate(@Valid NoticeFormDto noticeFormDto, BindingResult bindingResult, Model model,
+    public String noticeUpdate(@Valid NoticeFormDto noticeFormDto, BindingResult bindingResult, RedirectAttributes redirectAttributes,
                              @PathVariable("noticeId") Long noticeId){
         if (bindingResult.hasErrors()) return "notice/list";
 
@@ -102,9 +106,8 @@ public class NoticeController {
             noticeService.updateNotice(noticeFormDto);
         }catch (Exception e) {
             e.printStackTrace();
-            model.addAttribute("errorMessage", "수정 중에 에러가 발생했습니다.");
-            model.addAttribute("noticeFormDto", getNoticeFormDto);
-            return "notice/noticeDtl";
+            redirectAttributes.addFlashAttribute("errorMessage", "수정 중에 에러가 발생했습니다.");
+            return "redirect:/notice/rewrite/{noticeId}";
         }
         return "redirect:/notice/list";
     }

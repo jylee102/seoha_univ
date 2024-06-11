@@ -55,7 +55,7 @@
                         </tr>
                         <tr style="align-items:center;" th:if="${#authentication.principal.role == 'STUDENT'}">
                             <td>휴학내역</td>
-                            <td style="display:flex; justify-content:center; flex-direction:column">
+                            <td style="justify-content:center; flex-direction:column">
                                 <div th:each="break, status:${breaks}" style="margin-bottom:20px;">
                                     <!-- Button trigger modal -->
 
