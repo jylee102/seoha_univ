@@ -1,17 +1,12 @@
 package com.seohauniv.service;
 
-import com.seohauniv.dto.NoticeFormDto;
-import com.seohauniv.dto.NoticeSearchDto;
 import com.seohauniv.dto.ScheduleFormDto;
-import com.seohauniv.entity.Notice;
 import com.seohauniv.entity.Schedule;
 import com.seohauniv.entity.Staff;
 import com.seohauniv.repository.ScheduleRepository;
 import com.seohauniv.repository.StaffRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +31,7 @@ public class ScheduleService {
     //목록
     @Transactional(readOnly = true)
     public List<Schedule> getAdminSchedule(ScheduleFormDto scheduleFormDto) {
-        List<Schedule> scheduleList = scheduleRepository.getAdminSchedule(scheduleFormDto);
+        List<Schedule> scheduleList = scheduleRepository.findAllByOrderByStartAsc();
         return scheduleList;
     }
 

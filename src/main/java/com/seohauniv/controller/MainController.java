@@ -34,12 +34,7 @@ public class MainController {
     private final NoticeService noticeService;
 
     @GetMapping(value = "/")
-    public String main(HttpServletRequest request, Model model, Principal principal) {
-        // 로그인 되어 있지 않다면 로그인 페이지로
-        Object httpStatus = request.getAttribute("HttpStatus");
-        if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
-            return "/members/login";
-
+    public String main(Model model) {
         Pageable pageable = PageRequest.of(0, 5);
 
         Page<Notice> notices = noticeService.getAdminNoticePage(new NoticeSearchDto("all", "title", ""), pageable);
@@ -50,21 +45,13 @@ public class MainController {
 
     // 비밀번호 변경 페이지
     @GetMapping(value = "/changePw")
-    public String changePw(HttpServletRequest request) {
-        Object httpStatus = request.getAttribute("HttpStatus");
-        if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
-            return "/members/login";
-
+    public String changePw() {
         return "member/changePassword";
     }
 
     // 구성원 등록 페이지
     @GetMapping(value = "/staffs/regMember")
-    public String regMember(HttpServletRequest request, Model model) {
-        Object httpStatus = request.getAttribute("HttpStatus");
-        if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
-            return "/members/login";
-
+    public String regMember(Model model) {
         List<Dept> deptList = deptService.getAllDept();
 
         model.addAttribute("memberFormDto", new MemberFormDto());
@@ -94,11 +81,7 @@ public class MainController {
     }
 
     @GetMapping(value = "/professors/syllabus")
-    public String syllabus(HttpServletRequest request) {
-        Object httpStatus = request.getAttribute("HttpStatus");
-        if (httpStatus != null && (int) httpStatus == HttpServletResponse.SC_UNAUTHORIZED)
-            return "/members/login";
-
+    public String syllabus() {
         return "professor/syllabus";
     }
 

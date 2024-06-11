@@ -3,15 +3,11 @@ package com.seohauniv.service;
 import com.seohauniv.constant.ProcedureStatus;
 import com.seohauniv.dto.BreakFormDto;
 import com.seohauniv.entity.Break;
-import com.seohauniv.entity.Notice;
-import com.seohauniv.entity.Student;
 import com.seohauniv.repository.BreakRepository;
-import com.seohauniv.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 
@@ -31,7 +27,7 @@ public class BreakService {
 
     @Transactional(readOnly = true)
     public List<Break> getBreakInfo(String memberId){
-        List<Break> breakList = breakRepository.getBreakInfo(memberId);
+        List<Break> breakList = breakRepository.findByStudentId(memberId);
 
         return breakList;
     }

@@ -7,13 +7,9 @@ import com.seohauniv.repository.ProfessorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +23,11 @@ public class ProfessorService {
     }
     @Transactional(readOnly = true)
     public Page<Enroll> getMyCourseStudentList(String courseId, Pageable pageable) {
-        List<Enroll> enrolls = enrollRepository.findStudentsByCourseId(courseId, pageable);
-
-        Long totalCount = enrollRepository.findStudentsByCourseId(courseId);
-
-        return new PageImpl<>(enrolls, pageable, totalCount);
+        return enrollRepository.findByCourseId(courseId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Enroll findStudentsByCourseIdAndStudentId(String courseId,String studentId) {
-        return enrollRepository.findStudentsByCourseIdAndStudentId(courseId,studentId);
+        return enrollRepository.findByCourseIdAndStudentId(courseId,studentId);
     }
 }

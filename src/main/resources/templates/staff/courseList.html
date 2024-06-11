@@ -63,6 +63,9 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        var message = [[${message}]];
+        if (message != null) alert(message);
+
         let searchValue;
         let currentPage;
 

@@ -3,9 +3,9 @@ package com.seohauniv.controller;
 import com.seohauniv.dto.CourseFormDto;
 import com.seohauniv.dto.CourseEnrollDto;
 import com.seohauniv.dto.CourseSearchDto;
-import com.seohauniv.dto.SyllabusFormDto;
 import com.seohauniv.entity.Course;
 import com.seohauniv.service.CourseService;
+import com.seohauniv.service.EnrollService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CourseController {
     private final CourseService courseService;
+    private final EnrollService enrollService;
 
     @PostMapping("/staff/course/create")
     public String createCourse(@ModelAttribute @Valid CourseFormDto courseFormDto, BindingResult bindingResult,
@@ -54,7 +55,7 @@ public class CourseController {
             courseService.create(courseFormDto);
 
             redirectAttributes.addFlashAttribute("message", "해당 강의가 개설되었습니다.");
-            return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId(); // 리다이렉트하여 페이지를 리로드합니다.
+            return "redirect:/staffs/createCourse";
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("message", "강의 개설 도중 문제가 발생했습니다.");
@@ -78,7 +79,7 @@ public class CourseController {
         Map<String, Boolean> enrollStatus = new HashMap<>();
         for (CourseEnrollDto courseEnrollDto : coursesPage) {
             Course course = courseService.findById(courseEnrollDto.getId());
-            boolean isEnrolled = courseService.isAlreadyEnrolled(course, memberId);
+            boolean isEnrolled = enrollService.isAlreadyEnrolled(course, memberId);
             enrollStatus.put(course.getId(), isEnrolled);
         }
 

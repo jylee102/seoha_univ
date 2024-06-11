@@ -21,4 +21,10 @@ public class MemberContext extends User {
         this.name = member.getName();
         this.role = member.getRole().toString();
     }
+
+    // 사용자가 주어진 역할(role)을 가지고 있는지 확인하는 메소드
+    public boolean hasRole(String role) {
+        return getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_" + role));
+    }
 }

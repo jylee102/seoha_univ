@@ -2,13 +2,15 @@ package com.seohauniv.entity;
 
 import com.seohauniv.dto.NoticeFormDto;
 import jakarta.persistence.*;
-import lombok.Data;
-
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "notice")
-@Data
+@Getter
+@Setter
+@ToString
 public class Notice extends BaseEntity {
     @Id
     @Column(name = "notice_id")
@@ -23,12 +25,6 @@ public class Notice extends BaseEntity {
 
     @Column(nullable = false)
     private int views;
-
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Staff staff;
 
     public void updateNotice(NoticeFormDto noticeFormDto){
         this.title = noticeFormDto.getTitle();

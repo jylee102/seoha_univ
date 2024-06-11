@@ -6,21 +6,19 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "enroll")
+@Table(name = "message")
 @Getter
 @Setter
 @ToString
-public class Enroll {
+public class Message extends BaseEntity {
     @Id
-    @Column(name = "enroll_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Student student;
+    @JoinColumn(name = "send_to")
+    private Member sendTo; // 받는 사람
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    private String title; // 미리보기 내용
+    private String content; // 내용
 }

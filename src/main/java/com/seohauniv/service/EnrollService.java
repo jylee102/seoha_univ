@@ -2,11 +2,9 @@ package com.seohauniv.service;
 
 import com.seohauniv.entity.*;
 import com.seohauniv.repository.EnrollRepository;
-import com.seohauniv.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,11 +60,7 @@ public class EnrollService {
     // 신청한 강의 목록 가져오기
     @Transactional(readOnly = true)
     public Page<Enroll> getMyEnrollList(String memberId, Pageable pageable) {
-        List<Enroll> enrolls = enrollRepository.findEnrolls(memberId, pageable);
-
-        Long totalCount = enrollRepository.countEnroll(memberId);
-
-        return new PageImpl<>(enrolls, pageable, totalCount);
+        return enrollRepository.findByStudentId(memberId, pageable);
     }
 
     // 본인 확인(현재 로그인한 학생과 수강 신청한 사용자가 같은지 검사)
@@ -93,5 +87,10 @@ public class EnrollService {
         Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(EntityNotFoundException::new);
 
         enrollRepository.delete(enroll);
+    }
+
+    public boolean isAlreadyEnrolled(Course course, String id) {
+        List<Enroll> enrolls = enrollRepository.findByCourseAndStudentId(course, id);
+        return !enrolls.isEmpty();
     }
 }

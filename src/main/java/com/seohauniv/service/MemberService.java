@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -185,75 +186,61 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
+    @Transactional(readOnly = true)
+    public Page<?> getMemberListPage(MemberSearchDto memberSearchDto, Pageable pageable) {
+        switch (memberSearchDto.getTabValue()) {
+            case "STUDENT":
+                if (memberSearchDto.getSearchBy().equals("id")) {
+                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().isEmpty()) {
+                        return studentRepository.findByIdStartingWith(memberSearchDto.getSearchQuery(), pageable);
+                    } else {
+                        return studentRepository.findById(memberSearchDto.getSearchQuery(),
+                                pageable);
+                    }
+                } else if (memberSearchDto.getSearchBy().equals("name")) {
+                    return studentRepository.findByNameContaining(memberSearchDto.getSearchQuery(),
+                            pageable);
+                }
+            case "STAFF":
+                if (memberSearchDto.getSearchBy().equals("id")) {
+                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().isEmpty()) {
+                        return staffRepository.findByIdStartingWith(memberSearchDto.getSearchQuery(),
+                                pageable);
+                    } else {
+                        return staffRepository.findById(memberSearchDto.getSearchQuery(),
+                                pageable);
+                    }
+                } else if (memberSearchDto.getSearchBy().equals("name")) {
+                    return staffRepository.findByNameContaining(memberSearchDto.getSearchQuery(), pageable);
+                }
+            case "PROFESSOR":
+                if (memberSearchDto.getSearchBy().equals("id")) {
+                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().isEmpty()) {
+                        return professorRepository.findByIdStartingWith(memberSearchDto.getSearchQuery(), pageable);
+                    } else {
+                        return professorRepository.findById(memberSearchDto.getSearchQuery()
+                                , pageable);
+                    }
+                } else if (memberSearchDto.getSearchBy().equals("name")) {
+                    return professorRepository.findByNameContaining(memberSearchDto.getSearchQuery(),
+                            pageable);
+                }
+        }
+        return null;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         //해당 id 계정을 가진 사용자가 있는지 확인
-        Member member = memberRepository.getById(id);
-
-        if (member == null) { //사용자가 없다면
-            throw new UsernameNotFoundException(id);
-        }
+        Member member = getMember(id);
 
         if (member == null) { //사용자가 없다면
             throw new UsernameNotFoundException(id);
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getRole().toString()));
 
         return new MemberContext(member, authorities); //Member 객체를 상속받은 MemberContext을 넣어주면 스프링이 알아서 처리한다.
-    }
-
-    @Transactional(readOnly = true)
-    public Page<?> getMemberListPage(MemberSearchDto memberSearchDto, Pageable pageable) {
-        switch (memberSearchDto.getTabValue()) {
-            case "STUDENT":
-                if (memberSearchDto.getSearchBy().equals("id")) {
-                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Student> memberPage =
-                                studentRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
-                        return memberPage;
-                    } else {
-                        Page<Student> memberPage = studentRepository.getPageById(memberSearchDto.getSearchQuery(),
-                                pageable);
-                        return memberPage;
-                    }
-                } else if (memberSearchDto.getSearchBy().equals("name")) {
-                    Page<Student> memberPage = studentRepository.getPageByName(memberSearchDto.getSearchQuery(),
-                            pageable);
-                    return memberPage;
-                }
-            case "STAFF":
-                if (memberSearchDto.getSearchBy().equals("id")) {
-                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Staff> memberPage = staffRepository.getPageByRegYear(memberSearchDto.getSearchQuery(),
-                                pageable);
-                        return memberPage;
-                    } else {
-                        Page<Staff> memberPage = staffRepository.getPageById(memberSearchDto.getSearchQuery(),
-                                pageable);
-                        return memberPage;
-                    }
-                } else if (memberSearchDto.getSearchBy().equals("name")) {
-                    Page<Staff> memberPage = staffRepository.getPageByName(memberSearchDto.getSearchQuery(), pageable);
-                    return memberPage;
-                }
-            case "PROFESSOR":
-                if (memberSearchDto.getSearchBy().equals("id")) {
-                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Professor> memberPage =
-                                professorRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
-                        return memberPage;
-                    } else {
-                        Page<Professor> memberPage = professorRepository.getPageById(memberSearchDto.getSearchQuery()
-                                , pageable);
-                        return memberPage;
-                    }
-                } else if (memberSearchDto.getSearchBy().equals("name")) {
-                    Page<Professor> memberPage = professorRepository.getPageByName(memberSearchDto.getSearchQuery(),
-                            pageable);
-                    return memberPage;
-                }
-        }
-        return null;
     }
 }

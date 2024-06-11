@@ -61,7 +61,6 @@
                 <div class="col-md-12">
                         <form role="form" th:action="@{/staff/notice/write/new}" method="post" enctype="multipart/form-data"
                               name="noticeForm" th:object="${noticeFormDto}">
-                            <input type="hidden" name="memberId" th:value="${#authentication.principal.username}" />
                             <div class="form-group row">
                                 <div class="col-md-12">
                                     <label th:for="title" class="text-black">제목</label>

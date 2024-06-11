@@ -1,6 +1,5 @@
 package com.seohauniv.dto;
 
-import com.seohauniv.entity.Member;
 import com.seohauniv.entity.Notice;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -8,12 +7,10 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
 public class NoticeFormDto {
-    private String memberId;
 
     private Long id;
 

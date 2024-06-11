@@ -1,8 +1,6 @@
 package com.seohauniv.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
@@ -12,10 +10,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass //엔티티에서 부모클래스로 사용
 @Getter
 @Setter
-public class BaseEntity extends BaseTimeEntity{
+public abstract class BaseEntity extends BaseTimeEntity {
 
     @CreatedBy
-    @Column(updatable = false)
-    private String createdBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", updatable = false)
+    private Member createdBy;
 
 }

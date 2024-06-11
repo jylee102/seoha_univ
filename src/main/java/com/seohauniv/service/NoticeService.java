@@ -3,7 +3,6 @@ package com.seohauniv.service;
 import com.seohauniv.dto.NoticeFormDto;
 import com.seohauniv.dto.NoticeSearchDto;
 import com.seohauniv.entity.Notice;
-import com.seohauniv.entity.Staff;
 import com.seohauniv.repository.NoticeRepository;
 import com.seohauniv.repository.StaffRepository;
 import jakarta.persistence.EntityManager;
@@ -25,16 +24,13 @@ public class NoticeService {
     private EntityManager entityManager;
     public Long saveNotice(NoticeFormDto noticeFormDto) throws Exception{
         Notice notice = noticeFormDto.creatNotice();
-        Staff staff = staffRepository.findById(noticeFormDto.getMemberId()).orElseThrow(EntityNotFoundException::new);
-        notice.setStaff(staff);
         noticeRepository.save(notice);
         return notice.getId();
     }
 
     @Transactional(readOnly = true)
     public Page<Notice> getAdminNoticePage(NoticeSearchDto noticeSearchDto, Pageable pageable) {
-        Page<Notice> noticePage = noticeRepository.getAdminNoticePage(noticeSearchDto, pageable);
-        return noticePage;
+        return noticeRepository.getAdminNoticePage(noticeSearchDto, pageable);
     }
 
 
@@ -42,8 +38,7 @@ public class NoticeService {
     @Transactional(readOnly = true)
     public NoticeFormDto updateNoticeDtl(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(EntityNotFoundException::new);
-        NoticeFormDto noticeFormDto = NoticeFormDto.of(notice);
-        return noticeFormDto;
+        return NoticeFormDto.of(notice);
     }
 
     //수정하기
@@ -59,8 +54,7 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(EntityNotFoundException::new);
         notice.updateViews();
         entityManager.flush();
-        NoticeFormDto noticeFormDto = NoticeFormDto.of(notice);
-        return noticeFormDto;
+        return NoticeFormDto.of(notice);
     }
 
     //공지 삭제

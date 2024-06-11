@@ -87,9 +87,7 @@
 <th:block layout:fragment="script">
     <script th:inline="javascript">
 
-        console.log([[${schedules}]])
-
-        function deleteNotice(noticeId) {
+        function deleteSchedule(noticeId) {
          const deleteConf = confirm("삭제하시겠습니까?");
          if(!deleteConf) return; //취소버튼 누르면
 
@@ -97,7 +95,7 @@
          var header = $("meta[name='_csrf_header']").attr("content");
 
          //request URL
-         var url = "/notice/" + noticeId + "/delete";
+         var url = "/schedule/" + noticeId + "/delete";
 
 
          $.ajax({
@@ -111,7 +109,7 @@
             dataType : "json",
             cache : false,
             success : function(result, status) {
-               location.href = '/notice/list';
+               location.href = '/schedule/list';
             },
             error : function(jqXHR, status, error) {
                if(jqXHR.status == '401') {
