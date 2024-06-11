@@ -1,5 +1,6 @@
 package com.seohauniv.controller;
 
+import com.seohauniv.constant.Day;
 import com.seohauniv.dto.EvaluationFormDto;
 import com.seohauniv.dto.MyCourseSearchDto;
 import com.seohauniv.entity.Course;
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -52,7 +55,9 @@ private final EvaluationService evaluationService;
     public String myCourseStudent(Model model, @PathVariable("courseId") String courseId,@PathVariable("page") Optional<Integer> page) {
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
+        List<Evaluation> evaluations = evaluationService.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
         model.addAttribute("students", myCourseStudentList);
+        model.addAttribute("evaluations", evaluations);
         model.addAttribute("maxPage", 5);
 
         return "professor/myCourseStudent";
@@ -66,20 +71,32 @@ private final EvaluationService evaluationService;
         return "professor/evaluation";
     }
     @PostMapping(value = "professors/evaluation/{courseId}/{studentId}")
-    public String saveEvaluation(EvaluationFormDto evaluationFormDto,Model model,@PathVariable("studentId")String studentId){
+    public String saveEvaluation(EvaluationFormDto evaluationFormDto, RedirectAttributes redirectAttributes, @PathVariable("studentId")String studentId){
         try {
-            List<Evaluation> evaluations = evaluationService.getEvaluationsByStudentId(studentId);
+            List<Evaluation> evaluations = evaluationService.findByEnrollStudentId(studentId);
             if(!evaluations.isEmpty()){
-                model.addAttribute("errorMessage","이미 기입된 기록이 있습니다.");
+                redirectAttributes.addFlashAttribute("errorMessage","이미 기입된 기록이 있습니다.");
                 return "redirect:/professors/myCourse";
             }
             evaluationService.saveEvaluation(evaluationFormDto);
         }
         catch (Exception e){
             e.printStackTrace();
-            model.addAttribute("errorMessage","오류가 발생했습니다.");
+            redirectAttributes.addFlashAttribute("errorMessage","오류가 발생했습니다.");
             return "professor/evaluation";
         }
         return "redirect:/professors/myCourse";
+    }
+    @GetMapping(value = "/professors/checkAttendance")
+    public String checkAttendance(Model model,Principal principal){
+
+        model.addAttribute("mondayEvents", professorService.getCourseEventsByDay(Day.MON));
+        model.addAttribute("tuesdayEvents", professorService.getCourseEventsByDay(Day.TUE));
+        model.addAttribute("wednesdayEvents", professorService.getCourseEventsByDay(Day.WED));
+        model.addAttribute("thursdayEvents", professorService.getCourseEventsByDay(Day.THU));
+        model.addAttribute("fridayEvents", professorService.getCourseEventsByDay(Day.FRI));
+
+
+        return "professor/checkAttendance";
     }
 }

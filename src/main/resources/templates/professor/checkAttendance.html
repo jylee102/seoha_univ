@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Calendar</title>
+  <th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css' rel='stylesheet'/>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.print.css' rel='stylesheet' media='print'/>
+    <style>
+      @media screen and (min-width: 1024px) {
+          .input--box {
+              width: 70%;
+          }
+      }
+      ul {
+          padding-left: 0;
+      }
+      .btn {
+          height: 28px;
+          padding: 5px 10px;
+          font-size: 14px;
+          margin-bottom: 8px; /* 버튼 아래 여백 조절 */
+      }
+    </style>
+  </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+  <div class="container calendar-container">
+    <div id="calendar" style="max-width:900px; margin:40px auto;">
+
+    </div>
+  </div>
+</main>
+<th:block layout:fragment="script">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src='https://fullcalendar.io/releases/fullcalendar/3.9.0/lib/moment.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js'></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script th:inline="javascript">
+    var mondayEvents = /*[[ ${mondayEvents} ]]*/ [];
+    var tuesdayEvents = /*[[ ${tuesdayEvents} ]]*/ [];
+    var wednesdayEvents = /*[[ ${wednesdayEvents} ]]*/ [];
+    var thursdayEvents = /*[[ ${thursdayEvents} ]]*/ [];
+    var fridayEvents = /*[[ ${fridayEvents} ]]*/ [];
+
+    // 각 이벤트 배열에서 제목만 추출하여 새로운 배열 생성
+    var mondayEventTitles = mondayEvents.map(event => event.title);
+    var tuesdayEventTitles = tuesdayEvents.map(event => event.title);
+    var wednesdayEventTitles = wednesdayEvents.map(event => event.title);
+    var thursdayEventTitles = thursdayEvents.map(event => event.title);
+    var fridayEventTitles = fridayEvents.map(event => event.title);
+
+    var startDate = new Date('2024-03-02');
+    var endDate = new Date('2024-06-19');
+
+    $(document).ready(function(){
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: ''
+            },
+
+            dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+            monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+            titleFormat: 'YYYY년 MMMM',
+            eventSources: [
+                {
+                    url: '/professors/checkAttendance',
+                    method: 'GET',
+                    failure: function() {
+                        alert('출석 데이터를 불러오지 못했습니다.');
+                    },
+                    color: 'purple',
+                    textColor: 'white'
+                },
+
+                // 추가: 학기 기간 이벤트
+                {
+                    events: [
+                        {
+                            title: '1학기 시작',
+                            start: '2024-03-01', // 학기 시작일
+                            color: 'green'
+                        },
+                        {
+                            title: '1학기 종료',
+                            start: '2024-06-19', // 학기 종료일
+                            color: 'red'
+                        },
+                        // 각 요일의 강의 이벤트 추가
+
+                        // 월요일 강의 일정 추가
+                        ...mondayEvents.map(event => {
+                            return {
+                                title: event.title,
+                                start: event.start,
+                                dow: [1],
+                                end: event.end, // 학기 종료일로 설정
+                                color: 'blue' // 월요일 강의는 파란색으로 표시
+                            };
+                        }),
+                        // 화요일 강의 일정 추가
+                        ...tuesdayEvents.map(event => {
+                            return {
+                                title: event.title,
+                                start: event.start,
+                                dow: [2],
+                                end: event.end, // 학기 종료일로 설정
+                                color: 'green' // 화요일 강의는 초록색으로 표시
+                            };
+                        }),
+                        // 수요일 강의 일정 추가
+                        ...wednesdayEvents.map(event => {
+                            return {
+                                title: event.title,
+                                start: event.start,
+                                dow: [3],
+                                end: event.end, // 학기 종료일로 설정
+                                color: 'red' // 수요일 강의는 빨간색으로 표시
+                            };
+                        }),
+                        // 목요일 강의 일정 추가
+                        ...thursdayEvents.map(event => {
+                            return {
+                                title: event.title,
+                                start: event.start,
+                                dow: [4],
+                                end: event.end, // 학기 종료일로 설정
+                                color: 'orange' // 목요일 강의는 주황색으로 표시
+                            };
+                        }),
+                        // 금요일 강의 일정 추가
+                        ...fridayEvents.map(event => {
+                            return {
+                                title: event.title,
+                                start: event.start,
+                                dow: [5],
+                                end: event.end, // 학기 종료일로 설정
+                                color: 'purple' // 금요일 강의는 보라색으로 표시
+                            };
+                        })
+                    ]
+                }
+            ],
+             eventRender: function(event, element) {
+            console.log(event);
+        }
+
+        });
+    });
+  </script>
+</th:block>
+</body>
+</html>

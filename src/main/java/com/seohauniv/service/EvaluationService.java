@@ -23,7 +23,10 @@ public class EvaluationService {
     return evaluation.getId();
     }
     @Transactional(readOnly = true)
-    public List<Evaluation> getEvaluationsByStudentId(String studentId) {
-        return evaluationRepository.getEvaluationsByStudentId(studentId);
+    public List<Evaluation> findByEnrollStudentId(String studentId) {
+        return evaluationRepository.findByEnrollStudentId(studentId);
+    }
+    public List<Evaluation> findByCourseIdOrderByEnrollStudentIdAsc(String courseId){
+        return evaluationRepository.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
     }
 }

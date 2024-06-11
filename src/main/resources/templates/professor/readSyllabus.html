@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.css}">
+    <style>
+        @media screen and (min-width: 1024px) {
+            .input--box {
+                width: 70%;
+            }
+        }
+        ul{
+        padding-left: 0;
+        }
+        .btn {
+            height: 28px;
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-bottom: 8px; /* 버튼 아래 여백 조절 */
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content">
+    <th:block th:if="${not students.content.empty}">
+        <canvas id="pdfViewer"></canvas>
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+
+        function page(page) {
+            // 페이지 이동
+            location.href = "/professors/course/" + [[${students.content[0].course.id}]] + "/" + page;
+        }
+
+        function goToFirstPage() {
+            page(0);
+        }
+
+        function goToLastPage() {
+            var totalPages = [[${students.totalPages}]];
+            page(totalPages - 1);
+        }
+
+
+    </script>
+</th:block>
+
+</html>

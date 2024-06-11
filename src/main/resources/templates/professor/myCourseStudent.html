@@ -45,20 +45,48 @@
                 <th>환산점수</th>
                 <th>점수 기입</th>
             </tr>
-            </thead>
             <tbody>
-            <tr th:each="student : ${students.content}">
-                <td>[[${student.student.id}]]</td>
-                <td>[[${student.student.name}]]</td>
-                <td>[[${student.student.major.title}]]</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td><a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a></td>
-            </tr>
+            <th:block th:each="student : ${students.content}">
+                <tr>
+                    <td>[[${student.student.id}]]</td>
+                    <td>[[${student.student.name}]]</td>
+                    <td>[[${student.student.major.title}]]</td>
+                    <td>1</td> <!-- 결석 정보 등을 표시할 수 있는 필드 -->
+                    <td>1</td> <!-- 지각 정보 등을 표시할 수 있는 필드 -->
+                    <td>
+                        <th:block th:each="evaluation : ${evaluations}">
+                    <span th:if="${evaluation.enroll.student.id == student.student.id}">
+                        <span th:text="${evaluation.homework}"></span>
+                    </span>
+                        </th:block>
+                    </td>
+                    <td>
+                        <th:block th:each="evaluation : ${evaluations}">
+                    <span th:if="${evaluation.enroll.student.id == student.student.id}">
+                        <span th:text="${evaluation.midExam}"></span>
+                    </span>
+                        </th:block>
+                    </td>
+                    <td>
+                        <th:block th:each="evaluation : ${evaluations}">
+                    <span th:if="${evaluation.enroll.student.id == student.student.id}">
+                        <span th:text="${evaluation.finalExam}"></span>
+                    </span>
+                        </th:block>
+                    </td>
+                    <td>
+                        <th:block th:each="evaluation : ${evaluations}">
+                    <span th:if="${evaluation.enroll.student.id == student.student.id}">
+                        <span th:text="${evaluation.convertedScore}"></span>
+                    </span>
+                        </th:block>
+                    </td>
+                    <td>
+                        <a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a>
+                    </td>
+
+                </tr>
+            </th:block>
             </tbody>
         </table>
         <div class="pagination" th:with="start=${(students.number / maxPage) * maxPage + 1},
@@ -113,6 +141,8 @@
             var totalPages = [[${students.totalPages}]];
             page(totalPages - 1);
         }
+
+
     </script>
 </th:block>
 

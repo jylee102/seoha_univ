@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface EvaluationRepository extends JpaRepository<Evaluation,Long> {
-    @Query("SELECT e FROM Evaluation e WHERE e.enroll.student.id = :studentId")
-    List<Evaluation> getEvaluationsByStudentId(@Param("studentId") String studentId);
+    List<Evaluation> findByEnrollStudentId(String studentId);
+    List<Evaluation> findByCourseIdOrderByEnrollStudentIdAsc(String courseId);
 }
