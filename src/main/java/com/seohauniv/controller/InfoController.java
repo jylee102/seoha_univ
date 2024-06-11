@@ -27,7 +27,6 @@ public class InfoController {
     //내정보 페이지 보기
     @GetMapping(value = "/myInfo")
     public String InfoForm(Model model, Principal principal) {
-
         Member member = memberService.getMember(principal.getName());
         List<Break> breaks = breakService.getBreakInfo(principal.getName());
         switch (member.getRole().toString()) {

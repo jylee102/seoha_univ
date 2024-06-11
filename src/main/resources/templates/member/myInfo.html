@@ -67,8 +67,8 @@
                                     <div class="modal fade" th:id="'exampleModal' + ${break.id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <div class="modal-header" style="border:none;">
-                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">휴학신청 내역</h1>
+                                                <div class="modal-header" style="border:none; justify-content:center;">
+                                                    <h1 style="font-weight:600" id="exampleModalLabel">휴학신청 내역</h1>
                                                 </div>
                                                 <div class="modal-body">
                                                     <table class="table--container table">
@@ -86,11 +86,11 @@
                                                         </tr>
                                                         <tr>
                                                             <td>학년</td>
-                                                            <td th:text="${member.id}"></td>
+                                                            <td th:text="${break.studentGrade}"></td>
                                                         </tr>
                                                         <tr>
                                                             <td>학과</td>
-                                                            <td th:text="${member.name}"></td>
+                                                            <td th:text="${break.student.major.title}"></td>
                                                         </tr>
                                                         <tr>
                                                             <td>전화번호</td>
