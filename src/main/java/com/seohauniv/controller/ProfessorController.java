@@ -1,11 +1,10 @@
 package com.seohauniv.controller;
 
 import com.seohauniv.constant.Day;
+import com.seohauniv.dto.AttendanceWeekListDto;
 import com.seohauniv.dto.EvaluationFormDto;
 import com.seohauniv.dto.MyCourseSearchDto;
-import com.seohauniv.entity.Course;
-import com.seohauniv.entity.Enroll;
-import com.seohauniv.entity.Evaluation;
+import com.seohauniv.entity.*;
 import com.seohauniv.service.CourseService;
 import com.seohauniv.service.EvaluationService;
 import com.seohauniv.service.ProfessorService;
@@ -13,15 +12,14 @@ import org.springframework.data.domain.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -87,16 +85,57 @@ private final EvaluationService evaluationService;
         }
         return "redirect:/professors/myCourse";
     }
-    @GetMapping(value = "/professors/checkAttendance")
-    public String checkAttendance(Model model,Principal principal){
+    @GetMapping(value = {"professors/checkAttendance","/professors/checkAttendance/{page}"})
+    public String checkAttendance(@ModelAttribute MyCourseSearchDto myCourseSearchDto, Model model, Principal principal, @PathVariable("page") Optional<Integer> page){
+        int searchYear = myCourseSearchDto.getSearchYear() != 0 ? myCourseSearchDto.getSearchYear() : -1;
+        int searchSemester = myCourseSearchDto.getSearchSemester() != 0 ? myCourseSearchDto.getSearchSemester() : -1;
 
-        model.addAttribute("mondayEvents", professorService.getCourseEventsByDay(Day.MON));
-        model.addAttribute("tuesdayEvents", professorService.getCourseEventsByDay(Day.TUE));
-        model.addAttribute("wednesdayEvents", professorService.getCourseEventsByDay(Day.WED));
-        model.addAttribute("thursdayEvents", professorService.getCourseEventsByDay(Day.THU));
-        model.addAttribute("fridayEvents", professorService.getCourseEventsByDay(Day.FRI));
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
 
-
+        Page<Course> myCourses;
+        if(searchYear == -1 && searchSemester ==-1){
+            myCourses =courseService.myCourse(principal.getName(),pageable);
+        } else {
+            myCourses = courseService.myCourseSearch(principal.getName(), myCourseSearchDto, pageable);
+        }
+        model.addAttribute("myCourses",myCourses);
+        model.addAttribute("myCourseSearchDto", myCourseSearchDto);
+        model.addAttribute("maxPage", 5);
         return "professor/checkAttendance";
     }
+    @GetMapping(value = {"professors/checkAttendanceList/{courseId}","professors/checkAttendanceList/{courseId}/{page}"})
+    public String checkAttendanceList(Model model, @PathVariable("courseId") String courseId, @PathVariable("page") Optional<Integer> page){
+
+
+
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get():0 , pageSize);
+
+        Course myCourse = courseService.findById(courseId);
+
+        // 페이징된 데이터 가져오기
+        Page<AttendanceWeekListDto> attendancePage = professorService.getAttendancePage(myCourse, pageable);
+
+        model.addAttribute("myCourses", attendancePage);
+        model.addAttribute("maxPage", 5);
+        model.addAttribute("courseId",courseId);
+
+
+        return "professor/checkAttendanceList";
+    }
+
+    @GetMapping(value = {"professors/checkAttendanceStudent/{courseId}","professors/checkAttendanceStudent/{courseId}/{page}"})
+    public String checkAttendanceStudent(Model model, @PathVariable("courseId") String courseId,@PathVariable("page") Optional<Integer> page) {
+        Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
+        Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
+        List<Evaluation> evaluations = evaluationService.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
+        model.addAttribute("students", myCourseStudentList);
+        model.addAttribute("evaluations", evaluations);
+        model.addAttribute("maxPage", 5);
+
+        return "professor/checkAttendanceStudent";
+    }
+
+
+
 }

@@ -38,13 +38,8 @@
                 <th>이름</th>
                 <th>소속</th>
                 <th>출석</th>
-                <th>결석</th>
                 <th>지각</th>
-                <th>과제점수</th>
-                <th>중간시험</th>
-                <th>기말시험</th>
-                <th>환산점수</th>
-                <th>점수 기입</th>
+                <th>결석</th>
             </tr>
             <tbody>
             <th:block th:each="student : ${students.content}">
@@ -52,41 +47,9 @@
                     <td>[[${student.student.id}]]</td>
                     <td>[[${student.student.name}]]</td>
                     <td>[[${student.student.major.title}]]</td>
-                    <td>1</td> <!-- 출석 정보 등을 표시할 수 있는 필드 -->
-                    <td>1</td> <!-- 결석 정보 등을 표시할 수 있는 필드 -->
-                    <td>1</td> <!-- 지각 정보 등을 표시할 수 있는 필드 -->
-                    <td>
-                        <th:block th:each="evaluation : ${evaluations}">
-                    <span th:if="${evaluation.enroll.student.id == student.student.id}">
-                        <span th:text="${evaluation.homework}"></span>
-                    </span>
-                        </th:block>
-                    </td>
-                    <td>
-                        <th:block th:each="evaluation : ${evaluations}">
-                    <span th:if="${evaluation.enroll.student.id == student.student.id}">
-                        <span th:text="${evaluation.midExam}"></span>
-                    </span>
-                        </th:block>
-                    </td>
-                    <td>
-                        <th:block th:each="evaluation : ${evaluations}">
-                    <span th:if="${evaluation.enroll.student.id == student.student.id}">
-                        <span th:text="${evaluation.finalExam}"></span>
-                    </span>
-                        </th:block>
-                    </td>
-                    <td>
-                        <th:block th:each="evaluation : ${evaluations}">
-                    <span th:if="${evaluation.enroll.student.id == student.student.id}">
-                        <span th:text="${evaluation.convertedScore}"></span>
-                    </span>
-                        </th:block>
-                    </td>
-                    <td>
-                        <a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a>
-                    </td>
-
+                    <td><a><i class="fa-solid fa-o"></i></a></td>
+                    <td><i class="fa-solid fa-check"></i></a></td>
+                    <td><a><i class="fa-solid fa-x"></i></a></td>
                 </tr>
             </th:block>
             </tbody>
