@@ -63,14 +63,6 @@ public class ScheduleController {
         return "schedule/scheduleList";
     }
 
-    //상세페이지
-    @GetMapping(value = "/schedule/detail/{scheduleId}")
-    public String scheduleDtl(Model model, @PathVariable("scheduleId") Long scheduleId){
-       ScheduleFormDto scheduleFormDto = scheduleService.getScheduleDtl(scheduleId);
-        model.addAttribute("schedule",scheduleFormDto);
-        return "schedule/scheduleDtl";
-    }
-
     //수정페이지
     @GetMapping(value = "/schedule/rewrite/{scheduleId}")
     public String scheduleUpdatePage(@PathVariable("scheduleId") Long scheduleId, Model model) {
