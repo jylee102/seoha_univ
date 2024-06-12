@@ -22,6 +22,14 @@
             overflow-wrap: break-word; /* 긴 단어가 자동으로 줄바꿈 되게 함 */
             word-break: break-all; /* 추가 옵션: 모든 문자에서 줄바꿈 허용 */
         }
+
+        tr {
+            display: flex;
+        }
+
+        td {
+            border: none !important;
+        }
     </style>
 </th:block>
 
@@ -34,15 +42,15 @@
                    name="notice" th:object="${notice}">
                 <table class="table--container table">
                     <tr>
-                        <td>제목 :&nbsp;</td>
-                        <td th:text="${notice.title}" style="font-weight:bold;"></td>
+                        <td style="border: none !important;">제목 :&nbsp;</td>
+                        <td th:text="${notice.title}" style="font-weight:bold; margin-left:-10px;"></td>
                     </tr>
                     <tr>
-                        <td style="min-width:130px;">작성자 :&nbsp;<span th:text="${notice.createdBy.name}"></span></td>
+                        <td style="min-width:130px;">작성자 :&nbsp;<span th:text="${notice.createdBy.name}" style="margin-left:10px;"></span></td>
                         <td style="text-align: right;">등록일 :&nbsp;<span th:text="${#temporals.format(notice.regDate, 'yyyy-MM-dd')}"></span></td>
                     </tr>
                     <tr>
-                        <td>내용</td>
+                        <td style="min-width:60px;">내용</td>
                         <td class="content" th:text="${notice.content}"></td>
                     </tr>
                 </table>

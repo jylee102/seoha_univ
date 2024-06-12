@@ -1,10 +1,12 @@
 package com.seohauniv.controller;
 
+import com.seohauniv.dto.InfoFormDto;
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.entity.Break;
 import com.seohauniv.entity.Member;
 import com.seohauniv.entity.Student;
 import com.seohauniv.service.BreakService;
+import com.seohauniv.service.InfoService;
 import com.seohauniv.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -23,6 +26,7 @@ import java.util.List;
 public class InfoController {
     private final MemberService memberService;
     private final BreakService breakService;
+    private final InfoService infoService;
 
     //내정보 페이지 보기
     @GetMapping(value = "/myInfo")
@@ -80,8 +84,8 @@ public class InfoController {
 
     //수정
     @PostMapping(value = "/myInfo/update")
-    public String InfoUpdate(@Valid MemberFormDto memberFormDto, BindingResult bindingResult,
-                             Principal principal, Model model){
+    public String InfoUpdate(@Valid InfoFormDto infoFormDto, BindingResult bindingResult,
+                             Principal principal, RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()) {
             StringBuilder sb = new StringBuilder();
@@ -92,33 +96,21 @@ public class InfoController {
             for (FieldError fieldError : fieldErrors) {
                 sb.append(fieldError.getDefaultMessage()).append("\n"); //에러메세지를 가지고온다.
             }
-            model.addAttribute("message", sb.toString());
-            model.addAttribute("memberFormDto",memberFormDto);
+            redirectAttributes.addFlashAttribute("message", sb.toString());
 
-            return "member/myInfoUpdate";
+            return "redirect:/myInfo/update";
         }
 
         try {
-            Member member = memberService.updateInfo(memberFormDto, principal.getName());
-            switch (member.getRole().toString()) {
-                case "STAFF":
-                    model.addAttribute("member", member.getStaff());
-                    break;
-                case "STUDENT":
-                    model.addAttribute("member", member.getStudent());
-                    break;
-                case "PROFESSOR":
-                    model.addAttribute("member", member.getProfessor());
-                    break;
-            }
+            Member member = infoService.updateInfo(infoFormDto, principal.getName());
 
-            return "member/myInfo";
+            return "redirect:/myInfo";
         } catch (Exception e){
             e.printStackTrace();
-            model.addAttribute("memberFormDto",memberFormDto);
-            model.addAttribute("message", "수정 중 에러가 발생했습니다");
 
-            return "member/myInfoUpdate";
+            redirectAttributes.addFlashAttribute("message", "수정 중 에러가 발생했습니다");
+
+            return "redirect:/myInfo/update";
         }
     }
 }
