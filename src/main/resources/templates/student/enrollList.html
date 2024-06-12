@@ -107,6 +107,7 @@
                                         th:onclick="beforeSubmit([[${courses.id}]])"
                                         th:unless="${enrollStatus.get(courses.id)}">신청</button>
                                 <button class="btn btn-inverse-dark" type="button"
+                                        th:onclick="beforeCancel([[${courses.id}]])"
                                         th:if="${enrollStatus.get(courses.id)}">취소</button>
                             </td>
                         </tr>
@@ -144,9 +145,6 @@
 <th:block layout:fragment="script">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
-        var errorMessage = [[${errorMessage}]];
-        if(errorMessage != null || errorMessage == "") alert(errorMessage);
-
         document.addEventListener('DOMContentLoaded', function() {
             function updatePlaceholder() {
                 var inputSearch = document.querySelector('#searchQuery');
@@ -241,6 +239,46 @@
                      alert(jqXHR.responseText);
                 }
             });
+        }
+
+        // 수강신청 취소
+        function beforeCancel(courseId) {
+            const deleteConf = confirm("수강 신청을 취소하시겠습니까?");
+            if (!deleteConf) return;
+
+            $.ajax({
+				url : "/students/enroll/" + courseId + "/delete",
+				type : "DELETE",
+				contentType : "application/json",
+				data: JSON.stringify({ courseId : courseId }),
+				beforeSend : function(xhr) {
+				    // 데이터를 전송하기 전에 헤더에 csrf 값을 설정
+                    xhr.setRequestHeader(header, token);
+				},
+				dataType : "json",
+				cache : false,
+				success : function(result, status) {
+				    var path = location.pathname;
+
+				    // 페이지 번호만 가져온다.
+				    var page = path.substring(path.lastIndexOf("/") + 1);
+
+				    if (page == 'enroll') {
+				        page = 0;
+				    }
+
+				    // 수강신청 취소 후에 원래 페이지로 이동 시켜준다.
+				    location.reload();
+				},
+				error : function(jqXHR, status, error) {
+				    if(jqXHR.status == '401') {
+                        alert('로그인 후 이용해주세요.');
+                        location.href = '/members/login';
+                    } else {
+                        alert(jqXHR.responseText);
+                    }
+				}
+			});
         }
     </script>
 </th:block>

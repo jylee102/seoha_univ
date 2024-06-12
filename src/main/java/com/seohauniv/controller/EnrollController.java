@@ -55,7 +55,7 @@ public class EnrollController {
     public String myCourseList (@PathVariable("page")Optional<Integer> page,
                                 Principal principal, Model model) {
 
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 2);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
 
         Page<Enroll> myEnrollDtoPList = enrollService.getMyEnrollList(principal.getName(), pageable);
 
@@ -65,7 +65,7 @@ public class EnrollController {
         return "student/myCourseList";
     }
 
-    // 수강신청 취소
+    // 수강신청 취소(내 강의)
     @DeleteMapping("/students/myCourse/{enrollId}/delete")
     public @ResponseBody ResponseEntity deleteMyEnroll(@PathVariable("enrollId") Long enrollId,
                                                      @RequestBody Map<String, String> map, Principal principal) {
@@ -82,5 +82,23 @@ public class EnrollController {
         courseService.updateRestSeat(course);
 
         return new ResponseEntity<Long>(enrollId, HttpStatus.OK);
+    }
+
+    // 수강신청 취소(수강신청)
+    @DeleteMapping(value = "/students/enroll/{courseId}/delete")
+    public @ResponseBody ResponseEntity<?> deleteEnroll(@PathVariable("courseId") String courseId, Principal principal) {
+
+        Course course = courseService.findById(courseId);
+
+        Enroll enroll = enrollService.findByStudentIdAndCourseId(principal.getName(), courseId);
+
+        if (!enrollService.validateEnroll(enroll.getId(), principal.getName())) {
+            return new ResponseEntity<String>("수강신청 취소 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        enrollService.deleteEnroll(enroll.getId());
+        courseService.updateRestSeat(course);
+
+        return new ResponseEntity<>(enroll.getId(), HttpStatus.OK);
     }
 }

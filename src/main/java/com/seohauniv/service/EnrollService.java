@@ -93,4 +93,8 @@ public class EnrollService {
         List<Enroll> enrolls = enrollRepository.findByCourseAndStudentId(course, id);
         return !enrolls.isEmpty();
     }
+
+    public Enroll findByStudentIdAndCourseId(String courseId, String studentId) {
+        return enrollRepository.findByCourseIdAndStudentId(courseId, studentId);
+    }
 }
