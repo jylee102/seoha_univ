@@ -99,4 +99,9 @@ public class MainController {
     public String courseList() {
         return "staff/courseList";
     }
+
+    @GetMapping("/list/messages")
+    public String messageList() {
+        return "message/messageList";
+    }
 }

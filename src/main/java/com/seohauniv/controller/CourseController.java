@@ -4,8 +4,10 @@ import com.seohauniv.dto.CourseFormDto;
 import com.seohauniv.dto.CourseEnrollDto;
 import com.seohauniv.dto.CourseSearchDto;
 import com.seohauniv.entity.Course;
+import com.seohauniv.entity.Message;
 import com.seohauniv.service.CourseService;
 import com.seohauniv.service.EnrollService;
+import com.seohauniv.service.MessageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,7 @@ import java.util.Optional;
 public class CourseController {
     private final CourseService courseService;
     private final EnrollService enrollService;
+    private final MessageService messageService;
 
     @PostMapping("/staff/course/create")
     public String createCourse(@ModelAttribute @Valid CourseFormDto courseFormDto, BindingResult bindingResult,
@@ -48,18 +51,22 @@ public class CourseController {
             }
 
             redirectAttributes.addFlashAttribute("message", sb.toString());
-            return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId(); // 리다이렉트하여 페이지를 리로드합니다.
+            return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId(); // 리다이렉트하여 페이지를 리로드
         }
 
         try {
-            courseService.create(courseFormDto);
+            Course course = courseService.create(courseFormDto); // 강의 개설
+
+            // 해당 강의의 계획서를 제출한 교수에게 메시지
+            Message message = new Message(course);
+            messageService.create(message);
 
             redirectAttributes.addFlashAttribute("message", "해당 강의가 개설되었습니다.");
             return "redirect:/staffs/createCourse";
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("message", "강의 개설 도중 문제가 발생했습니다.");
-            return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId(); // 리다이렉트하여 페이지를 리로드합니다.
+            return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId();
         }
     }
 

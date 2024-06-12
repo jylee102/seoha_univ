@@ -2,7 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
-
 <head>
     <meta name="_csrf" th:content="${_csrf.token}" />
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
@@ -13,25 +12,19 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
-    <style>
-        .clickable-row:hover {
-            cursor: pointer;
-            background-color: #e0e0e0;
-        }
-    </style>
 </th:block>
 
-<main layout:fragment="content">
+<main layout:fragment="content" id="content">
     <div class="card">
         <div class="card-body px-5 py-5">
-            <h1>강의 계획서 목록</h1>
+            <h1>메시지</h1>
             <div class="split--div"></div>
 
-            <form name="syllabusForm" onsubmit="return false;">
+            <form name="searchForm" onsubmit="return false;">
                 <div class="d-flex align-items-center search">
                     <div class="input-container">
                         <input type="text" class="input-search" id="searchValue"
-                               placeholder="강의명 또는 교수명으로 검색" />
+                               placeholder="제목 또는 내용으로 검색" />
                         <i class="fa-solid fa-xmark" onclick="$('#searchValue').val('')"></i>
                     </div>
                     <div class="btn-search">
@@ -44,11 +37,10 @@
                     <thead>
                     <tr>
                         <th></th>
-                        <th>강의명</th>
-                        <th>학과/구분</th>
-                        <th>학점</th>
-                        <th>강의 시간</th>
-                        <th>신청인</th>
+                        <th>제목</th>
+                        <th>보낸이</th>
+                        <th>받은 날짜</th>
+                        <th>상태</th>
                     </tr>
                     </thead>
 
@@ -76,7 +68,7 @@
             loadData(currentPage, searchValue);
         });
 
-        $(document.syllabusForm).on('submit', function() {
+        $(document.searchForm).on('submit', function() {
             loadData(currentPage, searchValue);
         })
 
@@ -84,7 +76,7 @@
             searchValue = $('#searchValue').val();
 
             $.ajax({
-                url: "/staff/loadCourseList",
+                url: "/loadMessageList",
                 method: "GET",
                 data: { page: page - 1, searchValue: searchValue },
                 success: function(data) {
@@ -103,7 +95,7 @@
             tableBody.empty(); // 기존 내용을 비우고 새로운 데이터를 추가할 준비
 
             if (data.totalPages == 0) {
-                $(".table tbody").append('<tr><td colspan="6">해당하는 데이터가 없습니다.</td></tr>');
+                $(".table tbody").append('<tr><td colspan="5">해당하는 데이터가 없습니다.</td></tr>');
                 return;
             }
 
@@ -111,7 +103,7 @@
             var totalItems = data.totalElements;
             var itemsPerPage = data.size;
 
-            // 받아온 데이터를 반복하여 테이블에 추가
+            // 받아온 데이터를 반복 요소 추가
             $.each(data.content, function(index, item) {
                 var row = $("<tr></tr>");
 
@@ -119,18 +111,53 @@
                 var descendingIndex = totalItems - ((data.number * itemsPerPage) + index);
 
                 row.append("<td>" + descendingIndex + "</td>");
-                row.append("<td>" + item.courseName + "</td>");
-                row.append("<td>" + item.major + "/" + item.courseTypeDescription + "</td>");
-                row.append("<td>" + item.credit + "학점</td>");
-                row.append("<td>" + item.courseTimesDescription + "</td>");
-                row.append("<td>" + item.professorName + "</td>");
+                row.append("<td>" + item.title + "</td>");
+                row.append("<td>" + item.createdBy.name + "</td>");
+                row.append("<td>" + item.regDate + "</td>");
+                if (item.isRead == "t") row.append("<td>읽음</td>");
+                else row.append("<td>안읽음</td>");
 
                 // 클릭 시 데이터 상세정보 표시
                 row.addClass("clickable-row");
-                row.attr("onclick", `location.href = '/staff/viewSyllabus/${item.id}'`);
+                row.attr("onclick", "openModal(" + item.id + ")");
 
                 // 테이블에 행 추가
                 tableBody.append(row);
+
+                // 모달
+                var modal = $("<div></div>");
+                modal.addClass("modal fade").attr('tabindex', '-1').attr('role', 'dialog')
+                     .attr('aria-hidden', 'true').attr('id', 'modal-' + item.id);
+
+                modal.html(
+                `<div class="modal-dialog">` +
+                    `<div class="modal-content">` +
+                        `<div class="modal-header" style="border:none; justify-content:center;">` +
+                            `<h1 style="font-weight:600">메시지</h1>` +
+                        `</div>` +
+                        `<div class="modal-body">` +
+                            `<table class="table--container table">` +
+                                `<tr>` +
+                                    `<td>제목</td>` +
+                                    `<td>${item.title}</td>` +
+                                `</tr>` +
+                                `<tr>` +
+                                    `<td>보낸이</td>` +
+                                    `<td>${item.createdBy.name}</td>` +
+                                `</tr>` +
+                                `<tr>` +
+                                    `<td>내용</td>` +
+                                    `<td>${item.content}</td>` +
+                                `</tr>` +
+                            `</table>` +
+                        `</div>` +
+                        `<div class="modal-footer" style="border:none;">` +
+                            `<button type="button" class="btn btn-secondary" onclick="$('#modal-${item.id}').modal('hide')">닫기</button>` +
+                        `</div>` +
+                    `</div>` +
+                `</div>`);
+
+                $('#content').append(modal);
             });
         }
 
@@ -195,6 +222,21 @@
             paginationContainer.append(renderPageButtons(start, end, currentPage)
                 .prepend(prevLi).prepend(firstLi)
                 .append(nextLi).append(lastLi));
+        }
+
+        function openModal(messageId) {
+            $(`#modal-${messageId}`).modal('show');
+
+            // 안읽음 -> 읽음 상태 변경
+            $.ajax({
+                url: "/changeMessageStatus/" + messageId,
+                method: "POST",
+                success: function(data) {
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText);
+                }
+            });
         }
     </script>
 </th:block>

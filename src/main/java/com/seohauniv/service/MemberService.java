@@ -4,16 +4,15 @@ import com.seohauniv.config.MemberContext;
 import com.seohauniv.constant.Role;
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.dto.MemberSearchDto;
-import com.seohauniv.entity.Member;
-import com.seohauniv.entity.Professor;
-import com.seohauniv.entity.Staff;
-import com.seohauniv.entity.Student;
+import com.seohauniv.entity.*;
 import com.seohauniv.repository.MemberRepository;
 import com.seohauniv.repository.ProfessorRepository;
 import com.seohauniv.repository.StaffRepository;
 import com.seohauniv.repository.StudentRepository;
 import com.seohauniv.util.IdGenerator;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -229,10 +228,29 @@ public class MemberService implements UserDetailsService {
         return null;
     }
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Transactional(readOnly = true)
+    public Member getMemberWithMessages(String id) {
+        return entityManager.createQuery(
+                        "SELECT m FROM Member m LEFT JOIN FETCH m.messages WHERE m.id = :id", Member.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Message> getUnreadMessages(String memberId) {
+        return entityManager.createQuery(
+                        "SELECT msg FROM Message msg WHERE msg.sendTo.id = :memberId AND msg.isRead = 'f'", Message.class)
+                .setParameter("memberId", memberId)
+                .getResultList();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         //해당 id 계정을 가진 사용자가 있는지 확인
-        Member member = getMember(id);
+        Member member = getMemberWithMessages(id);
 
         if (member == null) { //사용자가 없다면
             throw new UsernameNotFoundException(id);
@@ -241,6 +259,8 @@ public class MemberService implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getRole().toString()));
 
-        return new MemberContext(member, authorities); //Member 객체를 상속받은 MemberContext을 넣어주면 스프링이 알아서 처리한다.
+        List<Message> unreadMessages = getUnreadMessages(id);
+
+        return new MemberContext(member, authorities, unreadMessages); //Member 객체를 상속받은 MemberContext을 넣어주면 스프링이 알아서 처리한다.
     }
 }

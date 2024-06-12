@@ -2,6 +2,7 @@ package com.seohauniv.service;
 
 import com.seohauniv.constant.CourseType;
 import com.seohauniv.constant.Day;
+import com.seohauniv.constant.Role;
 import com.seohauniv.dto.CourseTimeDto;
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.dto.ProgressUpdate;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,15 +189,43 @@ public class ExcelService {
 
                     List<CourseTimeDto> courseTimes = new ArrayList<>();
                     for (int j = 9; j < row.getLastCellNum(); j += 3) {
-                        if (row.getCell(j).getStringCellValue().isEmpty()) break;
+                        if (row.getCell(j) == null) break;
 
                         CourseTimeDto courseTimeDto = new CourseTimeDto();
-                        courseTimeDto.setDay(Day.valueOf(row.getCell(j).getStringCellValue()));
-                        courseTimeDto.setStartTime(LocalTime.parse(row.getCell(j + 1).getStringCellValue()));
-                        courseTimeDto.setEndTime(LocalTime.parse(row.getCell(j + 2).getStringCellValue()));
+                        
+                        switch (row.getCell(j).getStringCellValue()) {
+                            case "월요일":
+                                courseTimeDto.setDay(Day.MON);
+                                break;
+                            case "화요일":
+                                courseTimeDto.setDay(Day.TUE);
+                                break;
+                            case "수요일":
+                                courseTimeDto.setDay(Day.WED);
+                                break;
+                            case "목요일":
+                                courseTimeDto.setDay(Day.THU);
+                                break;
+                            case "금요일":
+                                courseTimeDto.setDay(Day.FRI);
+                                break;
+                        }
+
+                        courseTimeDto.setStartTime(row.getCell(j + 1).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+                        courseTimeDto.setEndTime(row.getCell(j + 2).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
                         courseTimes.add(courseTimeDto);
                     }
                     syllabusFormDto.setCourseTimes(courseTimes);
+
+                    List<WeeklyPlan> weeklyPlans = new ArrayList<>();
+                    for (int j = 1; j <= 6; j++) {
+                        WeeklyPlan weeklyPlan = new WeeklyPlan();
+                        weeklyPlan.setWeek(j);
+                        if (row.getCell(j + 18) == null) weeklyPlan.setContent("");
+                        else weeklyPlan.setContent(row.getCell(j + 18).getStringCellValue());
+                        weeklyPlans.add(weeklyPlan);
+                    }
+                    syllabusFormDto.setWeeklyPlans(weeklyPlans);
 
                     // 유효성 검사 수행
                     Errors validationErrors = new BeanPropertyBindingResult(syllabusFormDto, "syllabusFormDto");

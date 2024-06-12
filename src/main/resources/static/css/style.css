@@ -22840,5 +22840,15 @@ dl li {
     box-shadow: none;
 }
 
+@media screen and (max-width: 991px) {
+    .preview-item-content {
+        width: 100%;
+    }
+
+    .ellipsis {
+        max-width: 100% !important;
+    }
+}
+
 /*# sourceMappingURL=maps/style.css.map */
 
