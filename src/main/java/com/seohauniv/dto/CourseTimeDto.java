@@ -23,6 +23,11 @@ public class CourseTimeDto {
 
     @NotNull(message = "선택된 요일의 강의 종료 시간을 입력하세요.")
     private LocalTime endTime;
+
+    private String courseName;
+    private String professorName;
+    private String roomName;
+
     private static ModelMapper modelMapper = new ModelMapper();
 
     public CourseTimeDto() {

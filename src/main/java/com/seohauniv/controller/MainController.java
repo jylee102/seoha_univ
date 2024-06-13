@@ -115,4 +115,10 @@ public class MainController {
     public String messageList() {
         return "message/messageList";
     }
+
+    // 내 시간표
+    @GetMapping(value = "/students/timeTable")
+    public String timeTable() {
+        return "student/timeTable";
+    }
 }
