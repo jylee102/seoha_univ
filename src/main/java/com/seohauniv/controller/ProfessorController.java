@@ -156,13 +156,11 @@ private final EvaluationService evaluationService;
     }
 
     @PostMapping(value = "/professors/attendance/add")
-    public @ResponseBody ResponseEntity addAttendance(@RequestBody AttendanceFormDto attendanceFormDto, @RequestParam("week") int week,
-                                                      @RequestParam("day") Day day){
+    public @ResponseBody ResponseEntity addAttendance(@RequestBody AttendanceFormDto attendanceFormDto){
 
         try {
-            Attendance attendance = attendanceService.addAttendance(attendanceFormDto.getStudentId(),attendanceFormDto.getStatus());
-            attendance.setWeek(week);
-            attendance.setDay(day);
+            Attendance attendance = attendanceService.addAttendance(attendanceFormDto.getStudentId(),attendanceFormDto.getStatus(),attendanceFormDto.getDay(),attendanceFormDto.getWeek());
+
             return new ResponseEntity(attendance,HttpStatus.OK);
         }
         catch (Exception e){

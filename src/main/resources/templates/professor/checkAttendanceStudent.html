@@ -128,7 +128,8 @@
         return $("meta[name='_csrf_header']").attr("content");
     }
 
-          function addAttendance(studentId, status, evaluationId) {
+
+          function addAttendance(studentId, status) {
           var urlParams = new URLSearchParams(window.location.search);
           var week = urlParams.get('week');
           var day = urlParams.get('day');
@@ -144,16 +145,17 @@
             },
             success: function(response) {
                 alert('출석체크 완료');
+                console.log(week);
                 // 필요한 경우 추가 작업 수행
-                 if (response.success) {
+
                 // 출석체크 완료 메시지 표시
                 var messageElement = document.createElement("span");
                 messageElement.textContent = "출석체크 완료";
                 document.getElementById("present-" + studentId).innerHTML = "";
-                document.getElementById("present-" + studentId).appendChild(messageElement);
                 document.getElementById("late-" + studentId).innerHTML = "";
+                document.getElementById("late-" + studentId).appendChild(messageElement);
                 document.getElementById("absent-" + studentId).innerHTML = "";
-            }
+
             },
             error: function(xhr, status, error) {
             console.log(xhr.responseText);

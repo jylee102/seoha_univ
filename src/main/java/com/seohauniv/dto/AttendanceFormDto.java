@@ -9,4 +9,6 @@ import lombok.Setter;
 public class AttendanceFormDto {
     private String studentId;
     private String status;
+    private int week;
+    private String day;
 }

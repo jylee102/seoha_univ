@@ -1,6 +1,7 @@
 package com.seohauniv.service;
 
 import com.seohauniv.constant.AttendStatus;
+import com.seohauniv.constant.Day;
 import com.seohauniv.dto.AttendanceFormDto;
 import com.seohauniv.entity.*;
 import com.seohauniv.repository.AttendanceRepository;
@@ -20,20 +21,25 @@ import java.util.List;
 public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
-    public Attendance addAttendance(String studentId, String status) {
+    public Attendance addAttendance(String studentId, String status, String day,int week) {
         Attendance attendance = new Attendance();
         Student student = studentRepository.findById(studentId).orElseThrow(EntityNotFoundException::new);
 
         if(status.equals("PRESENT")){
             attendance.setStudent(student);
             attendance.setStatus(AttendStatus.PRESENT);
-
+            attendance.setDay(Day.valueOf(day));
+            attendance.setWeek(week);
         } else if(status.equals("LATE")){
             attendance.setStudent(student);
             attendance.setStatus(AttendStatus.LATE);
+            attendance.setDay(Day.valueOf(day));
+            attendance.setWeek(week);
         } else {
             attendance.setStudent(student);
             attendance.setStatus(AttendStatus.ABSENT);
+            attendance.setDay(Day.valueOf(day));
+            attendance.setWeek(week);
         }
 
         return attendanceRepository.save(attendance);
