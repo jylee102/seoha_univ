@@ -18,6 +18,15 @@
             cursor: pointer;
             background-color: #e0e0e0;
         }
+
+        @media screen and (max-width: 750px) {
+            .table--container th:nth-child(3), /* 학점 */
+            .table--container td:nth-child(3),
+            .table--container th:nth-child(4), /* 강의 시간 */
+            .table--container td:nth-child(4) {
+                display: none;
+            }
+        }
     </style>
 </th:block>
 
@@ -43,12 +52,11 @@
                 <table class="table--container table" style="text-align: center;">
                     <thead>
                     <tr>
-                        <th></th>
-                        <th>강의명</th>
-                        <th>학과/구분</th>
-                        <th>학점</th>
+                        <th style="min-width:80px">강의명</th>
+                        <th style="min-width:160px">학과/구분</th>
+                        <th style="min-width:70px">학점</th>
                         <th>강의 시간</th>
-                        <th>신청인</th>
+                        <th style="min-width:80px">신청인</th>
                     </tr>
                     </thead>
 
@@ -118,7 +126,6 @@
                 // 각 열에 데이터 추가
                 var descendingIndex = totalItems - ((data.number * itemsPerPage) + index);
 
-                row.append("<td>" + descendingIndex + "</td>");
                 row.append("<td>" + item.courseName + "</td>");
                 row.append("<td>" + item.major + "/" + item.courseTypeDescription + "</td>");
                 row.append("<td>" + item.credit + "학점</td>");

@@ -38,6 +38,16 @@
             padding-left:20px;
             margin-top:20px;
         }
+
+        .content {
+            word-wrap: break-word; /* 길게 작성된 단어를 줄 바꿈 */
+            word-break: keep-all; /* 단어 중간에 줄 바꿈을 하지 않도록 */
+        }
+
+        .table th, .table td {
+            padding: 1rem 1rem;
+            vertical-align: top;
+            border-top: 1px solid #d2d1d1 !important;
     </style>
 </th:block>
 
@@ -52,12 +62,15 @@
             <h1 style="font-weight:600">학사일정</h1>
             <div class="split--div"></div>
             <div class="container">
-                <table class="table">
+                <table class="table" style="text-align: center">
                     <thead>
                     <tr class="first--tr">
-                        <th style="width:150px; text-align:center;">월</th>
-                        <th style="width:150px; text-align:center;">날짜</th>
-                        <th style="text-align:center;">내용</th>
+                        <th style="text-align:center; min-width:70px;">월</th>
+                        <th style="text-align:center; min-width:125px;">날짜</th>
+                        <th style="text-align:center; min-width:300px;">내용</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -69,14 +82,20 @@
                             <!-- Button trigger modal -->
                             <td th:if="${#authentication.principal.role == 'STAFF'}"><a href="#" data-bs-toggle="modal" th:data-bs-target="'#exampleModal' + ${entry.value[0].id}" th:text="${entry.value[0].content}"></a></td>
                             <td th:if="${#authentication.principal.role == 'STUDENT'}" th:text="${entry.value[0].content}"></td>
-                            <td th:if="${#authentication.principal.role == 'PROFESSOR'}" th:text="${entry.value[0].content}"></td>
+                            <td class="content" th:if="${#authentication.principal.role == 'PROFESSOR'}" th:text="${entry.value[0].content}"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                         <tr th:each="schedule, status : ${entry.value}" th:if="${status.index > 0}">
                             <td th:text="${#temporals.format(schedule.start, 'MM-dd') + ' ~ ' + #temporals.format(schedule.end, 'MM-dd')}" style="text-align:center;"></td>
                             <!-- Button trigger modal -->
                             <td th:if="${#authentication.principal.role == 'STAFF'}"><a href="#" data-bs-toggle="modal" th:data-bs-target="'#exampleModal' + ${schedule.id}" th:text="${schedule.content}"></a></td>
                             <td th:if="${#authentication.principal.role == 'STUDENT'}" th:text="${schedule.content}"></td>
-                            <td th:if="${#authentication.principal.role == 'PROFESSOR'}" th:text="${schedule.content}"></td>
+                            <td class="content" th:if="${#authentication.principal.role == 'PROFESSOR'}" th:text="${schedule.content}"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </th:block>
                     </tbody>

@@ -30,6 +30,23 @@
         td {
             border: none !important;
         }
+
+         @media screen and (max-width: 800px) {
+            .title1 {
+                display: none;
+            }
+         }
+
+        @media screen and (min-width: 799px) {
+            .title2 {
+                display: none;
+            }
+        }
+
+        .content {
+            word-wrap: break-word; /* 길게 작성된 단어를 줄 바꿈 */
+            word-break: keep-all; /* 단어 중간에 줄 바꿈을 하지 않도록 */
+        }
     </style>
 </th:block>
 
@@ -41,9 +58,13 @@
             <form role="form" th:action="@{'/notice/detail/' + ${noticeId}}" method="post" enctype="multipart/form-data"
                    name="notice" th:object="${notice}">
                 <table class="table--container table">
-                    <tr>
-                        <td style="border: none !important;">제목 :&nbsp;</td>
+                    <tr class="title1">
+                        <td style="border: none !important; min-width:70px;">제목 :&nbsp;</td>
                         <td th:text="${notice.title}" style="font-weight:bold; margin-left:-10px;"></td>
+                    </tr>
+                    <tr class="title2">
+                        <td style="border: none !important; min-width:70px;">제목 :&nbsp;</td>
+                        <td th:text="${#strings.length(notice.title) > 18 ? #strings.substring(notice.title, 0, 18) + '...' : notice.title}" style="font-weight:bold; margin-left:-10px;"></td>
                     </tr>
                     <tr>
                         <td style="min-width:130px;">작성자 :&nbsp;<span th:text="${notice.createdBy.name}" style="margin-left:10px;"></span></td>
