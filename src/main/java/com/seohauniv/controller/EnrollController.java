@@ -6,6 +6,8 @@ import com.seohauniv.entity.Student;
 import com.seohauniv.service.CourseService;
 import com.seohauniv.service.EnrollService;
 import com.seohauniv.service.StudentService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -90,7 +94,7 @@ public class EnrollController {
 
         Course course = courseService.findById(courseId);
 
-        Enroll enroll = enrollService.findByStudentIdAndCourseId(principal.getName(), courseId);
+        Enroll enroll = enrollService.findByStudentIdAndCourseId(courseId, principal.getName());
 
         if (!enrollService.validateEnroll(enroll.getId(), principal.getName())) {
             return new ResponseEntity<String>("수강신청 취소 권한이 없습니다.", HttpStatus.FORBIDDEN);

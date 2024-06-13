@@ -5,12 +5,14 @@ import com.seohauniv.entity.Enroll;
 import com.seohauniv.entity.Student;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface EnrollRepository extends JpaRepository<Enroll, Long> {
     List<Enroll> findByStudent(Student student);
+    List<Enroll> findByStudentId(String studentId);
 
     Page<Enroll> findByCourseId(String courseId, Pageable pageable);
 

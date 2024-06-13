@@ -1,6 +1,7 @@
 package com.seohauniv.service;
 
 import com.seohauniv.entity.*;
+import com.seohauniv.repository.CourseRepository;
 import com.seohauniv.repository.EnrollRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class EnrollService {
     private final EnrollRepository enrollRepository;
+    private final CourseRepository courseRepository;
     private final MemberService memberService;
 
     // 선택한 강의가 이미 신청한 강의인지 확인
@@ -96,5 +99,11 @@ public class EnrollService {
 
     public Enroll findByStudentIdAndCourseId(String courseId, String studentId) {
         return enrollRepository.findByCourseIdAndStudentId(courseId, studentId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Course> getCoursesByStudentId(String studentId) {
+        List<Enroll> enrollments = enrollRepository.findByStudentId(studentId);
+        return enrollments.stream().map(Enroll::getCourse).collect(Collectors.toList());
     }
 }
