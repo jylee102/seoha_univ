@@ -52,7 +52,7 @@
                     <td>
                         <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
                             <li style="height: 24px;">
-                                <a th:href="'/professors/checkAttendanceStudent/'+${courseId}">조회</a>
+                                <a th:href="'/professors/checkAttendanceStudent/'+${courseId}+'?week='+${myCourse.week}+'&day='+${myCourse.courseTime.day}">조회</a>
                             </li>
                         </ul>
                     </td>

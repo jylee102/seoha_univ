@@ -1,10 +1,10 @@
 package com.seohauniv.controller;
 
+import com.seohauniv.constant.AttendStatus;
 import com.seohauniv.constant.Day;
-import com.seohauniv.dto.AttendanceWeekListDto;
-import com.seohauniv.dto.EvaluationFormDto;
-import com.seohauniv.dto.MyCourseSearchDto;
+import com.seohauniv.dto.*;
 import com.seohauniv.entity.*;
+import com.seohauniv.service.AttendanceService;
 import com.seohauniv.service.CourseService;
 import com.seohauniv.service.EvaluationService;
 import com.seohauniv.service.ProfessorService;
@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,7 @@ import java.util.Optional;
 @Controller
 @RequiredArgsConstructor
 public class ProfessorController {
+private final AttendanceService attendanceService;
 private final CourseService courseService;
 private final ProfessorService professorService;
 private final EvaluationService evaluationService;
@@ -54,7 +56,21 @@ private final EvaluationService evaluationService;
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
         List<Evaluation> evaluations = evaluationService.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
+        List<StudentAttendanceDto> studentAttendanceDto = new ArrayList<>();
+        for (Enroll enroll : myCourseStudentList) {
+            int countStatusPresent = attendanceService.countByStatusAndStudentId(AttendStatus.PRESENT,enroll.getStudent().getId());
+            int countStatusLate = attendanceService.countByStatusAndStudentId(AttendStatus.LATE,enroll.getStudent().getId());
+            int countStatusAbsent = attendanceService.countByStatusAndStudentId(AttendStatus.ABSENT,enroll.getStudent().getId());
+            StudentAttendanceDto attendanceDto = new StudentAttendanceDto();
+            attendanceDto.setStudent(enroll.getStudent());
+            attendanceDto.setCountPresent(countStatusPresent);
+            attendanceDto.setCountLate(countStatusLate);
+            attendanceDto.setCountAbsent(countStatusAbsent);
+
+            studentAttendanceDto.add(attendanceDto);
+        }
         model.addAttribute("students", myCourseStudentList);
+        model.addAttribute("attendances",studentAttendanceDto);
         model.addAttribute("evaluations", evaluations);
         model.addAttribute("maxPage", 5);
 
@@ -113,8 +129,10 @@ private final EvaluationService evaluationService;
 
         Course myCourse = courseService.findById(courseId);
 
+
         // 페이징된 데이터 가져오기
         Page<AttendanceWeekListDto> attendancePage = professorService.getAttendancePage(myCourse, pageable);
+
 
         model.addAttribute("myCourses", attendancePage);
         model.addAttribute("maxPage", 5);
@@ -129,6 +147,7 @@ private final EvaluationService evaluationService;
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
         List<Evaluation> evaluations = evaluationService.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
+
         model.addAttribute("students", myCourseStudentList);
         model.addAttribute("evaluations", evaluations);
         model.addAttribute("maxPage", 5);
@@ -136,6 +155,20 @@ private final EvaluationService evaluationService;
         return "professor/checkAttendanceStudent";
     }
 
+    @PostMapping(value = "/professors/attendance/add")
+    public @ResponseBody ResponseEntity addAttendance(@RequestBody AttendanceFormDto attendanceFormDto, @RequestParam("week") int week,
+                                                      @RequestParam("day") Day day){
+
+        try {
+            Attendance attendance = attendanceService.addAttendance(attendanceFormDto.getStudentId(),attendanceFormDto.getStatus());
+            attendance.setWeek(week);
+            attendance.setDay(day);
+            return new ResponseEntity(attendance,HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity("출석체크에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 }
