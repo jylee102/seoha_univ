@@ -1,11 +1,13 @@
 package com.seohauniv.service;
 
 import com.seohauniv.constant.ProcedureStatus;
-import com.seohauniv.dto.BreakFormDto;
-import com.seohauniv.entity.Break;
+import com.seohauniv.dto.*;
+import com.seohauniv.entity.*;
 import com.seohauniv.repository.BreakRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,10 @@ import java.util.List;
 @Transactional
 public class BreakService {
     private final BreakRepository breakRepository;
+
+    public Break findById(Long id) {
+        return breakRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
 
     public Long saveBreak(BreakFormDto breakFormDto)throws Exception{
 
@@ -48,5 +54,31 @@ public class BreakService {
         //delete
         //CasCade 설정을 통해 order의 자식 엔티티에 해당하는 orderItem 도 같이 삭제된다.
         breakRepository.delete(b);
+    }
+
+    //휴학 신청서 리스트(with 페이징 처리)
+    public Page<BreakDto> getAllBreakToRead(Pageable pageable, String searchValue) {
+       return breakRepository.getBreaks(pageable, searchValue);
+    }
+
+    //상세페이지 데이터가져오기
+    public Break getBreakDtl(Long id) {
+        return breakRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    //휴학 신청서 반려 처리
+    public Break refuseBreak(Long id) {
+        Break breaks = findById(id);
+        breaks.setStatus(ProcedureStatus.REFUSAL);
+
+        return breaks;
+    }
+
+    // 휴학신청
+    public Break create(Break abreak) {
+        abreak.setStatus(ProcedureStatus.APPROVAL);
+
+
+        return breakRepository.save(abreak);
     }
 }
