@@ -3,6 +3,11 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
@@ -47,9 +52,16 @@
                     <td>[[${student.student.id}]]</td>
                     <td>[[${student.student.name}]]</td>
                     <td>[[${student.student.major.title}]]</td>
-                    <td><a><i class="fa-solid fa-o"></i></a></td>
-                    <td><i class="fa-solid fa-check"></i></a></td>
-                    <td><a><i class="fa-solid fa-x"></i></a></td>
+
+                    <td th:id="'present-'+${student.student.id}">
+                        <a href="javascript:void(0);" th:onclick="addAttendance([[${student.student.id}]], 'PRESENT')"><i class="fa-solid fa-o"></i></a>
+                    </td>
+                    <td th:id="'late-'+${student.student.id}">
+                        <a href="javascript:void(0);" th:onclick="addAttendance([[${student.student.id}]], 'LATE')"><i class="fa-solid fa-check"></i></a>
+                    </td >
+                    <td th:id="'absent-'+${student.student.id}">
+                        <a href="javascript:void(0);"  th:onclick="addAttendance([[${student.student.id}]], 'ABSENT')"><i class="fa-solid fa-x"></i></a>
+                    </td>
                 </tr>
             </th:block>
             </tbody>
@@ -96,7 +108,7 @@
 
         function page(page) {
             // 페이지 이동
-            location.href = "/professors/course/" + [[${students.content[0].course.id}]] + "/" + page;
+            location.href = "/professors/checkAttendanceStudent/" + [[${students.content[0].course.id}]] + "/" + page;
         }
 
         function goToFirstPage() {
@@ -108,6 +120,48 @@
             page(totalPages - 1);
         }
 
+         function getCsrfToken() {
+        return $("meta[name='_csrf']").attr("content");
+    }
+
+    function getCsrfHeader() {
+        return $("meta[name='_csrf_header']").attr("content");
+    }
+
+          function addAttendance(studentId, status, evaluationId) {
+          var urlParams = new URLSearchParams(window.location.search);
+          var week = urlParams.get('week');
+          var day = urlParams.get('day');
+          console.log(week);
+          console.log(day);
+        $.ajax({
+            url: '/professors/attendance/add',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ studentId: studentId, status: status, week: week, day:day }),
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader(getCsrfHeader(), getCsrfToken());
+            },
+            success: function(response) {
+                alert('출석체크 완료');
+                // 필요한 경우 추가 작업 수행
+                 if (response.success) {
+                // 출석체크 완료 메시지 표시
+                var messageElement = document.createElement("span");
+                messageElement.textContent = "출석체크 완료";
+                document.getElementById("present-" + studentId).innerHTML = "";
+                document.getElementById("present-" + studentId).appendChild(messageElement);
+                document.getElementById("late-" + studentId).innerHTML = "";
+                document.getElementById("absent-" + studentId).innerHTML = "";
+            }
+            },
+            error: function(xhr, status, error) {
+            console.log(xhr.responseText);
+                alert('출석 체크 오류: ' + xhr.responseText);
+
+            }
+        });
+    }
 
     </script>
 </th:block>
