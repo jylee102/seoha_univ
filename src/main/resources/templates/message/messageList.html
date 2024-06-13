@@ -14,7 +14,7 @@
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
 </th:block>
 
-<main layout:fragment="content" id="content">
+<main layout:fragment="content">
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1>메시지</h1>
@@ -33,7 +33,7 @@
                     </div>
                 </div>
 
-                <table class="table--container table" style="text-align: center;">
+                <table class="table--container table list" style="text-align: center;">
                     <thead>
                     <tr>
                         <th></th>
@@ -91,7 +91,7 @@
 
         // 데이터를 테이블에 렌더링하는 함수
         function renderItems(data) {
-            var tableBody = $(".table tbody");
+            var tableBody = $(".list tbody");
             tableBody.empty(); // 기존 내용을 비우고 새로운 데이터를 추가할 준비
 
             if (data.totalPages == 0) {
@@ -123,41 +123,6 @@
 
                 // 테이블에 행 추가
                 tableBody.append(row);
-
-                // 모달
-                var modal = $("<div></div>");
-                modal.addClass("modal fade").attr('tabindex', '-1').attr('role', 'dialog')
-                     .attr('aria-hidden', 'true').attr('id', 'modal-' + item.id);
-
-                modal.html(
-                `<div class="modal-dialog">` +
-                    `<div class="modal-content">` +
-                        `<div class="modal-header" style="border:none; justify-content:center;">` +
-                            `<h1 style="font-weight:600">메시지</h1>` +
-                        `</div>` +
-                        `<div class="modal-body">` +
-                            `<table class="table--container table">` +
-                                `<tr>` +
-                                    `<td>제목</td>` +
-                                    `<td>${item.title}</td>` +
-                                `</tr>` +
-                                `<tr>` +
-                                    `<td>보낸이</td>` +
-                                    `<td>${item.createdBy.name}</td>` +
-                                `</tr>` +
-                                `<tr>` +
-                                    `<td>내용</td>` +
-                                    `<td>${item.content}</td>` +
-                                `</tr>` +
-                            `</table>` +
-                        `</div>` +
-                        `<div class="modal-footer" style="border:none;">` +
-                            `<button type="button" class="btn btn-secondary" onclick="$('#modal-${item.id}').modal('hide')">닫기</button>` +
-                        `</div>` +
-                    `</div>` +
-                `</div>`);
-
-                $('#content').append(modal);
             });
         }
 
@@ -222,21 +187,6 @@
             paginationContainer.append(renderPageButtons(start, end, currentPage)
                 .prepend(prevLi).prepend(firstLi)
                 .append(nextLi).append(lastLi));
-        }
-
-        function openModal(messageId) {
-            $(`#modal-${messageId}`).modal('show');
-
-            // 안읽음 -> 읽음 상태 변경
-            $.ajax({
-                url: "/changeMessageStatus/" + messageId,
-                method: "POST",
-                success: function(data) {
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert(jqXHR.responseText);
-                }
-            });
         }
     </script>
 </th:block>

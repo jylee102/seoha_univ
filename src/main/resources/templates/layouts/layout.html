@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEOHA UNIVERSITY</title>
 
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
     <!-- 공통으로 사용할 CSS -->
 
     <link rel="stylesheet" th:href="@{/vendors/mdi/css/materialdesignicons.min.css}">
@@ -49,7 +52,7 @@
             <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
             <div class="main-panel">
-                <div layout:fragment="content" class="content"></div>
+                <div layout:fragment="content" class="content" id="content"></div>
 
                 <div th:replace="~{fragments/footer :: footer}"></div>
             </div>
@@ -63,6 +66,82 @@
     <script th:src="@{/js/off-canvas.js}"></script>
     <script th:src="@{/js/hoverable-collapse.js}"></script>
     <script th:src="@{/js/template.js}"></script>
+    <script>
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+
+        function refreshHeader() {
+            $.ajax({
+                url: '/header-data',
+                method: 'GET',
+                beforeSend : function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function(data) {
+                    $('#header').html(data); // 헤더를 새로고침된 데이터로 업데이트
+                },
+                error: function(error) {
+                    console.error('Failed to refresh header', error);
+                }
+            });
+        }
+
+        function openModal(messageId) {
+            // 안읽음 -> 읽음 상태 변경
+            $.ajax({
+                url: "/changeMessageStatus/" + messageId,
+                method: "POST",
+                beforeSend : function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function(data) {
+
+                    refreshHeader(); // 헤더 갱신
+
+                    // 모달 생성
+                    var modal = $("<div></div>");
+                    modal.addClass("modal fade").attr('tabindex', '-1').attr('role', 'dialog')
+                         .attr('aria-hidden', 'true').attr('id', 'modal-' + data.id);
+
+                    modal.html(
+                    `<div class="modal-dialog">` +
+                        `<div class="modal-content">` +
+                            `<div class="modal-header" style="border:none; justify-content:center;">` +
+                                `<h1 style="font-weight:600">메시지</h1>` +
+                            `</div>` +
+                            `<div class="modal-body">` +
+                                `<table class="table--container table">` +
+                                    `<tr>` +
+                                        `<td>제목</td>` +
+                                        `<td>${data.title}</td>` +
+                                    `</tr>` +
+                                    `<tr>` +
+                                        `<td>보낸이</td>` +
+                                        `<td>${data.createdBy.name}</td>` +
+                                    `</tr>` +
+                                    `<tr>` +
+                                        `<td>내용</td>` +
+                                        `<td>${data.content}</td>` +
+                                    `</tr>` +
+                                `</table>` +
+                            `</div>` +
+                            `<div class="modal-footer" style="border:none;">` +
+                                `<button type="button" class="btn btn-secondary" onclick="$('#modal-${data.id}').modal('hide'); loadData(currentPage, searchValue);">닫기</button>` +
+                            `</div>` +
+                        `</div>` +
+                    `</div>`);
+
+                    $('#content').append(modal);
+
+                    // 모달 띄우기
+                    $(`#modal-${data.id}`).modal('show');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText);
+                }
+            });
+        }
+    </script>
 
     <!-- 각 페이지의 JS가 작성될 위치 지정 -->
     <th:block layout:fragment="script"></th:block>

@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,6 +52,16 @@ public class MainController {
         }
 
         return "index";
+    }
+
+    // 헤더 데이터 업데이트
+    @Transactional(readOnly = true)
+    @GetMapping("/header-data")
+    public String getHeaderData(Model model, Principal principal) {
+        Member member = memberService.getMemberWithMessages(principal.getName());
+        System.out.println(member);
+        model.addAttribute("messages", memberService.getUnreadMessages(principal.getName()));
+        return "fragments/header :: header"; // 헤더 템플릿의 fragment를 반환
     }
 
     // 비밀번호 변경 페이지

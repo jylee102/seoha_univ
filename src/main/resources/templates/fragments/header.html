@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<nav th:fragment="header" class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+<nav th:fragment="header" id="header" class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
     <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center"
          style="background-color: #0D2D84;">
         <a class="navbar-brand brand-logo" href="/"><img style="width: 80%; height: 100%;" src="/images/logo-name.png" alt="logo"/></a>
@@ -22,7 +22,8 @@
                     <div class="dropdown-divider"></div>
                     <th:block th:each="message, status : ${#authentication.principal.messages}" th:if="${#authentication.principal.messages.size() != 0}">
                         <th:block th:if="${status.index < 3}">
-                            <a class="dropdown-item preview-item" style="cursor: pointer;">
+                            <a class="dropdown-item preview-item" style="cursor: pointer;"
+                               href="#" th:onclick="'openModal(' + ${message.id} + ')'">
                                 <div class="preview-item-content">
                                     <p class="preview-subject ellipsis mb-1" th:text="${message.title}"></p>
                                     <p class="text-muted ellipsis mb-0" th:text="${message.content}"></p>

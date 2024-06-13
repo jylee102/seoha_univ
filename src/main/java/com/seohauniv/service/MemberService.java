@@ -24,7 +24,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -242,7 +245,7 @@ public class MemberService implements UserDetailsService {
     @Transactional(readOnly = true)
     public List<Message> getUnreadMessages(String memberId) {
         return entityManager.createQuery(
-                        "SELECT msg FROM Message msg WHERE msg.sendTo.id = :memberId AND msg.isRead = 'f'", Message.class)
+                        "SELECT msg FROM Message msg WHERE msg.sendTo.id = :memberId AND msg.isRead = 'f' ORDER BY msg.regDate DESC", Message.class)
                 .setParameter("memberId", memberId)
                 .getResultList();
     }

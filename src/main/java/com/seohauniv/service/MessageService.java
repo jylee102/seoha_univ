@@ -27,8 +27,8 @@ public class MessageService {
         return messageRepository.myMessageList(memberId, pageable, searchValue);
     }
 
-    public void changeMessageStatus(Long messageId) {
-        Message message = findById(messageId);
-        message.setIsRead("T");
+    public Message changeMessageStatus(Message message) {
+        message.setIsRead("t");
+        return message;
     }
 }
