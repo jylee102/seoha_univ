@@ -6,10 +6,6 @@
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
-        select {
-             margin: 2px;
-             width: 33.33%;
-        }
 
         a {
             cursor: pointer;
@@ -19,10 +15,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
             display: inline-block;
+            max-width: 100%;
         }
 
         .table {
             width: 100%;
+            table-layout: fixed;
         }
 
         .table th, .table td {
@@ -42,17 +40,10 @@
         }
 
         @media screen and (max-width: 900px) {
-            .table th:nth-child(4), /* 등록일 */
-            .table td:nth-child(4),
             .table th:nth-child(5), /* 조회수 */
             .table td:nth-child(5){
                 display: none;
             }
-        }
-
-        .content {
-            word-wrap: break-word; /* 길게 작성된 단어를 줄 바꿈 */
-            word-break: keep-all; /* 단어 중간에 줄 바꿈을 하지 않도록 */
         }
     </style>
 </th:block>
@@ -71,27 +62,29 @@
                 <div class="col-md-12">
                     <form th:action="@{'/notice/rewrite/' + ${notices.number}}"
                           method="get" th:object="${notices}">
-                        <table class="table table-responsive-md" style="overflow-x:hidden; text-align:center;">
+                        <table class="table" style="overflow-x:hidden; text-align:center;">
                             <thead>
                             <tr style="text-align:center;">
-                                <th scope="col" style="min-width:62px; width: 10%;">번호</th>
-                                <th scope="col" style="min-width:62px; width: 40%;">제목</th>
-                                <th scope="col" style="min-width:77px; width: 10%;" class="sName">작성자</th>
-                                <th scope="col" style="min-width:77px; width: 10%;">등록일</th>
-                                <th scope="col" style="min-width:77px; width: 10%;" class="sName">조회수</th>
-                                <th scope="col" style="width: 10%;"></th>
+                                <th scope="col" style="width: 70px;">번호</th>
+                                <th scope="col">제목</th>
+                                <th scope="col" class="sName" style="width: 80px;">작성자</th>
+                                <th scope="col" style="width: 110px;">등록일</th>
+                                <th scope="col" class="sName" style="width: 80px;">조회수</th>
+                                <th scope="col" style="width: 100px;"></th>
                             </tr>
                             </thead>
                             <tbody>
                             <!-- 조회된 데이터를 출력한다. -->
                             <tr th:each="notice, status: ${notices.getContent()}">
-                                <th th:text="${notice.id}" style="text-align:center;"></th>
-                                <td style="min-width:225px;"><a class="ellipsis content" th:href="'/notice/detail/'+ ${notice.id}" th:text="${#strings.length(notice.title) > 15 ? #strings.substring(notice.title, 0, 15) + '...' : notice.title}"></a></td>
+                                <th th:text="${notices.totalElements - ((notices.number * notices.size) + status.index)}" style="text-align:center;"></th>
+                                <td>
+                                    <a class="ellipsis content" style="white-space: nowrap;" th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}"></a>
+                                </td>
                                 <td th:text="${notice.createdBy.name}" style="text-align:center;" class="sName"></td>
-                                <td th:text="${notice.formattedRegTime}" style="text-align:center;  min-width:110px;"></td>
+                                <td th:text="${notice.formattedRegTime}" style="text-align:center;"></td>
                                 <td th:text="${notice.views}" style="text-align:center;" class="sName"></td>
                                 <td><button type="button" class="btn btn-seoha"
-                                            th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])" style="min-width:56px;">삭제</button></td>
+                                            th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])">삭제</button></td>
 
                             </tr>
                             </tbody>
