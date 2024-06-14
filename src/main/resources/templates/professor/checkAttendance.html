@@ -23,11 +23,12 @@
         font-size: 14px;
         margin-bottom: 8px; /* 버튼 아래 여백 조절 */
     }
-    .fixed-cell {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    @media screen and (max-width: 630px) {
+            table th:nth-child(3), /* 강의시간 */
+            table tbody tr td:nth-child(3) {
+                display: none;
+            }
+    }
   </style>
 </th:block>
 

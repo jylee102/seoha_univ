@@ -14,7 +14,7 @@
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <style>
         html {
-            min-width: 580px;
+            min-width: 540px;
         }
 
         @media screen and (min-width: 1380px) {
@@ -67,6 +67,9 @@
         #weeklyPlan.collapse {
             max-height: none; /* 축소되었을 때 요소가 사라지지 않도록 함 */
         }
+        .input--box {
+            margin-right: 0 !important;
+        }
     </style>
 </th:block>
 
@@ -101,7 +104,7 @@
                         <td>
                             <table class="table input--box">
                                 <tr>
-                                    <th style="min-width:70px">강의 요일</th>
+                                    <th style="min-width:90px">강의 요일</th>
                                     <th>시작 시간</th>
                                     <th>종료 시간</th>
                                 </tr>

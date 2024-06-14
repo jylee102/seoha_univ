@@ -20,12 +20,17 @@
         }
 
         @media screen and (max-width: 750px) {
-            .table--container th:nth-child(3), /* 학점 */
-            .table--container td:nth-child(3),
-            .table--container th:nth-child(4), /* 강의 시간 */
-            .table--container td:nth-child(4) {
+            .table th:nth-child(3), /* 학점 */
+            .table td:nth-child(3),
+            .table th:nth-child(4), /* 강의 시간 */
+            .table td:nth-child(4) {
                 display: none;
             }
+        }
+
+        .table thead tr th {
+            font-weight:600;
+            font-size:14px;
         }
     </style>
 </th:block>
@@ -48,11 +53,11 @@
                                 style="min-width: 54px;" onclick="loadData(1, $('#searchValue').val())">조회</button>
                     </div>
                 </div>
-
-                <table class="table--container table" style="text-align: center;">
+                <div class="table-div">
+                <table class="table" style="text-align: center;">
                     <thead>
                     <tr>
-                        <th style="min-width:275px">강의명</th>
+                        <th style="min-width:110px">강의명</th>
                         <th style="min-width:160px">학과/구분</th>
                         <th style="min-width:70px">학점</th>
                         <th style="min-width:132px">강의 시간</th>
@@ -62,7 +67,7 @@
 
                     <tbody></tbody>
                 </table>
-
+                </div>
                 <div class="pagination-container"></div>
             </form>
         </div>

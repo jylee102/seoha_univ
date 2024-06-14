@@ -24,15 +24,14 @@
             margin-bottom: 8px; /* 버튼 아래 여백 조절 */
         }
 
-
-        .fixed-cell {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         .fixed-cell p {
             margin: 0; /* 여백 제거 */
+        }
+        @media screen and (max-width: 730px) {
+            table tr th:nth-child(4), /* 강의계획서 */
+            table tbody tr td:nth-child(4) {
+                display: none;
+            }
         }
     </style>
 </th:block>
