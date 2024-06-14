@@ -22,6 +22,44 @@
       padding-left: 20px;
       margin-top: 20px;
     }
+
+    .btn-seoha {
+      width: 250px;
+    }
+
+    .wrap {
+      height: 43.55rem;
+    }
+
+    .radioInputDiv {
+      margin-right: 20px;
+    }
+
+    .buter {
+      margin-right: 20px;
+    }
+
+    @media screen and (max-width: 585px) {
+      .radioInputDiv {
+        margin-right: 15px;
+      }
+    }
+
+    @media screen and (max-width: 540px) {
+      .radioInputDiv {
+        margin-right: 10px;
+      }
+
+      .buter {
+        margin-right: 10px;
+      }
+    }
+
+    @media screen and (max-width: 520px) {
+      .radioInputDiv {
+        margin-right: 5px;
+      }
+    }
   </style>
 </th:block>
 
@@ -39,7 +77,7 @@
               <td><input type="text" th:value="${member.name}" id="name" class="input--box" readonly /></td>
             </tr>
             <tr>
-              <td><label for="birth">생년월일</label></td>
+              <td><label for="birth" style="min-width:52px;">생년월일</label></td>
               <td><input type="text" th:value="${member.birth}" id="birth" class="input--box" readonly /></td>
             </tr>
             <tr>
@@ -56,15 +94,15 @@
             </tr>
             <tr>
               <td><label>기간</label></td>
-              <td style="display:flex">
+              <td style="display:flex; min-width:630px;">
                 <select name="fromYear" id="fromYear" style="margin-right:5px;"></select>
-                <select name="fromSemester" id="fromSemester" style="margin-right:20px;">
+                <select name="fromSemester" id="fromSemester" style="margin-right:5px;">
                   <option value="1">1학기</option>
                   <option value="2">2학기</option>
                 </select>
-                <p style="margin-right:20px; margin-bottom:0; place-content:center;">부터</p>
+                <p class="buter" style="margin-bottom:0; place-content:center;">부터</p>
                 <select name="toYear" id="toYear" style="margin-right:5px;"></select>
-                <select name="toSemester" id="toSemester" style="margin-right:20px;">
+                <select name="toSemester" id="toSemester" style="margin-right:5px;">
                   <option value="1">1학기</option>
                   <option value="2">2학기</option>
                 </select>
@@ -74,19 +112,19 @@
             <tr>
               <td><label th:for="reasonType">휴학구분</label></td>
               <td style="display: flex;">
-                <div style="display: flex; margin-right:10px;">
+                <div class="radioInputDiv" style="display: flex;">
                   <input type="radio" name="reasonType" value="OTHER">&nbsp;일반</input>
                 </div>
-                <div style="display: flex; margin-right:10px;">
+                <div class="radioInputDiv" style="display: flex;">
                   <input type="radio" name="reasonType" value="PARENTAL">&nbsp;임신·출산·육아</input>
                 </div>
-                <div style="display: flex; margin-right:10px;">
+                <div class="radioInputDiv" style="display: flex;">
                   <input type="radio" name="reasonType" value="MEDICAL">&nbsp;질병</input>
                 </div>
-                <div style="display: flex; margin-right:10px;">
+                <div class="radioInputDiv" style="display: flex;">
                   <input type="radio" name="reasonType" value="ENTREPRENEURSHIP">&nbsp;창업</input>
                 </div>
-                <div style="display: flex; margin-right:10px;">
+                <div style="display: flex;">
                   <input type="radio" name="reasonType" value="MILITARY">&nbsp;군입대</input>
                 </div>
               </td>

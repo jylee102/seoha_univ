@@ -17,6 +17,12 @@
              padding-left:20px;
              margin-top:20px;
         }
+
+        .btn-seoha {
+            width: 250px;
+            margin-top: 2rem;
+        }
+
     </style>
 </th:block>
 
@@ -32,7 +38,7 @@
                 <h1 style="font-weight:600">내 정보 조회</h1>
                 <div class="split--div"></div>
                 <form role="form" action="/myInfo" method="get" enctype="multipart/form-data" name="infoForm">
-                    <table class="table--container table">
+                    <table class="table--container table fixed-cell">
                         <tr>
                             <td>이름</td>
                             <td th:text="${member.name}"></td>
