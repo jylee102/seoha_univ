@@ -14,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.itextpdf.html2pdf.HtmlConverter;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class SyllabusService {
     }
 
     // 강의계획서 등록
-    public Syllabus create(SyllabusFormDto syllabusFormDto, Professor professor) {
+    public Syllabus create(SyllabusFormDto syllabusFormDto, Professor professor) throws Exception {
 
         Syllabus syllabus = syllabusFormDto.toEntity();
         syllabus.setProfessor(professor);

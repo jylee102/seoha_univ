@@ -61,6 +61,11 @@ dependencies {
 	// WebSocket and STOMP support
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// iTextPDF 라이브러리 추가
+	implementation 'com.itextpdf:html2pdf:4.0.2'
+	implementation 'com.itextpdf:kernel:7.2.0'
+	implementation 'com.itextpdf:io:7.2.0'
 }
 
 tasks.named('test') {

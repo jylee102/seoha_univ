@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+    .table--container {
+       width: 100%;
+       border: 1px solid #d2d1d1;
+       border-width: 1px 0px;
+    }
+    table tr,
+    td {
+       border: 1px solid #d2d1d1;
+       border-width: 1px 0px;
+       padding: 5px 15px;
+    }
+    main {
+       min-width: 100%;
+       padding: 20px;
+       margin-bottom: 50px;
+    }
+    .split--div {
+       min-width: 100%;
+       height: 2px;
+       background-color: gray;
+       margin: 20px 0 50px;
+    }
+  </style>
+</head>
+
+<main class="content">
+  <div class="card">
+    <div class="card-body px-5 py-5">
+      <h1>강의 계획서</h1>
+      <div class="split--div"></div>
+
+      <form name="syllabusForm" th:object="${course.syllabus}">
+        <table class="table--container table">
+          <tr>
+            <td>강의코드</td>
+            <td th:text="${course.id}"></td>
+          </tr>
+          <tr>
+            <td>학기</td>
+            <td th:text="*{year} + '년도 ' + *{semester} + '학기'"></td>
+          </tr>
+          <tr>
+            <td>강좌명</td>
+            <td th:text="*{courseName}"></td>
+          </tr>
+          <tr>
+            <td>담당 교수</td>
+            <td th:text="*{professor.name}"></td>
+          </tr>
+          <tr>
+            <td>강의 시간</td>
+            <td th:text="*{courseTimeDescription}"></td>
+          </tr>
+          <tr>
+            <td>강의실</td>
+            <td th:text="${course.room.buildingName} + ' ' + ${course.room.roomNo} + '호'"></td>
+          </tr>
+
+          <tr>
+            <td style="min-width: 140px;">구분 / 학점 / 인원</td>
+            <td th:text="*{courseTypeDescription} + ' / ' + *{credit} + '학점 / ' + *{capacity} + '명'"></td>
+          </tr>
+
+          <tr>
+            <td>수업 개요</td>
+            <td th:text="*{overview}"></td>
+          </tr>
+          <tr>
+            <td>강의 목표</td>
+            <td th:text="*{objective}"></td>
+          </tr>
+
+          <tr>
+            <td>수업 교재</td>
+            <td th:text="*{textbook}"></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+</main>
+
+</html>

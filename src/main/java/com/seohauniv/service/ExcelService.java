@@ -2,7 +2,6 @@ package com.seohauniv.service;
 
 import com.seohauniv.constant.CourseType;
 import com.seohauniv.constant.Day;
-import com.seohauniv.constant.Role;
 import com.seohauniv.dto.CourseTimeDto;
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.dto.ProgressUpdate;
@@ -21,7 +20,6 @@ import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +46,9 @@ public class ExcelService {
             Sheet sheet = workbook.getSheetAt(0);
 
             int dataRows = 0; // 데이터가 있는 행의 개수
-
+            int lastRowNum = sheet.getLastRowNum();
             // 데이터가 있는 행의 개수를 세는 반복문
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            for (int i = 1; i <= lastRowNum; i++) {
                 Row row = sheet.getRow(i);
                 if (row != null && row.getCell(0) != null) {
                     dataRows++; // 데이터가 있는 행이므로 개수를 증가시킴
@@ -58,10 +56,10 @@ public class ExcelService {
             }
 
             for (int i = 1; i <= dataRows; i++) { // 첫 번째 행은 헤더이므로 건너뜀
-                MemberFormDto memberFormDto = new MemberFormDto();
-
                 Row row = sheet.getRow(i);
                 if (row != null) {
+                    MemberFormDto memberFormDto = new MemberFormDto();
+
                     memberFormDto.setRole(row.getCell(0).getStringCellValue());
                     memberFormDto.setName(row.getCell(1).getStringCellValue());
                     memberFormDto.setEmail(row.getCell(2).getStringCellValue());
@@ -163,20 +161,20 @@ public class ExcelService {
             Sheet sheet = workbook.getSheetAt(0);
 
             int dataRows = 0; // 데이터가 있는 행의 개수
-
+            int lastRowNum = sheet.getLastRowNum();
             // 데이터가 있는 행의 개수를 세는 반복문
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            for (int i = 1; i <= lastRowNum; i++) {
                 Row row = sheet.getRow(i);
-                if (row != null && row.getCell(9) != null) {
+                if (row != null && row.getCell(0) != null) {
                     dataRows++; // 데이터가 있는 행이므로 개수를 증가시킴
                 }
             }
 
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) { // 첫 번째 행은 헤더이므로 건너뜀
-                SyllabusFormDto syllabusFormDto = new SyllabusFormDto();
-
+            for (int i = 1; i <= dataRows; i++) { // 첫 번째 행은 헤더이므로 건너뜀
                 Row row = sheet.getRow(i);
                 if (row != null) {
+                    SyllabusFormDto syllabusFormDto = new SyllabusFormDto();
+
                     syllabusFormDto.setYear((int) row.getCell(0).getNumericCellValue());
                     syllabusFormDto.setSemester((int) row.getCell(1).getNumericCellValue());
                     syllabusFormDto.setCourseName(row.getCell(2).getStringCellValue());
@@ -218,7 +216,7 @@ public class ExcelService {
                     syllabusFormDto.setCourseTimes(courseTimes);
 
                     List<WeeklyPlan> weeklyPlans = new ArrayList<>();
-                    for (int j = 1; j <= 6; j++) {
+                    for (int j = 1; j <= 16; j++) {
                         WeeklyPlan weeklyPlan = new WeeklyPlan();
                         weeklyPlan.setWeek(j);
                         if (row.getCell(j + 18) == null) weeklyPlan.setContent("");
@@ -250,21 +248,35 @@ public class ExcelService {
         if (!errors.isEmpty()) {
             return errors.toString().replaceAll(",", "\n");
         } else {
-            processDatabaseUpdates(syllabusFormDtoList, professor, messagingTemplate);
-            return null;
+            List<SyllabusFormDto> failedSyllabuses = processDatabaseUpdates(syllabusFormDtoList, professor, messagingTemplate);
+
+            if (!failedSyllabuses.isEmpty()) {
+                return "다음 항목들이 등록에 실패했습니다: " + failedSyllabuses.toString();
+            } else {
+                return null;
+            }
         }
     }
 
     // 강의 계획서 등록
-    private void processDatabaseUpdates(List<SyllabusFormDto> syllabusFormDtoList, Professor professor, SimpMessagingTemplate messagingTemplate) {
+    private List<SyllabusFormDto> processDatabaseUpdates(List<SyllabusFormDto> syllabusFormDtoList, Professor professor, SimpMessagingTemplate messagingTemplate) {
+        List<SyllabusFormDto> failedSyllabuses = new ArrayList<>();
+
         // 강의계획서 등록
         for (int i = 0; i < syllabusFormDtoList.size(); i++) {
-            syllabusService.create(syllabusFormDtoList.get(i), professor);
+            try {
+                syllabusService.create(syllabusFormDtoList.get(i), professor);
 
-            int percentComplete = (int) (((i + 1) / (double) syllabusFormDtoList.size()) * 100);
-            String message = "강의계획서 등록 중: " + (i + 1) + " / " + syllabusFormDtoList.size();
-            messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
+                int percentComplete = (int) (((i + 1) / (double) syllabusFormDtoList.size()) * 100);
+                String message = "강의계획서 등록 중: " + (i + 1) + " / " + syllabusFormDtoList.size();
+                messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
+            } catch (Exception e) {
+                e.printStackTrace();
+                failedSyllabuses.add(syllabusFormDtoList.get(i));
+            }
         }
+
+        return failedSyllabuses;
     }
 
 }

@@ -22,13 +22,17 @@ import java.util.Map;
 @Transactional
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final PdfService pdfService;
 
     // 강의 개설
-    public Course create(CourseFormDto courseFormDto) {
+    public Course create(CourseFormDto courseFormDto) throws Exception {
         courseFormDto.getSyllabus().setStatus(ProcedureStatus.APPROVAL);
 
         Course course = courseFormDto.toEntity();
         course.setRestSeat(courseFormDto.getSyllabus().getCapacity());
+
+        String pdf = pdfService.makePdf(course); // PDF 생성
+        course.setPdf(pdf);
 
         return courseRepository.save(course);
     }
