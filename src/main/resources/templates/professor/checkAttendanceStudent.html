@@ -54,13 +54,13 @@
                     <td>[[${student.student.major.title}]]</td>
 
                     <td th:id="'present-'+${student.student.id}">
-                        <a href="javascript:void(0);" th:onclick="addAttendance([[${student.student.id}]], 'PRESENT')"><i class="fa-solid fa-o"></i></a>
+                        <a href="javascript:void(0);" th:onclick="addAttendance([[${student.student.id}]],[[${student.course.id}]], 'PRESENT')"><i class="fa-solid fa-o"></i></a>
                     </td>
                     <td th:id="'late-'+${student.student.id}">
-                        <a href="javascript:void(0);" th:onclick="addAttendance([[${student.student.id}]], 'LATE')"><i class="fa-solid fa-check"></i></a>
+                        <a href="javascript:void(0);" th:onclick="addAttendance([[${student.student.id}]],[[${student.course.id}]], 'LATE')"><i class="fa-solid fa-check"></i></a>
                     </td >
                     <td th:id="'absent-'+${student.student.id}">
-                        <a href="javascript:void(0);"  th:onclick="addAttendance([[${student.student.id}]], 'ABSENT')"><i class="fa-solid fa-x"></i></a>
+                        <a href="javascript:void(0);"  th:onclick="addAttendance([[${student.student.id}]],[[${student.course.id}]], 'ABSENT')"><i class="fa-solid fa-x"></i></a>
                     </td>
                 </tr>
             </th:block>
@@ -104,23 +104,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
         var errorMessage = [[${errorMessage}]];
-        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+    if(errorMessage != null || errorMessage == "") alert(errorMessage);
 
-        function page(page) {
-            // 페이지 이동
-            location.href = "/professors/checkAttendanceStudent/" + [[${students.content[0].course.id}]] + "/" + page;
-        }
+    function page(page) {
+        // 페이지 이동
+        location.href = "/professors/checkAttendanceStudent/" + [[${students.content[0].course.id}]] + "/" + page;
+    }
 
-        function goToFirstPage() {
-            page(0);
-        }
+    function goToFirstPage() {
+        page(0);
+    }
 
-        function goToLastPage() {
-            var totalPages = [[${students.totalPages}]];
-            page(totalPages - 1);
-        }
+    function goToLastPage() {
+        var totalPages = [[${students.totalPages}]];
+        page(totalPages - 1);
+    }
 
-         function getCsrfToken() {
+    function getCsrfToken() {
         return $("meta[name='_csrf']").attr("content");
     }
 
@@ -128,39 +128,42 @@
         return $("meta[name='_csrf_header']").attr("content");
     }
 
+    function addAttendance(studentId, courseId, status) {
+        var urlParams = new URLSearchParams(window.location.search);
+        var week = urlParams.get('week');
+        var day = urlParams.get('day');
+        var jsonData = JSON.stringify({ studentId: studentId, courseId: courseId, status: status, week: week, day: day });
+        console.log(jsonData);
 
-          function addAttendance(studentId, status) {
-          var urlParams = new URLSearchParams(window.location.search);
-          var week = urlParams.get('week');
-          var day = urlParams.get('day');
-          console.log(week);
-          console.log(day);
         $.ajax({
             url: '/professors/attendance/add',
             type: 'POST',
+            dataType: 'text',
             contentType: 'application/json',
-            data: JSON.stringify({ studentId: studentId, status: status, week: week, day:day }),
+            data: jsonData,
             beforeSend: function(xhr) {
                 xhr.setRequestHeader(getCsrfHeader(), getCsrfToken());
             },
             success: function(response) {
-                alert('출석체크 완료');
-                console.log(week);
-                // 필요한 경우 추가 작업 수행
+                    console.log(response)
 
-                // 출석체크 완료 메시지 표시
-                var messageElement = document.createElement("span");
-                messageElement.textContent = "출석체크 완료";
-                document.getElementById("present-" + studentId).innerHTML = "";
-                document.getElementById("late-" + studentId).innerHTML = "";
-                document.getElementById("late-" + studentId).appendChild(messageElement);
-                document.getElementById("absent-" + studentId).innerHTML = "";
+                    alert('출석체크 완료');
 
+                    // 출석체크 완료 메시지 표시
+                    var messageElement = document.createElement("span");
+                    messageElement.textContent = "출석체크 완료";
+
+                    // 출석 상태에 따른 변경
+
+                        document.getElementById("present-" + studentId).innerHTML = "";
+                        document.getElementById("late-" + studentId).innerHTML = "";
+                        document.getElementById("late-" + studentId).appendChild(messageElement);
+                        document.getElementById("absent-" + studentId).innerHTML = "";
             },
             error: function(xhr, status, error) {
-            console.log(xhr.responseText);
-                alert('출석 체크 오류: ' + xhr.responseText);
+                console.log(xhr.responseText);
 
+                alert('출석 체크 오류: ' + xhr.responseText);
             }
         });
     }

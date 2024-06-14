@@ -8,7 +8,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface CourseRepository extends JpaRepository<Course, String>, QuerydslPredicateExecutor<Course>, CourseRepositoryCustom {
 
-    Page<Course> findByProfessorId(String memberId, Pageable pageable);
+    Page<Course> findByProfessorIdOrderById(String memberId, Pageable pageable);
 
-    Page<Course> findByProfessorIdAndSyllabusYearAndSyllabusSemester(String memberId, int year, int semester,Pageable pageable);
+    Page<Course> findByProfessorIdAndSyllabusYearAndSyllabusSemesterOrderById(String memberId, int year, int semester,Pageable pageable);
 }

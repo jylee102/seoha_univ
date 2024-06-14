@@ -10,5 +10,5 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
-    int countByStatusAndStudentId(AttendStatus status, String studentId);
+    int countByStatusAndEnrollIdAndStudentId(AttendStatus status,Long enrollId ,String studentId);
 }

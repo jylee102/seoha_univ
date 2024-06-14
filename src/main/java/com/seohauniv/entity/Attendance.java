@@ -28,5 +28,9 @@ public class Attendance extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Student student;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "enroll_id")
+    private Enroll enroll;
+
 
 }

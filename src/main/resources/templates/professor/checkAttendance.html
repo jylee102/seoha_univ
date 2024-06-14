@@ -29,25 +29,33 @@
                 display: none;
             }
     }
+      ul li a:hover {
+        text-decoration: underline !important;
+        color: black !important;
+        font-weight: bold !important;
+        }
   </style>
 </th:block>
 
 <main layout:fragment="content">
   <h1>출석체크</h1>
   <div class="split--div"></div>
-  <div class="sub--filter">
-    <form action="/professors/checkAttendance" method="get" th:object="${myCourseSearchDto}">
-      <div style="margin-bottom: 10px;">
-        <select class="input-search select-search" name="searchYear" id="yearSelect"></select>
-        <select class="input-search select-search" name="searchSemester">
-          <option value="1" selected>1학기</option>
-          <option value="2">2학기</option>
-        </select>
-        <!-- 검색 버튼 -->
-        <button class="btn btn-seoha" type="submit">조회</button>
-      </div>
-    </form>
-  </div>
+    <div class="sub--filter" style="display:flex; justify-content:space-between">
+        <form action="/professors/checkAttendance" method="get" th:object="${myCourseSearchDto}">
+            <div style="margin-bottom: 10px;">
+                <select class="input-search select-search" name="searchYear" id="yearSelect"></select>
+                <select class="input-search select-search" name="searchSemester">
+                    <option value="1" selected>1학기</option>
+                    <option value="2">2학기</option>
+                </select>
+                <!-- 검색 버튼 -->
+                <button class="btn btn-seoha" type="submit">조회</button>
+            </div>
+        </form>
+        <div style="margin-bottom: 10px;">
+            <select class="input-search select-search" name="week" id="weekSelect"></select>
+        </div>
+    </div>
   <h4 style="margin-bottom: 10px;">
     <span style="font-weight: 600;">강의 목록</span>
   </h4>
@@ -63,8 +71,14 @@
       <tr th:each="myCourse, status : ${myCourses}">
         <td th:text="${myCourse.id}"></td>
         <td th:text="${myCourse.syllabus.courseName}"></td>
-        <td><p th:each="courseTime, status : ${myCourse.syllabus.courseTimes}"
-               th:text="${courseTime.day.getDescription}+' '+${courseTime.startTime}+' ~ '+${courseTime.endTime}"></p></td>
+        <td><ul th:each="courseTime, status : ${myCourse.syllabus.courseTimes}">
+            <li>
+                <a
+                        th:text="${courseTime.day.getDescription}+' '+${courseTime.startTime}+' ~ '+${courseTime.endTime}"
+                        th:onclick="checkAttendance([[${myCourse.id}]],[[${courseTime.day}]])">
+                </a>
+            </li>
+        </ul></td>
         <td>
           <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
             <li style="height: 24px;"><a th:href="'/professors/checkAttendanceList/'+${myCourse.id}">조회</a>
@@ -106,42 +120,83 @@
 <th:block layout:fragment="script">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script th:inline="javascript">
-    var errorMessage = [[${errorMessage}]];
-    if (errorMessage != null || errorMessage == "") alert(errorMessage);
+      var errorMessage = [[${errorMessage}]];
+         if (errorMessage != null || errorMessage == "") alert(errorMessage);
 
-    // 현재 연도 구하기
-    var currentYear = new Date().getFullYear();
-    var selectElement = document.getElementById("yearSelect");
 
-    // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
-    for (var i = 0; i < 3; i++) {
-        var option = document.createElement("option");
-        option.value = currentYear + i;
-        option.textContent = (currentYear + i) + "학년도";
-        selectElement.appendChild(option);
-    }
+         var currentYear = new Date().getFullYear();
+         var selectElement = document.getElementById("weekSelect");
+         var optionElement = document.getElementById("yearSelect");
 
-    function page(page) {
-        var searchYear = document.getElementById("yearSelect").value;
-        var searchSemester = document.querySelector("select[name='searchSemester']").value;
-        // 페이지 이동
-        location.href = "/professors/checkAttendance/" + page
-            + "?searchYear=" + searchYear
-            + "&searchSemester=" + searchSemester;
-    }
 
-    function goToFirstPage() {
-        var searchYear = document.getElementById("yearSelect").value;
-        var searchSemester = document.querySelector("select[name='searchSemester']").value;
-        page(0, searchYear, searchSemester);
-    }
+         for (var i = 1; i <= 16; i++) {
+             var option = document.createElement("option");
+             option.value =  i;
+             option.textContent = (i) + "주차";
+             selectElement.appendChild(option);
+         }
+         for (var i = 0; i < 3; i++) {
+             var option = document.createElement("option");
+             option.value = currentYear + i;
+             option.textContent = (currentYear + i) + "학년도";
+             optionElement.appendChild(option);
+         }
 
-    function goToLastPage() {
-        var totalPages = [[${myCourses.totalPages}]];
-        var searchYear = document.getElementById("yearSelect").value;
-        var searchSemester = document.querySelector("select[name='searchSemester']").value;
-        page(totalPages - 1, searchYear, searchSemester);
-    }
+         function searchPage(page) {
+             var searchYear = document.getElementById("yearSelect").value;
+             var searchSemester = document.querySelector("select[name='searchSemester']").value;
+             // 페이지 이동
+             location.href = "/professors/checkAttendance/" + page
+                 + "?searchYear=" + searchYear
+                 + "&searchSemester=" + searchSemester;
+         }
+
+         function page(page) {
+             var week = document.getElementById("weekSelect").value;
+
+             // 페이지 이동
+             location.href = "/professors/checkAttendance/" + page
+                 + "?week=" + week;
+                 fetchData(url);
+         }
+         function checkAttendance(courseId,day) {
+
+            var week = document.getElementById("weekSelect").value;
+             // 페이지 이동
+             location.href = "/professors/checkAttendanceStudent/" + courseId
+                 + "?week=" + week +"&day="+day;
+                 fetchData(url);
+         }
+
+         function goToFirstPage() {
+             var week = document.getElementById("weekSelect").value;
+
+             page(0, week);
+         }
+            function fetchData(url) {
+         fetch(url)
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Network response was not ok');
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 // 데이터 처리 로직 추가
+                 console.log('Success:', data);
+                 // 필요한 DOM 업데이트 등을 수행
+             })
+             .catch(error => {
+                 console.error('Error:', error);
+                 // 오류 처리 로직 추가
+             });
+     }
+
+         function goToLastPage() {
+             var totalPages = [[${myCourses.totalPages}]];
+            var week = document.getElementById("weekSelect").value;
+             page(totalPages - 1, week);
+         }
   </script>
 </th:block>
 

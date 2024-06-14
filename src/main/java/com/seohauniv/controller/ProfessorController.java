@@ -58,9 +58,9 @@ private final EvaluationService evaluationService;
         List<Evaluation> evaluations = evaluationService.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
         List<StudentAttendanceDto> studentAttendanceDto = new ArrayList<>();
         for (Enroll enroll : myCourseStudentList) {
-            int countStatusPresent = attendanceService.countByStatusAndStudentId(AttendStatus.PRESENT,enroll.getStudent().getId());
-            int countStatusLate = attendanceService.countByStatusAndStudentId(AttendStatus.LATE,enroll.getStudent().getId());
-            int countStatusAbsent = attendanceService.countByStatusAndStudentId(AttendStatus.ABSENT,enroll.getStudent().getId());
+            int countStatusPresent = attendanceService.countByStatusAndStudentId(AttendStatus.PRESENT, enroll.getId(), enroll.getStudent().getId());
+            int countStatusLate = attendanceService.countByStatusAndStudentId(AttendStatus.LATE,enroll.getId(),enroll.getStudent().getId());
+            int countStatusAbsent = attendanceService.countByStatusAndStudentId(AttendStatus.ABSENT,enroll.getId(),enroll.getStudent().getId());
             StudentAttendanceDto attendanceDto = new StudentAttendanceDto();
             attendanceDto.setStudent(enroll.getStudent());
             attendanceDto.setCountPresent(countStatusPresent);
@@ -102,10 +102,9 @@ private final EvaluationService evaluationService;
         return "redirect:/professors/myCourse";
     }
     @GetMapping(value = {"professors/checkAttendance","/professors/checkAttendance/{page}"})
-    public String checkAttendance(@ModelAttribute MyCourseSearchDto myCourseSearchDto, Model model, Principal principal, @PathVariable("page") Optional<Integer> page){
+    public String checkAttendance(@ModelAttribute MyCourseSearchDto myCourseSearchDto,Model model, Principal principal, @PathVariable("page") Optional<Integer> page){
         int searchYear = myCourseSearchDto.getSearchYear() != 0 ? myCourseSearchDto.getSearchYear() : -1;
         int searchSemester = myCourseSearchDto.getSearchSemester() != 0 ? myCourseSearchDto.getSearchSemester() : -1;
-
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
 
         Page<Course> myCourses;
@@ -115,7 +114,7 @@ private final EvaluationService evaluationService;
             myCourses = courseService.myCourseSearch(principal.getName(), myCourseSearchDto, pageable);
         }
         model.addAttribute("myCourses",myCourses);
-        model.addAttribute("myCourseSearchDto", myCourseSearchDto);
+
         model.addAttribute("maxPage", 5);
         return "professor/checkAttendance";
     }
@@ -124,7 +123,7 @@ private final EvaluationService evaluationService;
 
 
 
-        int pageSize = 5;
+        int pageSize = 10;
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get():0 , pageSize);
 
         Course myCourse = courseService.findById(courseId);
@@ -146,25 +145,25 @@ private final EvaluationService evaluationService;
     public String checkAttendanceStudent(Model model, @PathVariable("courseId") String courseId,@PathVariable("page") Optional<Integer> page) {
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
-        List<Evaluation> evaluations = evaluationService.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
+
 
         model.addAttribute("students", myCourseStudentList);
-        model.addAttribute("evaluations", evaluations);
+
         model.addAttribute("maxPage", 5);
 
         return "professor/checkAttendanceStudent";
     }
 
     @PostMapping(value = "/professors/attendance/add")
-    public @ResponseBody ResponseEntity addAttendance(@RequestBody AttendanceFormDto attendanceFormDto){
+    public @ResponseBody ResponseEntity<String> addAttendance(@RequestBody AttendanceFormDto attendanceFormDto){
 
         try {
-            Attendance attendance = attendanceService.addAttendance(attendanceFormDto.getStudentId(),attendanceFormDto.getStatus(),attendanceFormDto.getDay(),attendanceFormDto.getWeek());
+            Attendance attendance = attendanceService.addAttendance(attendanceFormDto.getStudentId(),attendanceFormDto.getCourseId(),attendanceFormDto.getStatus(),attendanceFormDto.getDay(),attendanceFormDto.getWeek());
 
-            return new ResponseEntity(attendance,HttpStatus.OK);
+            return new ResponseEntity<String>("출석체크에 성공했습니다.",HttpStatus.OK);
         }
         catch (Exception e){
-            return new ResponseEntity("출석체크에 실패했습니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("출석체크에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 

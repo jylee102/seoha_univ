@@ -52,10 +52,10 @@ public class CourseService {
 
     @Transactional(readOnly = true)
     public Page<Course> myCourse(String memberId, Pageable pageable){
-        return courseRepository.findByProfessorId(memberId, pageable);
+        return courseRepository.findByProfessorIdOrderById(memberId, pageable);
     }
     @Transactional(readOnly = true)
     public Page<Course> myCourseSearch(String memberId, MyCourseSearchDto myCourseSearchDto, Pageable pageable){
-        return courseRepository.findByProfessorIdAndSyllabusYearAndSyllabusSemester(memberId,myCourseSearchDto.getSearchYear(),myCourseSearchDto.getSearchSemester(),pageable);
+        return courseRepository.findByProfessorIdAndSyllabusYearAndSyllabusSemesterOrderById(memberId,myCourseSearchDto.getSearchYear(),myCourseSearchDto.getSearchSemester(),pageable);
     }
 }

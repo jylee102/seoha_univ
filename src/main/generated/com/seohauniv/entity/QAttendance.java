@@ -26,6 +26,8 @@ public class QAttendance extends EntityPathBase<Attendance> {
 
     public final EnumPath<com.seohauniv.constant.Day> day = createEnum("day", com.seohauniv.constant.Day.class);
 
+    public final QEnroll enroll;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     //inherited
@@ -58,6 +60,7 @@ public class QAttendance extends EntityPathBase<Attendance> {
 
     public QAttendance(Class<? extends Attendance> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.enroll = inits.isInitialized("enroll") ? new QEnroll(forProperty("enroll"), inits.get("enroll")) : null;
         this.student = inits.isInitialized("student") ? new QStudent(forProperty("student"), inits.get("student")) : null;
     }
 
