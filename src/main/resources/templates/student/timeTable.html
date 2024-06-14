@@ -22,6 +22,18 @@
         #dp > div:nth-of-type(2) {
             overflow: hidden !important;
         }
+
+        #dp > div:first-of-type > table > tbody > tr > td:last-of-type {
+            display: none;
+        }
+
+        .calendar_default_cornerright {
+            height: 0 !important;
+        }
+
+        .calendar_default_event {
+            width: 101.5% !important;
+        }
     </style>
 </head>
 
@@ -29,8 +41,11 @@
 <main layout:fragment="content" style="margin:0;">
     <div class="card">
         <div class="card-body px-5 py-5">
-            <h1>내 강의 시간표</h1>
-            <div class="div-split" style="min-width: 410px;"></div>
+            <div style="margin-bottom: 50px;">
+                <h1>내 강의 시간표</h1>
+                <div class="div-split" style="min-width: 410px;"></div>
+            </div>
+
             <div id="dp"></div>
         </div>
     </div>
