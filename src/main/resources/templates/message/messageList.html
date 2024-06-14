@@ -12,6 +12,12 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <style>
+        .clickable-row:hover {
+            background-color: aliceblue;
+            cursor: pointer;
+        }
+    </style>
 </th:block>
 
 <main layout:fragment="content">
@@ -21,7 +27,7 @@
             <div class="split--div"></div>
 
             <form name="searchForm" onsubmit="return false;">
-                <div class="d-flex align-items-center search">
+                <div class="d-flex align-items-center search" style="margin-top: -30px;">
                     <div class="input-container">
                         <input type="text" class="input-search" id="searchValue"
                                placeholder="제목 또는 내용으로 검색" />
@@ -113,7 +119,7 @@
                 row.append("<td>" + descendingIndex + "</td>");
                 row.append("<td>" + item.title + "</td>");
                 row.append("<td>" + item.createdBy.name + "</td>");
-                row.append("<td>" + item.regDate + "</td>");
+                row.append("<td>" + item.regDate.split('T')[0] + "</td>");
                 if (item.isRead == "t") row.append("<td>읽음</td>");
                 else row.append("<td>안읽음</td>");
 

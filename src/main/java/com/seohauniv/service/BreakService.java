@@ -18,6 +18,7 @@ import java.util.List;
 @Transactional
 public class BreakService {
     private final BreakRepository breakRepository;
+    private final MessageService messageService;
 
     public Break findById(Long id) {
         return breakRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -71,13 +72,18 @@ public class BreakService {
         Break breaks = findById(id);
         breaks.setStatus(ProcedureStatus.REFUSAL);
 
+        Message message = new Message(breaks.getStudent().getMember(), "휴학 반려", breaks.getStudent().getName() + " 님의 휴학 신청이 반려되었습니다.");
+        messageService.create(message);
+
         return breaks;
     }
 
-    // 휴학신청
+    // 휴학신청 승인
     public Break create(Break abreak) {
         abreak.setStatus(ProcedureStatus.APPROVAL);
-
+        
+        Message message = new Message(abreak.getStudent().getMember(), "휴학 승인", abreak.getStudent().getName() + " 님의 휴학 신청이 승인되었습니다.");
+        messageService.create(message);
 
         return breakRepository.save(abreak);
     }

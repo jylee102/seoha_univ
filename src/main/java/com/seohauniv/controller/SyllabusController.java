@@ -1,9 +1,11 @@
 package com.seohauniv.controller;
 
 import com.seohauniv.dto.SyllabusFormDto;
+import com.seohauniv.entity.Message;
 import com.seohauniv.entity.Professor;
 import com.seohauniv.entity.Room;
 import com.seohauniv.entity.Syllabus;
+import com.seohauniv.service.MessageService;
 import com.seohauniv.service.ProfessorService;
 import com.seohauniv.service.RoomService;
 import com.seohauniv.service.SyllabusService;
@@ -31,6 +33,7 @@ public class SyllabusController {
     private final SyllabusService syllabusService;
     private final ProfessorService professorService;
     private final RoomService roomService;
+    private final MessageService messageService;
 
     @PostMapping("/professor/applyForSyllabus")
     public @ResponseBody ResponseEntity applyForSyllabus(@RequestBody @Valid SyllabusFormDto syllabusFormDto,
@@ -88,9 +91,15 @@ public class SyllabusController {
     }
 
     @PostMapping("/staff/refuse/syllabus")
-    public @ResponseBody ResponseEntity refuseSyllabus(@RequestParam("id") Long id) {
+    public @ResponseBody ResponseEntity refuseSyllabus(@RequestParam("id") Long id, @RequestParam("messageContent") String messageContent) {
         try {
-            syllabusService.refuseSyllabus(id);
+            Syllabus syllabus = syllabusService.refuseSyllabus(id);
+
+            String content = syllabus.getProfessor().getName() + " 님이 등록하신 [" +
+                    syllabus.getCourseName() + "] 강의 계획서가 승인되었습니다.\n\n" + messageContent;
+            Message message = new Message(syllabus.getProfessor().getMember(), "강의계획서 반려", content);
+            messageService.create(message);
+
             return new ResponseEntity("해당 강의 계획서가 반려 처리되었습니다.", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
