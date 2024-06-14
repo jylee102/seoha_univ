@@ -17,12 +17,6 @@
              padding-left:20px;
              margin-top:20px;
         }
-
-        .btn-seoha {
-            width: 250px;
-            margin-top: 2rem;
-        }
-
     </style>
 </th:block>
 
@@ -74,13 +68,13 @@
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header" style="border:none; justify-content:center;">
-                                                    <h1 style="font-weight:600" id="exampleModalLabel">휴학신청 내역</h1>
+                                                    <h1 style="font-weight:600; margin-top:27px;" id="exampleModalLabel">휴학신청 내역</h1>
                                                 </div>
                                                 <div class="modal-body">
                                                     <table class="table--container table">
                                                         <tr>
                                                             <td>학교</td>
-                                                            <td>서하 대학교</td>
+                                                            <td>서하대학교</td>
                                                         </tr>
                                                         <tr>
                                                             <td>이름</td>
@@ -92,14 +86,14 @@
                                                         </tr>
                                                         <tr>
                                                             <td>학년</td>
-                                                            <td th:text="${break.studentGrade}"></td>
+                                                            <td th:text="${break.studentGrade} + '학년'"></td>
                                                         </tr>
                                                         <tr>
                                                             <td>학과</td>
                                                             <td th:text="${break.student.major.title}"></td>
                                                         </tr>
                                                         <tr>
-                                                            <td>전화번호</td>
+                                                            <td style="width:84px;">전화번호</td>
                                                             <td th:text="${member.phone}"></td>
                                                         </tr>
                                                         <tr>
@@ -137,7 +131,8 @@
                         </tr>
                     </table>
                     <div style="display:flex; place-content:center;">
-                        <button type="button" style="margin-top:50px;" onclick="location.href = '/myInfo/update'" class="btn btn-seoha mb-3">수정</button>
+                        <button type="button" style="margin-top:50px; width:250px; margin-top:2rem;" onclick="location.href = '/myInfo/update'"
+                                class="btn btn-seoha mb-3">수정</button>
                     </div>
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 </form>

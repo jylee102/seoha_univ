@@ -24,10 +24,10 @@ public class TimeTableController {
     public Iterable<CourseTimeDto> resources(Principal principal) {
         try {
             List<Course> courses = enrollService.getCoursesByStudentId(principal.getName());
-            List<CourseTimeDto> courseDTOs = courses.stream()
+            List<CourseTimeDto> courseDtos = courses.stream()
                     .flatMap(course -> convertToDto(course).stream()) // Course를 여러 개의 CourseTimeDto로 변환
                     .collect(Collectors.toList());
-            return courseDTOs;
+            return courseDtos;
         } catch (Exception e) {
             e.printStackTrace(); // 디버깅을 위해 예외를 출력
             throw new RuntimeException("강의 정보를 가져오는데 실패하였습니다."); // 예시로 일반적인 에러 응답
@@ -40,7 +40,7 @@ public class TimeTableController {
                     CourseTimeDto dto = new CourseTimeDto();
                     dto.setCourseName(course.getSyllabus().getCourseName());
                     dto.setProfessorName(course.getProfessor().getName());
-                    dto.setRoomName(course.getRoom().getBuildingName() + " " + course.getRoom().getRoomNo());
+                    dto.setRoomName(course.getRoom().getBuildingName() + " " + course.getRoom().getRoomNo() + "호");
 
                     dto.setDay(courseTime.getDay());
                     dto.setStartTime(courseTime.getStartTime());
