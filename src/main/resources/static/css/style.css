@@ -21749,12 +21749,6 @@ dl li {
   flex-grow: 1;
 }
 
-@media (max-width: 767px) {
-  .content-wrapper {
-    padding: 1.5rem 1.5rem;
-  }
-}
-
 /* Sidebar */
 .sidebar {
   min-height: calc(100vh - 60px);

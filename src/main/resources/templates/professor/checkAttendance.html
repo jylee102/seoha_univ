@@ -23,6 +23,11 @@
         font-size: 14px;
         margin-bottom: 8px; /* 버튼 아래 여백 조절 */
     }
+    .fixed-cell {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
   </style>
 </th:block>
 
@@ -46,9 +51,9 @@
     <span style="font-weight: 600;">강의 목록</span>
   </h4>
   <div class="table-div">
-    <table>
+    <table class="fixed-cell">
       <tr>
-        <th>학수번호</th>
+        <th>강의코드</th>
         <th style="min-width: 72px;">강의명</th>
         <th style="min-width: 103px;">강의시간</th>
         <th>출석 체크</th>

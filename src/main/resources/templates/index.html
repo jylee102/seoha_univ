@@ -39,6 +39,11 @@
       table {
          width: 100%;
       }
+
+      .content {
+            word-wrap: break-word; /* 길게 작성된 단어를 줄 바꿈 */
+            word-break: keep-all; /* 단어 중간에 줄 바꿈을 하지 않도록 */
+        }
    </style>
 </th:block>
 
@@ -62,14 +67,14 @@
                   <div class="main--page--split"></div>
                   <div th:if="${notices}!=null">
                      <div th:each="notice, status: ${notices.getContent()}" style="display:flex; align-items:center;">
-                        <div class="main--page--ellipsis col-md-8">
-                           <div style="display: flex; align-items: center; height: 40px;">
-                              <a th:href="'/notice/detail/'+ ${notice.id}" th:text="${#strings.length(notice.title) > 10 ? #strings.substring(notice.title, 0, 10) + '...' : notice.title}"></a>
+                        <div class="main--page--ellipsis col-md-7">
+                           <div class="content" style="display: flex; align-items: center; height: 40px;">
+                              <a th:href="'/notice/detail/'+ ${notice.id}" th:text="${#strings.length(notice.title) > 15 ? #strings.substring(notice.title, 0, 15) + '...' : notice.title}"></a>
                            </div>
                         </div>
-                        <div style="vertical-align: middle;" class="col-md-4">
+                        <div class="col-md-5">
                            <div style="display: flex; align-items: center;">
-                              <span th:text="${notice.formattedRegTime}"></span>
+                              <span th:text="${notice.formattedRegTime}" style="min-width:90px"></span>
                            </div>
                         </div>
                      </div>
@@ -82,15 +87,15 @@
                   </h3>
                   <div class="main--page--split"></div>
                   <div th:if="${schedules} != null">
-                     <div th:each="schedule, status: ${schedules}" style="display:flex; align-items:center;">
-                        <div style="vertical-align: middle;" class="col-md-4">
-                           <div style="display: flex; align-items: center; height: 40px;">
+                     <div th:each="schedule, status: ${schedules}" style="display:flex; align-items: center;">
+                        <div style="vertical-align: middle;" class="main--page--ellipsis col-md-6">
+                           <div class="content" style="display: flex; align-items: center; height: 40px;">
                               <a th:href="'/schedule/list'" th:text="${#strings.length(schedule.content) > 10 ? #strings.substring(schedule.content, 0, 10) + '...' : schedule.content}" style="white-space: nowrap;"></a>
                            </div>
                         </div>
-                        <div style="vertical-align: middle;" class="col-md-8">
+                        <div class="col-md-6">
                            <div style="display: flex; align-items: center;">
-                              <span th:text="${schedule.start} + ' ~ ' + ${schedule.end}"></span>
+                              <span th:text="${schedule.start} + ' ~ ' + ${schedule.end}" style="min-width:183px"></span>
                            </div>
                         </div>
                      </div>

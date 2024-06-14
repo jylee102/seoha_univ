@@ -23,6 +23,11 @@
             font-size: 14px;
             margin-bottom: 8px; /* 버튼 아래 여백 조절 */
         }
+        .fixed-cell {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 </th:block>
 
@@ -34,7 +39,7 @@
         <span style="font-weight: 600;">강의 목록</span>
     </h4>
     <div class="table-div">
-        <table>
+        <table class="fixed-cell">
             <tr>
                 <th>주차</th>
                 <th style="min-width: 72px;">강의명</th>

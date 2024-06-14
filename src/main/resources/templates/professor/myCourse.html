@@ -23,6 +23,17 @@
             font-size: 14px;
             margin-bottom: 8px; /* 버튼 아래 여백 조절 */
         }
+
+
+        .fixed-cell {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fixed-cell p {
+            margin: 0; /* 여백 제거 */
+        }
     </style>
 </th:block>
 
@@ -45,33 +56,33 @@
     <h4 style="margin-bottom: 10px;">
         <span style="font-weight: 600;">강의 목록</span>
     </h4>
-    <div class="table-div">
+    <div class="table-div fixed-cell">
         <table>
             <tr>
-                <th>학수번호</th>
-                <th style="min-width: 72px;">강의명</th>
-                <th style="min-width: 103px;">강의시간</th>
-                <th>강의계획서</th>
-                <th>학생 목록</th>
+                <th style="min-width:122px">강의코드</th>
+                <th class="content1 fixed-cell" style="min-width: 72px;">강의명</th>
+                <th style="min-width: 143px;">강의시간</th>
+                <th style="min-width:75px">강의계획서</th>
+                <th style="min-width:75px">학생 목록</th>
             </tr>
             <tbody>
-            <tr th:each="myCourse, status : ${myCourses}">
-                <td th:text="${myCourse.id}"></td>
-                <td th:text="${myCourse.syllabus.courseName}"></td>
-                <td><p th:each="courseTime, status : ${myCourse.syllabus.courseTimes}"
+                <tr th:each="myCourse, status : ${myCourses}">
+                    <td th:text="${myCourse.id}"></td>
+                    <td class="fixed-cell" th:text="${myCourse.syllabus.courseName}"></td>
+                    <td class="fixed-cell"><p th:each="courseTime, status : ${myCourse.syllabus.courseTimes}"
                        th:text="${courseTime.day.getDescription}+' '+${courseTime.startTime}+' ~ '+${courseTime.endTime}"></p></td>
-                <td>
-                    <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
-                        <li style="height: 24px;"><a th:href="'/course/syllabus/'+${myCourse.id}"
+                    <td>
+                        <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
+                            <li style="height: 24px;"><a th:href="'/course/syllabus/'+${myCourse.id}"
                                                      onclick="window.open(this.href, '_blank', 'width=1000, height=1000'); return false;">조회</a>
-                    </ul>
-                </td>
-                <td>
-                    <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
-                        <li style="height: 24px;"><a th:href="'/professors/course/'+${myCourse.id}">조회</a>
-                    </ul>
-                </td>
-            </tr>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
+                            <li style="height: 24px;"><a th:href="'/professors/course/'+${myCourse.id}">조회</a>
+                        </ul>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
