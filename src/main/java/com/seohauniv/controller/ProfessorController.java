@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Controller
@@ -142,13 +139,12 @@ private final EvaluationService evaluationService;
     }
 
     @GetMapping(value = {"professors/checkAttendanceStudent/{courseId}","professors/checkAttendanceStudent/{courseId}/{page}"})
-    public String checkAttendanceStudent(Model model, @PathVariable("courseId") String courseId,@PathVariable("page") Optional<Integer> page) {
+    public String checkAttendanceStudent(Model model, @PathVariable("courseId") String courseId,@PathVariable("page") Optional<Integer> page,@RequestParam("week") int week,
+                                         @RequestParam("day") String day) {
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
 
-
-        model.addAttribute("students", myCourseStudentList);
-
+        model.addAttribute("enrolls", myCourseStudentList);
         model.addAttribute("maxPage", 5);
 
         return "professor/checkAttendanceStudent";

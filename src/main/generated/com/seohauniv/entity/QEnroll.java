@@ -22,6 +22,8 @@ public class QEnroll extends EntityPathBase<Enroll> {
 
     public static final QEnroll enroll = new QEnroll("enroll");
 
+    public final ListPath<Attendance, QAttendance> attendances = this.<Attendance, QAttendance>createList("attendances", Attendance.class, QAttendance.class, PathInits.DIRECT2);
+
     public final QCourse course;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);

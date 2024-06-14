@@ -56,5 +56,8 @@ public class AttendanceService {
     public int countByStatusAndStudentId(AttendStatus status, Long enrollId, String studentId) {
         return attendanceRepository.countByStatusAndEnrollIdAndStudentId(status, enrollId, studentId);
     }
-
+    @Transactional(readOnly = true)
+    public Attendance findByEnrollIdAndStudentIdAndWeekAndDay(Long enrollId, String studentId, int week, Day day){
+        return attendanceRepository.findByEnrollIdAndStudentIdAndWeekAndDay(enrollId,studentId,week,day);
+    };
 }
