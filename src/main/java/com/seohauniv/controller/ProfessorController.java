@@ -54,6 +54,8 @@ private final EvaluationService evaluationService;
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
         List<Evaluation> evaluations = evaluationService.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
         List<StudentAttendanceDto> studentAttendanceDto = new ArrayList<>();
+
+
         for (Enroll enroll : myCourseStudentList) {
             int countStatusPresent = attendanceService.countByStatusAndStudentId(AttendStatus.PRESENT, enroll.getId(), enroll.getStudent().getId());
             int countStatusLate = attendanceService.countByStatusAndStudentId(AttendStatus.LATE,enroll.getId(),enroll.getStudent().getId());
@@ -98,6 +100,40 @@ private final EvaluationService evaluationService;
         }
         return "redirect:/professors/myCourse";
     }
+    //수정성적
+    @GetMapping(value = "/professors/updateEvaluation/{courseId}/{studentId}")
+    public String update(@PathVariable("courseId") String courseId,@PathVariable("studentId")String studentId, Model model) {
+
+        try {
+            Enroll enroll = professorService.findStudentsByCourseIdAndStudentId(courseId,studentId);
+            EvaluationFormDto evaluationFormDto = evaluationService.updateEvaluationDtl(studentId,courseId);
+            model.addAttribute("enroll",enroll);
+            model.addAttribute("evaluationFormDto", evaluationFormDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "에러가 발생했습니다.");
+            //에러발생시 비어있는 객체를 넘겨준다.
+            model.addAttribute("noticeFormDto", new NoticeFormDto());
+            return "professor/updateEvaluation";
+        }
+
+
+        return "professor/updateEvaluation";
+    }
+    //성적 수정
+    @PostMapping(value = "professors/updateEvaluation/{courseId}/{studentId}")
+    public String updateEvaluation(EvaluationFormDto evaluationFormDto, RedirectAttributes redirectAttributes, @PathVariable("studentId")String studentId){
+        try {
+            evaluationService.updateEvaluation(evaluationFormDto);
+            return "redirect:/professors/myCourse";
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage","오류가 발생했습니다.");
+            return "professor/evaluation";
+        }
+    }
+    //출석체크 강의
     @GetMapping(value = {"professors/checkAttendance","/professors/checkAttendance/{page}"})
     public String checkAttendance(@ModelAttribute MyCourseSearchDto myCourseSearchDto,Model model, Principal principal, @PathVariable("page") Optional<Integer> page){
         int searchYear = myCourseSearchDto.getSearchYear() != 0 ? myCourseSearchDto.getSearchYear() : -1;
@@ -115,10 +151,9 @@ private final EvaluationService evaluationService;
         model.addAttribute("maxPage", 5);
         return "professor/checkAttendance";
     }
+    //출석체크 리스트
     @GetMapping(value = {"professors/checkAttendanceList/{courseId}","professors/checkAttendanceList/{courseId}/{page}"})
     public String checkAttendanceList(Model model, @PathVariable("courseId") String courseId, @PathVariable("page") Optional<Integer> page){
-
-
 
         int pageSize = 10;
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get():0 , pageSize);
@@ -143,8 +178,9 @@ private final EvaluationService evaluationService;
                                          @RequestParam("day") String day) {
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
-
+        Page<Attendance> attendances = attendanceService.findByEnrollIdAndStudentIdAndWeekAndDay(courseId,week,Day.valueOf(day),pageable);
         model.addAttribute("enrolls", myCourseStudentList);
+        model.addAttribute("attendances",attendances);
         model.addAttribute("maxPage", 5);
 
         return "professor/checkAttendanceStudent";

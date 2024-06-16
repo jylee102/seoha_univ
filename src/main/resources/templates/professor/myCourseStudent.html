@@ -91,7 +91,15 @@
                             </th:block>
                         </td>
                         <td>
-                            <a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a>
+                            <th:block th:each="evaluation : ${evaluations}">
+                                <a th:if="${evaluation.enroll.student.id == student.student.id}" th:href="'/professors/updateEvaluation/'+${student.course.id}+'/'+${student.student.id}">수정</a>
+                            </th:block>
+                            <th:block th:if="${#lists.isEmpty(evaluations)}">
+                                <a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a>
+                            </th:block>
+                            <th:block th:each="evaluation : ${evaluations}">
+                                <a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a>
+                            </th:block>
                         </td>
                     </tr>
                 </th:block>

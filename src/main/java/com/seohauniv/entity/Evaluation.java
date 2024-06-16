@@ -1,5 +1,6 @@
 package com.seohauniv.entity;
 
+import com.seohauniv.dto.EvaluationFormDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,5 +30,11 @@ public class Evaluation {
 
     public void calcConvertedScore(){
         this.convertedScore = (0.2F*homework)+(0.3F*midExam)+(0.5F*finalExam);
+    }
+
+    public void updateEvaluation(EvaluationFormDto evaluationFormDto){
+        this.homework = evaluationFormDto.getHomework();
+        this.midExam = evaluationFormDto.getMidExam();
+        this.finalExam = evaluationFormDto.getFinalExam();
     }
 }
