@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="css">
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css}">
     <style>
         .fieldError {
@@ -71,9 +68,14 @@
         var errorMessage = [[${errorMessage}]];
         if(errorMessage != null) alert(errorMessage);
 
+        // 시작일과 종료일 값을 JavaScript 변수로 전달
+        var startDateValue = [[${scheduleFormDto.start}]];
+        var endDateValue = [[${scheduleFormDto.end}]];
+
          flatpickr("#startDate", {
             plugins: [new rangePlugin({ input: "#endDate" })],
-            locale: "ko"
+            locale: "ko",
+            defaultDate: [startDateValue, endDateValue]
         });
     </script>
 </th:block>

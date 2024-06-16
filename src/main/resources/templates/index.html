@@ -2,14 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
-<head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>Document</title>
-   <link rel="stylesheet" th:href="@{/css/main.css}" />
-   <link rel="stylesheet" th:href="@{/css/main_page.css}" />
-   <link rel="stylesheet" th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css}"/>
-</head>
 
 <th:block layout:fragment="css">
    <style>
@@ -41,9 +33,9 @@
       }
 
       .content {
-            word-wrap: break-word; /* 길게 작성된 단어를 줄 바꿈 */
-            word-break: keep-all; /* 단어 중간에 줄 바꿈을 하지 않도록 */
-        }
+         word-wrap: break-word; /* 길게 작성된 단어를 줄 바꿈 */
+         word-break: keep-all; /* 단어 중간에 줄 바꿈을 하지 않도록 */
+       }
    </style>
 </th:block>
 
@@ -110,4 +102,12 @@
    </div>
 </div>
 </body>
+
+<th:block layout:fragment="script">
+   <script th:inline="javascript">
+      //에러메시지 출력
+      var errorMessage = [[${errorMessage}]];
+      if(errorMessage != null) alert(errorMessage);
+   </script>
+</th:block>
 </html>

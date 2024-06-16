@@ -35,6 +35,13 @@ public class SyllabusController {
     private final RoomService roomService;
     private final MessageService messageService;
 
+    // 강의계획서 등록 페이지
+    @GetMapping(value = "/professors/syllabus")
+    public String syllabus() {
+        return "professor/syllabus";
+    }
+    
+    // 강의계획서 등록
     @PostMapping("/professor/applyForSyllabus")
     public @ResponseBody ResponseEntity applyForSyllabus(@RequestBody @Valid SyllabusFormDto syllabusFormDto,
                                                          BindingResult bindingResult, Principal principal) {
@@ -61,6 +68,13 @@ public class SyllabusController {
         }
     }
 
+    // 강의계획서 목록 페이지
+    @GetMapping("/staffs/createCourse")
+    public String courseList() {
+        return "staff/courseList";
+    }
+
+    // 강의계획서 목록 불러오기
     @GetMapping("/staff/loadCourseList")
     public @ResponseBody ResponseEntity loadCourseList(@RequestParam(value = "page", defaultValue = "0") Optional<Integer> page,
                                                        @RequestParam(value = "searchValue", defaultValue = "") String searchValue) {
@@ -74,29 +88,32 @@ public class SyllabusController {
         }
     }
 
+    // 강의계획서 상세 페이지
     @GetMapping("/staff/viewSyllabus/{syllabusId}")
     public String viewSyllabus(@PathVariable("syllabusId") Long syllabusId,
-                               Model model) {
-        Syllabus syllabus = syllabusService.findById(syllabusId);
+                               Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Syllabus syllabus = syllabusService.findById(syllabusId);
+            List<Room> roomList = roomService.findAllRoom();
 
-        SyllabusFormDto syllabusFormDto = SyllabusFormDto.of(syllabus);
-        String courseTimesDescription = syllabusFormDto.getCourseTimesDescription().replace("<br>", " | ");
-
-        List<Room> roomList = roomService.findAllRoom();
-
-        model.addAttribute("syllabusForm", syllabus);
-        model.addAttribute("courseTimesDescription", courseTimesDescription);
-        model.addAttribute("roomList",roomList);
-        return "staff/syllabus";
+            model.addAttribute("syllabusForm", syllabus);
+            model.addAttribute("roomList", roomList);
+            return "staff/syllabus";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("message", "강의 정보 불러오기에 실패했습니다.");
+            return "redirect:/staffs/createCourse";
+        }
     }
 
+    // 강의계획서 반려 처리(삭제)
     @PostMapping("/staff/refuse/syllabus")
     public @ResponseBody ResponseEntity refuseSyllabus(@RequestParam("id") Long id, @RequestParam("messageContent") String messageContent) {
         try {
             Syllabus syllabus = syllabusService.refuseSyllabus(id);
 
             String content = syllabus.getProfessor().getName() + " 님이 등록하신 [" +
-                    syllabus.getCourseName() + "] 강의 계획서가 승인되었습니다.\n\n" + messageContent;
+                    syllabus.getCourseName() + "] 강의 계획서가 반려되었습니다.\n\n" + messageContent;
             Message message = new Message(syllabus.getProfessor().getMember(), "강의계획서 반려", content);
             messageService.create(message);
 

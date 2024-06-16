@@ -24,6 +24,13 @@ public class MessageController {
     private final MessageService messageService;
     private final UserDetailsService userDetailsService;
 
+    // 메시지 목록 페이지
+    @GetMapping("/list/messages")
+    public String messageList() {
+        return "message/messageList";
+    }
+    
+    // 받은 메시지 목록 불러오기
     @GetMapping("/loadMessageList")
     public @ResponseBody ResponseEntity loadMessageList(@RequestParam(value = "page", defaultValue = "0") Optional<Integer> page,
                                                         @RequestParam(value = "searchValue", defaultValue = "") String searchValue, Principal principal) {

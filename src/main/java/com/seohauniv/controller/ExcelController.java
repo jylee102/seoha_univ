@@ -20,6 +20,7 @@ public class ExcelController {
     private final ExcelService excelService;
     private final SimpMessagingTemplate messagingTemplate;
 
+    // 엑셀을 통한 구성원 등록
     @PostMapping("/staff/upload/members")
     public @ResponseBody ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) {
 
@@ -40,6 +41,7 @@ public class ExcelController {
         }
     }
 
+    // 엑셀을 통한 강의계획서 등록
     @PostMapping("/professor/upload/syllabus")
     public @ResponseBody ResponseEntity uploadSyllabusFile(@RequestParam("file") MultipartFile file, Principal principal) {
 

@@ -1,6 +1,5 @@
 package com.seohauniv.controller;
 
-
 import com.seohauniv.dto.ScheduleFormDto;
 import com.seohauniv.entity.Schedule;
 import com.seohauniv.service.ScheduleService;
@@ -21,7 +20,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    //학사일정작성 페이지
+    // 학사일정 작성 페이지
     @GetMapping(value = "/staff/schedule/write")
     public String scheduleWrite (Model model){
         model.addAttribute("scheduleFormDto", new ScheduleFormDto());
@@ -29,7 +28,7 @@ public class ScheduleController {
         return "schedule/scheduleWrite";
     }
 
-    //작성
+    // 학사일정 등록
     @PostMapping(value = "/staff/schedule/write/new")
     public String scheduleWriteNew (@Valid ScheduleFormDto scheduleFormDto, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors())
@@ -37,39 +36,45 @@ public class ScheduleController {
 
         try {
             scheduleService.saveSchedule(scheduleFormDto);
+            return "redirect:/schedule/list";
         }catch (Exception e){
             e.printStackTrace();
             model.addAttribute("errorMessage","오류가 발생했습니다.");
             return "schedule/scheduleWrite";
         }
-        return "redirect:/schedule/list";
     }
 
-    //목록
+    // 학사일정 목록
     @GetMapping(value = "/schedule/list")
     public String scheduleManage (ScheduleFormDto scheduleFormDto, Model model){
-        List<Schedule> schedules = scheduleService.getAdminSchedule(scheduleFormDto);
+        try {
+            List<Schedule> schedules = scheduleService.getAdminSchedule(scheduleFormDto);
 
-
-        if (schedules.isEmpty()){
+            if (schedules.isEmpty()) {
+                return "schedule/scheduleList";
+            }
+            Map<String, List<Schedule>> map = new LinkedHashMap<>();
+            for (Schedule schedule : schedules) {
+                String month = schedule.getStart().getMonthValue() + "월";
+                map.computeIfAbsent(month, k -> new ArrayList<>()).add(schedule);
+            }
+            model.addAttribute("schedules", map);
+            return "schedule/scheduleList";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "학사일정 목록 불러오기에 실패했습니다.");
             return "schedule/scheduleList";
         }
-        Map<String, List<Schedule>> map = new LinkedHashMap<>();
-        for (Schedule schedule : schedules) {
-            String month = schedule.getStart().getMonthValue() + "월";
-            map.computeIfAbsent(month, k -> new ArrayList<>()).add(schedule);
-        }
-        model.addAttribute("schedules", map);
-        return "schedule/scheduleList";
     }
 
-    //수정페이지
+    // 학사일정 수정 페이지
     @GetMapping(value = "/schedule/rewrite/{scheduleId}")
     public String scheduleUpdatePage(@PathVariable("scheduleId") Long scheduleId, Model model) {
 
         try {
             ScheduleFormDto scheduleFormDto = scheduleService.updateScheduleDtl(scheduleId);
             model.addAttribute("scheduleFormDto", scheduleFormDto);
+            return "schedule/scheduleRewrite";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "에러가 발생했습니다.");
@@ -77,10 +82,9 @@ public class ScheduleController {
             model.addAttribute("scheduleFormDto", new ScheduleFormDto());
             return "schedule/scheduleRewrite";
         }
-        return "schedule/scheduleRewrite";
     }
 
-    //수정처리
+    // 학사일정 수정 처리
     @PostMapping(value = "/schedule/rewrite/{scheduleId}")
     public String scheduleUpdate(@Valid ScheduleFormDto scheduleFormDto, BindingResult bindingResult, Model model,
                                @PathVariable("scheduleId") Long scheduleId){
@@ -93,23 +97,28 @@ public class ScheduleController {
 
         try {
             scheduleService.updateSchedule(scheduleFormDto);
-        }catch (Exception e) {
+
+            return "redirect:/schedule/list";
+        } catch (Exception e) {
             e.printStackTrace();
-            model.addAttribute("errorMessage", "수정 중에 에러가 발생했습니다.");
+            model.addAttribute("errorMessage", "수정 중 에러가 발생했습니다.");
             model.addAttribute("scheduleFormDto", getScheduleFormDto);
             return "schedule/scheduleDtl";
         }
-        return "redirect:/schedule/list";
     }
 
-    //삭제
+    // 학사일정 삭제
     @DeleteMapping("/schedule/{scheduleId}/delete")
-    public @ResponseBody ResponseEntity deleteSchedule(@PathVariable("scheduleId") Long scheduleId
-    ) {
+    public @ResponseBody ResponseEntity deleteSchedule(@PathVariable("scheduleId") Long scheduleId) {
 
-        scheduleService.deleteSchedule(scheduleId);
+        try {
+            scheduleService.deleteSchedule(scheduleId);
 
-        return new ResponseEntity<Long>(scheduleId, HttpStatus.OK);
+            return new ResponseEntity<>(scheduleId, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("삭제 중 에러가 발생했습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

@@ -22828,10 +22828,10 @@ dl li {
 }
 
 .btn-seoha {
-    background: #0D2D84;
-    color: #fff;
-    border-color: #0D2D84;
-    box-shadow: none;
+    background: #0D2D84 !important;
+    color: #fff !important;
+    border-color: #0D2D84 !important;
+    box-shadow: none !important;
 }
 
 @media screen and (max-width: 991px) {

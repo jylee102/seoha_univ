@@ -38,7 +38,7 @@
       <h1>휴학 신청서 목록</h1>
       <div class="split--div"></div>
 
-      <form name="syllabusForm" onsubmit="return false;">
+      <form name="breakForm" onsubmit="return false;">
         <div class="d-flex align-items-center search" style="margin-top: -35px; margin-bottom:11px;">
           <div class="input-container">
             <input type="text" class="input-search" id="searchValue"
@@ -85,7 +85,7 @@
         loadData(currentPage, searchValue);
     });
 
-    $(document.syllabusForm).on('submit', function() {
+    $(document.breakForm).on('submit', function() {
         loadData(currentPage, searchValue);
     })
 

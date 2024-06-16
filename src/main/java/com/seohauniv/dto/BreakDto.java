@@ -4,11 +4,9 @@ import com.seohauniv.constant.LeaveReason;
 import com.seohauniv.constant.ProcedureStatus;
 import com.seohauniv.entity.Break;
 import com.seohauniv.entity.Dept;
-import com.seohauniv.entity.Syllabus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
 
@@ -34,7 +32,7 @@ public class BreakDto {
     @NotNull(message = "휴학구분은 필수 선택입니다.")
     private LeaveReason reasonType;
 
-    private ProcedureStatus status = ProcedureStatus.PROCESSING;
+    private ProcedureStatus status;
 
     private String studentName;
     private String studentId;

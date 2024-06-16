@@ -194,6 +194,11 @@
                 .prepend(prevLi).prepend(firstLi)
                 .append(nextLi).append(lastLi));
         }
+
+        // 메시지 확인 모달 닫힐 때 페이지 다시 로드(읽음 표시로 바뀐 데이터 반영)
+        $('#message-close-btn').on('click', function() {
+            loadData(currentPage, searchValue);
+        });
     </script>
 </th:block>
 

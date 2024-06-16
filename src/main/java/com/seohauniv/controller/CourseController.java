@@ -8,6 +8,7 @@ import com.seohauniv.entity.Message;
 import com.seohauniv.service.CourseService;
 import com.seohauniv.service.EnrollService;
 import com.seohauniv.service.MessageService;
+import com.seohauniv.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,8 +35,10 @@ import java.util.Optional;
 public class CourseController {
     private final CourseService courseService;
     private final EnrollService enrollService;
+    private final RoomService roomService;
     private final MessageService messageService;
 
+    // 강의 개설
     @PostMapping("/staff/course/create")
     public String createCourse(@ModelAttribute @Valid CourseFormDto courseFormDto, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes) {
@@ -55,14 +58,20 @@ public class CourseController {
         }
 
         try {
-            Course course = courseService.create(courseFormDto); // 강의 개설
 
-            // 해당 강의의 계획서를 제출한 교수에게 메시지
-            Message message = new Message(course);
-            messageService.create(message);
+            if (!roomService.checkTimeConflict(courseFormDto)) {
+                Course course = courseService.create(courseFormDto); // 강의 개설
 
-            redirectAttributes.addFlashAttribute("message", "해당 강의가 개설되었습니다.");
-            return "redirect:/staffs/createCourse";
+                // 해당 강의의 계획서를 제출한 교수에게 메시지
+                Message message = new Message(course);
+                messageService.create(message);
+
+                redirectAttributes.addFlashAttribute("message", "해당 강의가 개설되었습니다.");
+                return "redirect:/staffs/createCourse";
+            } else {
+                redirectAttributes.addFlashAttribute("message", "해당 시간에 강의실을 이용할 수 없습니다.");
+                return "redirect:/staff/viewSyllabus/" + courseFormDto.getSyllabus().getId();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("message", "강의 개설 도중 문제가 발생했습니다.");
@@ -74,27 +83,33 @@ public class CourseController {
     @GetMapping(value = {"/students/enroll", "/students/enroll/{page}"})
     public String enrollList(CourseSearchDto courseSearchDto,
                              @PathVariable("page") Optional<Integer> page,
-                             Model model, Principal principal) {
+                             Model model, Principal principal, RedirectAttributes redirectAttributes) {
 
-        //URL path에 페이지가 있으면 해당 페이지 번호를 조회하고, 페이지 번호가 없다면 0 페이지(첫번째 페이지)를 조회
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
+        try {
+            //URL path에 페이지가 있으면 해당 페이지 번호를 조회하고, 페이지 번호가 없다면 0 페이지(첫번째 페이지)를 조회
+            Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
 
-        Page<CourseEnrollDto> coursesPage = courseService.getEnrollListPage(courseSearchDto, pageable);
-        String memberId = principal.getName(); // 현재 로그인한 학생 ID를 가져온다.
+            Page<CourseEnrollDto> coursesPage = courseService.getEnrollListPage(courseSearchDto, pageable);
+            String memberId = principal.getName(); // 현재 로그인한 학생 ID를 가져온다.
 
-        // 각 강의에 대해 현재 로그인한 학생이 수강신청했는지 확인
-        Map<String, Boolean> enrollStatus = new HashMap<>();
-        for (CourseEnrollDto courseEnrollDto : coursesPage) {
-            Course course = courseService.findById(courseEnrollDto.getId());
-            boolean isEnrolled = enrollService.isAlreadyEnrolled(course, memberId);
-            enrollStatus.put(course.getId(), isEnrolled);
+            // 각 강의에 대해 현재 로그인한 학생이 수강신청했는지 확인
+            Map<String, Boolean> enrollStatus = new HashMap<>();
+            for (CourseEnrollDto courseEnrollDto : coursesPage) {
+                Course course = courseService.findById(courseEnrollDto.getId());
+                boolean isEnrolled = enrollService.isAlreadyEnrolled(course, memberId);
+                enrollStatus.put(course.getId(), isEnrolled);
+            }
+
+            model.addAttribute("courses", coursesPage);
+            model.addAttribute("courseSearchDto", courseSearchDto);
+            model.addAttribute("enrollStatus", enrollStatus);
+            model.addAttribute("maxPage", 5);
+
+            return "student/enrollList";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "강의 목록 불러오기에 실패했습니다.");
+            return "redirect:/";
         }
-
-        model.addAttribute("courses", coursesPage);
-        model.addAttribute("courseSearchDto", courseSearchDto);
-        model.addAttribute("enrollStatus", enrollStatus);
-        model.addAttribute("maxPage", 5);
-
-        return "student/enrollList";
     }
 }

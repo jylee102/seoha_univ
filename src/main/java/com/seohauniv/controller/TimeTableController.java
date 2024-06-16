@@ -1,12 +1,11 @@
 package com.seohauniv.controller;
 
-
-import com.seohauniv.dto.CourseEnrollDto;
 import com.seohauniv.dto.CourseTimeDto;
 import com.seohauniv.entity.Course;
 import com.seohauniv.service.EnrollService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -19,6 +18,13 @@ import java.util.stream.Collectors;
 public class TimeTableController {
     private final EnrollService enrollService;
 
+    // 학생 시간표 페이지
+    @GetMapping(value = "/students/timeTable")
+    public String timeTable() {
+        return "student/timeTable";
+    }
+
+    // 학생의 강의 목록 불러오기
     @RequestMapping("/api/resources")
     @ResponseBody
     public Iterable<CourseTimeDto> resources(Principal principal) {
@@ -34,6 +40,7 @@ public class TimeTableController {
         }
     }
 
+    // Course 타입 -> CourseTimeDto 타입
     private List<CourseTimeDto> convertToDto(Course course) {
         return course.getSyllabus().getCourseTimes().stream()
                 .map(courseTime -> {

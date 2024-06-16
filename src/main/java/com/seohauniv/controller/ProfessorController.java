@@ -1,7 +1,6 @@
 package com.seohauniv.controller;
 
 import com.seohauniv.constant.AttendStatus;
-import com.seohauniv.constant.Day;
 import com.seohauniv.dto.*;
 import com.seohauniv.entity.*;
 import com.seohauniv.service.AttendanceService;
@@ -22,14 +21,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.*;
 
-
 @Controller
 @RequiredArgsConstructor
 public class ProfessorController {
-private final AttendanceService attendanceService;
-private final CourseService courseService;
-private final ProfessorService professorService;
-private final EvaluationService evaluationService;
+    private final AttendanceService attendanceService;
+    private final CourseService courseService;
+    private final ProfessorService professorService;
+    private final EvaluationService evaluationService;
+
     @GetMapping(value = {"professors/myCourse","/professors/myCourse/{page}"})
     public String myCourse(@ModelAttribute MyCourseSearchDto myCourseSearchDto, Model model, Principal principal, @PathVariable("page") Optional<Integer> page){
         int searchYear = myCourseSearchDto.getSearchYear() != 0 ? myCourseSearchDto.getSearchYear() : -1;
@@ -106,9 +105,9 @@ private final EvaluationService evaluationService;
 
         try {
             Enroll enroll = professorService.findStudentsByCourseIdAndStudentId(courseId,studentId);
-            EvaluationFormDto evaluationFormDto = evaluationService.updateEvaluationDtl(studentId,courseId);
+//            EvaluationFormDto evaluationFormDto = evaluationService.updateEvaluationDtl(studentId,courseId);
             model.addAttribute("enroll",enroll);
-            model.addAttribute("evaluationFormDto", evaluationFormDto);
+//            model.addAttribute("evaluationFormDto", evaluationFormDto);
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "에러가 발생했습니다.");
@@ -124,7 +123,7 @@ private final EvaluationService evaluationService;
     @PostMapping(value = "professors/updateEvaluation/{courseId}/{studentId}")
     public String updateEvaluation(EvaluationFormDto evaluationFormDto, RedirectAttributes redirectAttributes, @PathVariable("studentId")String studentId){
         try {
-            evaluationService.updateEvaluation(evaluationFormDto);
+//            evaluationService.updateEvaluation(evaluationFormDto);
             return "redirect:/professors/myCourse";
         }
         catch (Exception e){
@@ -178,9 +177,9 @@ private final EvaluationService evaluationService;
                                          @RequestParam("day") String day) {
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
-        Page<Attendance> attendances = attendanceService.findByEnrollIdAndStudentIdAndWeekAndDay(courseId,week,Day.valueOf(day),pageable);
+//        Page<Attendance> attendances = attendanceService.findByEnrollIdAndStudentIdAndWeekAndDay(courseId,week,Day.valueOf(day),pageable);
         model.addAttribute("enrolls", myCourseStudentList);
-        model.addAttribute("attendances",attendances);
+//        model.addAttribute("attendances",attendances);
         model.addAttribute("maxPage", 5);
 
         return "professor/checkAttendanceStudent";

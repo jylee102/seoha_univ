@@ -69,28 +69,28 @@
       <div class="card-body px-5 py-5">
         <h1 style="font-weight:600">휴학신청</h1>
         <div class="split--div"></div>
-        <form role="form" action="/break/write/new" method="post" enctype="multipart/form-data" name="breakForm">
+        <form role="form" action="/break/write/new" method="post" name="breakForm" th:object="${member}">
           <table class="table--container table">
-            <input type="hidden" name="student" id="student" th:value="${member.id}">
+            <input type="hidden" name="student" id="student" th:value="*{id}">
             <tr>
               <td><label for="name">이름</label></td>
-              <td><input type="text" th:value="${member.name}" id="name" class="input--box" readonly /></td>
+              <td><input type="text" th:value="*{name}" id="name" class="input--box" readonly /></td>
             </tr>
             <tr>
               <td><label for="birth" style="min-width:52px;">생년월일</label></td>
-              <td><input type="text" th:value="${member.birth}" id="birth" class="input--box" readonly /></td>
+              <td><input type="text" th:value="*{birth}" id="birth" class="input--box" readonly /></td>
             </tr>
             <tr>
               <td><label for="address">주소</label></td>
-              <td><input type="text" th:value="${member.address}" id="address" class="input--box" readonly /></td>
+              <td><input type="text" th:value="*{address}" id="address" class="input--box" readonly /></td>
             </tr>
             <tr>
               <td><label for="phone">전화번호</label></td>
-              <td><input type="text" th:value="${member.phone}" id="phone" class="input--box" readonly /></td>
+              <td><input type="text" th:value="*{phone}" id="phone" class="input--box" readonly /></td>
             </tr>
             <tr>
               <td><label for="email">이메일</label></td>
-              <td><input type="text" th:value="${member.email}" id="email" class="input--box" readonly /></td>
+              <td><input type="text" th:value="*{email}" id="email" class="input--box" readonly /></td>
             </tr>
             <tr>
               <td><label>기간</label></td>
