@@ -90,7 +90,7 @@
                                 <td th:text="${notice.views}" style="text-align:center;" class="sName"></td>
                                 <td>
                                     <button type="button" class="btn btn-seoha"
-                                            th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])">삭제
+                                            th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])" th:if="${#authentication.principal.role == 'STAFF'}">삭제
                                     </button>
                                 </td>
 
