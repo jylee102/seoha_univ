@@ -23,17 +23,30 @@
             font-size: 14px;
             margin-bottom: 8px; /* 버튼 아래 여백 조절 */
         }
+         @media screen and (max-width: 685px) {
+            .table thead tr th:nth-child(3),
+            .table tbody tr td:nth-child(3){
+                display: none;
+            }
+        }
+        @media screen and (max-width: 560px) {
+            .table thead tr th:nth-child(6),
+            .table tbody tr td:nth-child(6){
+                display: none;
+            }
+        }
     </style>
 </th:block>
 
 <main layout:fragment="content">
+    <div class="card-body px-5 py-5">
     <h1>금학기 성적 조회</h1>
     <div class="split--div"></div>
 
             <div>
                 <h4 th:if="${totalGradeDto != null}" style="font-weight: 600">과목별 성적</h4>
                 <div class="table-div">
-                    <table th:if="${totalGradeDto != null}" border="1" class="sub--list--table">
+                    <table th:if="${totalGradeDto != null}" border="1" class="sub--list--table table">
                         <thead>
                         <tr>
                             <th>연도</th>
@@ -103,7 +116,7 @@
 
 
 
-
+</div>
 </main>
 
 <th:block layout:fragment="script">
