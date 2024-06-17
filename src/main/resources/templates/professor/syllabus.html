@@ -64,9 +64,11 @@
             max-height: 0;
             overflow: hidden;
         }
+
         #weeklyPlan.collapse {
             max-height: none; /* 축소되었을 때 요소가 사라지지 않도록 함 */
         }
+
         .input--box {
             margin-right: 0 !important;
         }
@@ -77,11 +79,11 @@
     </style>
 </th:block>
 
-<main layout:fragment="content" id="drop_zone">
+<main layout:fragment="content" id="drop_zone" style="margin-bottom:0;">
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1>강의 계획서</h1>
-            <div class="split--div"></div>
+            <div class="split--div" style="margin-bottom:30px; min-width:410px;"></div>
 
             <div id="progressWrapper" style="display: none;">
                 <div id="progressBar" style="width: 0; height: 30px; background-color: blue;"></div>
@@ -89,7 +91,7 @@
             </div>
 
             <form name="syllabusForm" id="syllabusForm">
-                <div class="selections" style="display: flex; justify-content: flex-end; padding: 0 1rem 1rem 0;">
+                <div class="selections" style="display: flex; justify-content: flex-end; padding: 0 0 1rem 0;">
                     <select name="year" id="yearSelect"></select>
                     <select name="semester">
                         <option value="1">1학기</option>
@@ -144,7 +146,7 @@
 
                     <tr class="dept-form">
                         <td><label th:for="type" style="min-width: 105px;">구분 / 학점 / 인원</label></td>
-                        <td>
+                        <td style="padding-left:30px;">
                             <div class="row type-form">
                                 <div class="col-2" style="display: flex; align-items: center; line-height: 1px;">
                                     <input type="radio" name="type" value="MAJOR">&nbsp;전공</input>
@@ -210,7 +212,8 @@
                     </tr>
                 </table>
                 <div class="button--container">
-                    <button class="btn btn-seoha" type="button" onclick="beforeSubmit()">신청</button>
+                    <button class="btn btn-seoha" type="button" onclick="beforeSubmit()"
+                        style="width:250px;">신청</button>
                 </div>
             </form>
         </div>

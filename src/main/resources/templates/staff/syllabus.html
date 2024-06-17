@@ -28,11 +28,11 @@
     </style>
 </th:block>
 
-<main layout:fragment="content">
+<main layout:fragment="content" style="margin-bottom:0;">
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1>강의 계획서 검토</h1>
-            <div class="split--div"></div>
+            <div class="split--div" style="margin-bottom:40px;"></div>
 
             <form name="syllabusForm" th:object="${syllabusForm}" action="/staff/course/create" method="post">
                 <input type="hidden" name="syllabus" th:value="*{id}">
