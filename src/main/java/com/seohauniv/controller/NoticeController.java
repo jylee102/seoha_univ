@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.Optional;
 
 @Controller
@@ -22,7 +24,7 @@ import java.util.Optional;
 public class NoticeController {
     private final NoticeService noticeService;
 
-    //작성 페이지
+    // 공지사항 작성 페이지
     @GetMapping(value = "/staff/notice/write")
     public String noticeWrite (Model model){
         model.addAttribute("noticeFormDto", new NoticeFormDto());
@@ -30,7 +32,7 @@ public class NoticeController {
         return "notice/noticeWrite";
     }
 
-    //작성
+    // 공지사항 등록
     @PostMapping(value = "/staff/notice/write/new")
     public String noticeWriteNew (@Valid NoticeFormDto noticeFormDto, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors())
@@ -38,40 +40,54 @@ public class NoticeController {
 
         try {
             noticeService.saveNotice(noticeFormDto);
+            return "redirect:/notice/list";
         }catch (Exception e){
             e.printStackTrace();
             model.addAttribute("errorMessage","오류가 발생했습니다.");
             return "notice/noticeWrite";
         }
-        return "redirect:/notice/list";
     }
 
-    //목록
+    // 공지사항 목록 페이지
     @GetMapping(value = {"/notice/list", "/notice/list/{page}"})
     public String noticeManage (NoticeSearchDto noticeSearchDto,
-                                @PathVariable("page") Optional<Integer> page, Model model){
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
+                                @PathVariable("page") Optional<Integer> page,
+                                Model model, RedirectAttributes redirectAttributes){
+        try {
+            Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
 
-        Page<Notice> notices = noticeService.getAdminNoticePage(noticeSearchDto, pageable);
-        System.out.println(notices);
-        model.addAttribute("notices", notices);
-        model.addAttribute("noticeSearchDto", noticeSearchDto);
-        model.addAttribute("maxPage", 5);
 
-        return "notice/noticeList";
+            Page<Notice> notices = noticeService.getAdminNoticePage(noticeSearchDto, pageable);
+
+            model.addAttribute("notices", notices);
+            model.addAttribute("noticeSearchDto", noticeSearchDto);
+            model.addAttribute("maxPage", 5);
+
+            return "notice/noticeList";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "공지사항 목록 불러오기에 실패했습니다.");
+            return "redirect:/";
+        }
     }
 
 
-    //상세페이지
+    // 공지사항 상세 페이지
     @GetMapping(value = "/notice/detail/{noticeId}")
-    public String noticeDtl(Model model, @PathVariable("noticeId") Long noticeId){
-        NoticeFormDto noticeFormDto = noticeService.getNoticeDtl(noticeId);
-        model.addAttribute("notice",noticeFormDto);
-        return "notice/noticeDtl";
+    public String noticeDtl(Model model, @PathVariable("noticeId") Long noticeId, RedirectAttributes redirectAttributes){
+        try {
+            Notice notice = noticeService.getNoticeDtl(noticeId);
+            model.addAttribute("notice", notice);
+            return "notice/noticeDtl";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "공지사항 정보 불러오기에 실패했습니다.");
+            return "redirect:/notice/list";
+        }
     }
 
 
-    //수정페이지
+    // 공지사항 수정 페이지
     @GetMapping(value = "/notice/rewrite/{noticeId}")
     public String noticeUpdatePage(@PathVariable("noticeId") Long noticeId, Model model) {
 
@@ -90,32 +106,32 @@ public class NoticeController {
         return "notice/noticeRewrite";
     }
 
-    //수정
+    // 공지사항 수정
     @PostMapping(value = "/notice/rewrite/{noticeId}")
-    public String noticeUpdate(@Valid NoticeFormDto noticeFormDto, BindingResult bindingResult, Model model,
+    public String noticeUpdate(@Valid NoticeFormDto noticeFormDto, BindingResult bindingResult, RedirectAttributes redirectAttributes,
                              @PathVariable("noticeId") Long noticeId){
         if (bindingResult.hasErrors()) return "notice/list";
 
-        NoticeFormDto getNoticeFormDto = noticeService.updateNoticeDtl(noticeId);
-
         try {
             noticeService.updateNotice(noticeFormDto);
+            return "redirect:/notice/list";
         }catch (Exception e) {
             e.printStackTrace();
-            model.addAttribute("errorMessage", "수정 중에 에러가 발생했습니다.");
-            model.addAttribute("noticeFormDto", getNoticeFormDto);
-            return "notice/noticeDtl";
+            redirectAttributes.addFlashAttribute("errorMessage", "수정 중에 에러가 발생했습니다.");
+            return "redirect:/notice/rewrite/{noticeId}";
         }
-        return "redirect:/notice/list";
     }
 
-    //공지삭제
+    // 공지 삭제
     @DeleteMapping("/notice/{noticeId}/delete")
-    public @ResponseBody ResponseEntity deleteNotice(@PathVariable("noticeId") Long noticeId
-            ) {
+    public @ResponseBody ResponseEntity deleteNotice(@PathVariable("noticeId") Long noticeId) {
 
-        noticeService.deleteNotice(noticeId);
-
-        return new ResponseEntity<Long>(noticeId, HttpStatus.OK);
+        try {
+            noticeService.deleteNotice(noticeId);
+            return new ResponseEntity<>(noticeId, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("학사일정 삭제에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 }

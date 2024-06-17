@@ -1,5 +1,6 @@
 package com.seohauniv.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seohauniv.dto.NoticeFormDto;
 import com.seohauniv.dto.ScheduleFormDto;
 import jakarta.persistence.*;
@@ -25,6 +26,7 @@ public class Schedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Staff staff;
 
     public void updateSchedule(ScheduleFormDto scheduleFormDto){

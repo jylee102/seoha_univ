@@ -5,8 +5,6 @@
 
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
         @media screen and (min-width: 1024px) {
@@ -14,104 +12,177 @@
                 width: 70%;
             }
         }
-        ul{
-        padding-left: 0;
+
+        @media screen and (max-width: 730px) {
+            table tr th:nth-child(4), /* 강의계획서 */
+            table tbody tr td:nth-child(4) {
+                display: none;
+            }
         }
+
+        @media screen and (max-width: 650px) {
+            .search {
+                padding-left: 0;
+                padding-bottom: 1rem;
+            }
+        }
+
+        ul {
+            padding-left: 0;
+        }
+
         .btn {
-            height: 28px;
+            height: 32px;
             padding: 5px 10px;
             font-size: 14px;
             margin-bottom: 8px; /* 버튼 아래 여백 조절 */
         }
+
+        .btn-search {
+            padding-left: 15px;
+            padding-top: 7px;
+        }
+
+        .select-search {
+            width: 140px;
+        }
+
+        .fixed-cell p {
+            margin: 0; /* 여백 제거 */
+        }
+
     </style>
 </th:block>
 
 <main layout:fragment="content">
-    <h1>내 강의 조회</h1>
-    <div class="split--div"></div>
-    <div class="sub--filter">
-        <form action="/professors/subject" method="post">
-            <div style="margin-bottom: 10px;">
-                <select class="input-search select-search" name="year" id="yearSelect"></select>
-                <select class="input-search select-search" name="semester">
-                    <option value="1">1학기</option>
-                    <option value="2">2학기</option>
-                </select>
-                <!-- 검색 버튼 -->
-                <button class="btn btn-seoha" type="submit" >조회
-                </button>
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>내 강의 조회</h1>
+            <div class="div-split" style="min-width: 380px;"></div>
+            <div class="sub--filter">
+                <form action="/professors/myCourse" method="get" th:object="${myCourseSearchDto}">
+                    <div class="d-flex align-items-center search" style="min-width: 380px;">
+                        <div>
+                            <select class="input-search select-search" name="searchYear" id="yearSelect"
+                                    style="margin-right:5px;"></select>
+                            <select class="input-search select-search" name="searchSemester">
+                                <option value="1" selected>1학기</option>
+                                <option value="2">2학기</option>
+                            </select>
+                        </div>
+                        <!-- 검색 버튼 -->
+                        <div class="btn-search">
+                            <button class="btn btn-info" type="submit" style="min-width: 54px;">조회</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
-    </div>
-    <h4 style="margin-bottom: 10px;">
-        <span style="font-weight: 600;">강의 목록</span>
-    </h4>
-    <div class="table-div">
-        <table>
-            <tr>
-                <th>학수번호</th>
-                <th style="min-width: 72px;">강의명</th>
-                <th style="min-width: 103px;">강의시간</th>
-                <th>강의계획서</th>
-                <th>학생 목록</th>
-            </tr>
-            <tbody>
-            <tr th:each="myCourse, status : ${myCourses}">
-            <td th:text="${myCourse.id}"></td>
-            <td th:text="${myCourse.syllabus.courseName}"></td>
-            <td><p th:each="courseTime, status : ${myCourse.syllabus.courseTimes}" th:text="${courseTime.day.getDescription}+' '+${courseTime.startTime}+' ~ '+${courseTime.endTime}"></p></td>
-            <td>
-                <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
-                    <li style="height: 24px;"><a th:href="'/course/syllabus/'+${myCourse.id}"
-                                                 onclick="window.open(this.href, '_blank', 'width=1000, height=1000'); return false;">조회</a>
+            <h4 style="margin-bottom: 10px;">
+                <span style="font-weight:600;">강의 목록</span>
+            </h4>
+            <div class="card">
+                <div class="table-div fixed-cell">
+                    <table style="table-layout:fixed; min-width:380px;">
+                        <tr>
+                            <th>강의코드</th>
+                            <th class="content1 fixed-cell">강의명</th>
+                            <th style="min-width:76px;">강의시간</th>
+                            <th style="min-width:75px;">강의계획서</th>
+                            <th style="min-width:56px;">학생 목록</th>
+                        </tr>
+                        <tbody>
+                        <tr th:each="myCourse, status : ${myCourses}">
+                            <td th:text="${myCourse.id}"></td>
+                            <td class="fixed-cell" style="min-width:72px;" th:text="${myCourse.syllabus.courseName}"></td>
+                            <td class="fixed-cell"><p th:each="courseTime, status : ${myCourse.syllabus.courseTimes}"
+                                                      th:text="${courseTime.day.getDescription}+' '+${courseTime.startTime}+' ~ '+${courseTime.endTime}"></p>
+                            </td>
+                            <td>
+                                <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
+                                    <li style="height: 24px;"><a th:href="'/course/syllabus/'+${myCourse.id}"
+                                                                 onclick="window.open(this.href, '_blank', 'width=1000, height=1000'); return false;">조회</a>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
+                                    <li style="height: 24px;"><a th:href="'/professors/course/'+${myCourse.id}">조회</a>
+                                </ul>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pagination" th:with="start=${(myCourses.number / maxPage) * maxPage + 1},
+                                     end=${(myCourses.totalPages == 0) ? 1 : (start + (maxPage - 1) < myCourses.totalPages ? start + (maxPage - 1) : myCourses.totalPages)}"
+                 aria-label="Page navigation example">
+                <ul>
+                    <li>
+                        <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+                    </li>
+                    <li th:classappend="${myCourses.first} ? 'disabled' : ''"
+                        th:onclick="'javascript:page(' + ${myCourses.number - 1} +')'"
+                    >
+                        <a><i class="fa-solid fa-angle-left"></i></a>
+                    </li>
+                    <li th:each="page: ${#numbers.sequence(start, end)}"
+                        th:classappend="${myCourses.number eq page - 1} ? 'page-active' : 'page'"
+                    >
+                        <a th:text="${page}"></a>
+                    </li>
+                    <li th:classappend="${myCourses.last} ? 'disabled' : ''"
+                        th:onclick="'javascript:page(' + ${myCourses.number + 1} +')'"
+                    >
+                        <a><i class="fa-solid fa-angle-right"></i></a>
+                    </li>
+                    <li>
+                        <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+                    </li>
                 </ul>
-            </td>
-            <td>
-                <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
-                    <li style="height: 24px;"><a th:href="'/professors/course/'+${myCourse.id}">조회</a>
-                </ul>
-            </td>
-            </tr>
-            </tbody>
-        </table>
+            </div>
+        </div>
     </div>
-    <table border="1" class="sub--list--table">
-        <thead>
-        <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-        </thead>
-
-
-
-
-
-
-
-    </table>
 </main>
 
 <th:block layout:fragment="script">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
         var errorMessage = [[${errorMessage}]];
-        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+        if (errorMessage != null || errorMessage == "") alert(errorMessage);
 
         // 현재 연도 구하기
         var currentYear = new Date().getFullYear();
         var selectElement = document.getElementById("yearSelect");
 
         // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
-                for (var i = 0; i < 3; i++) {
-                    var option = document.createElement("option");
-                    option.value = currentYear + i;
-                    option.textContent = (currentYear + i) + "학년도";
-                    selectElement.appendChild(option);
-                }
+        for (var i = 0; i < 3; i++) {
+            var option = document.createElement("option");
+            option.value = currentYear + i;
+            option.textContent = (currentYear + i) + "학년도";
+            selectElement.appendChild(option);
+        }
+
+        function page(page) {
+            var searchYear = document.getElementById("yearSelect").value;
+            var searchSemester = document.querySelector("select[name='searchSemester']").value;
+            // 페이지 이동
+            location.href = "/professors/myCourse/" + page
+                + "?searchYear=" + searchYear
+                + "&searchSemester=" + searchSemester;
+        }
+
+        function goToFirstPage() {
+            var searchYear = document.getElementById("yearSelect").value;
+            var searchSemester = document.querySelector("select[name='searchSemester']").value;
+            page(0, searchYear, searchSemester);
+        }
+
+        function goToLastPage() {
+            var totalPages = [[${myCourses.totalPages}]];
+            var searchYear = document.getElementById("yearSelect").value;
+            var searchSemester = document.querySelector("select[name='searchSemester']").value;
+            page(totalPages - 1, searchYear, searchSemester);
+        }
     </script>
 </th:block>
 

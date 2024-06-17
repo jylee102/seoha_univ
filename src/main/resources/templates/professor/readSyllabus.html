@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout2}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.css}">
+    <style>
+        @media screen and (min-width: 1024px) {
+            .input--box {
+                width: 70%;
+            }
+        }
+        ul{
+        padding-left: 0;
+        }
+        .btn {
+            height: 28px;
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-bottom: 8px; /* 버튼 아래 여백 조절 */
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content">
+    <div id="pdfContainer"></div>
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        var url = /*[[${pdfURL}]]*/ '/path/to/your/pdf.pdf'; // PDF 파일 URL을 여기에 넣습니다.
+
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
+        var pdfDoc = null,
+            scale = 1.5,
+            pdfContainer = document.getElementById('pdfContainer');
+
+        function renderPage(page) {
+            var viewport = page.getViewport({scale: scale});
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            canvas.classList.add('pdf-page');
+            pdfContainer.appendChild(canvas);
+
+            var renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            return page.render(renderContext).promise;
+        }
+
+        function renderAllPages(pdfDoc) {
+            var pagesPromises = [];
+            for (var num = 1; num <= pdfDoc.numPages; num++) {
+                pagesPromises.push(
+                    pdfDoc.getPage(num).then(renderPage)
+                );
+            }
+            return Promise.all(pagesPromises);
+        }
+
+        pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            pdfDoc = pdf;
+            renderAllPages(pdfDoc);
+        });
+
+        var errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage != null && errorMessage != "") {
+            alert(errorMessage);
+        }
+    </script>
+</th:block>
+
+</html>

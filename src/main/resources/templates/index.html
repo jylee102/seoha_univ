@@ -2,17 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
-<head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>Document</title>
-   <link rel="stylesheet" th:href="@{/css/main.css}" />
-   <link rel="stylesheet" th:href="@{/css/main_page.css}" />
-   <link
-           rel="stylesheet"
-           th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css}"
-   />
-</head>
 
 <th:block layout:fragment="css">
    <style>
@@ -24,82 +13,101 @@
 
       .main--page--notice {
          width: 50%;
+         display: flex; /* Flexbox 적용 */
+         flex-direction: column; /* 컨테이너의 자식 요소들을 세로로 배치 */
+      }
+
+      .main--page--notice table {
+         flex-grow: 1; /* 테이블이 남은 공간을 모두 차지하도록 함 */
+         height: 100%; /* 테이블이 부모 요소의 높이를 차지하도록 함 */
+      }
+
+       .main--page--ellipsis {
+         overflow: hidden;
+         text-overflow: ellipsis;
+         white-space: nowrap; /* 텍스트가 한 줄로만 표시되도록 함 */
       }
 
       table {
          width: 100%;
       }
+
+      .content {
+         word-wrap: break-word; /* 길게 작성된 단어를 줄 바꿈 */
+         word-break: keep-all; /* 단어 중간에 줄 바꿈을 하지 않도록 */
+       }
    </style>
 </th:block>
 
 <body>
-<div layout:fragment="content"
-     style="width: calc(50vw + 240px);"
->
+<div layout:fragment="content" style="width: calc(50vw + 240px);">
    <div>
       <img
               alt="학교"
               src="/images/main_bg.jpg"
               class="main--page--img"
-              style="margin-top: 70px"
+              style="margin-top: 40px"
       />
       <div>
          <div class="main--page--div">
             <div class="d-flex">
                <!-- 공지사항 -->
-               <div class="main--page--notice">
+               <div class="main--page--notice container" style="flex: 1;">
                   <h3>
                      <a href="/notice">공지사항</a>
                   </h3>
                   <div class="main--page--split"></div>
-                  <table th:if="${notices}!=null">
-                     <tr th:each="notice, status: ${notices.getContent()}">
-                        <td><a th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}"></a></td>
-                        <td th:text="${notice.formattedRegTime}"></td>
-                     </tr>
-                  </table>
+                  <div th:if="${notices}!=null">
+                     <div th:each="notice, status: ${notices.getContent()}" style="display:flex; align-items:center;">
+                        <div class="main--page--ellipsis col-md-7">
+                           <div class="content" style="display: flex; align-items: center; height: 40px;">
+                              <a th:href="'/notice/detail/'+ ${notice.id}" th:text="${#strings.length(notice.title) > 15 ? #strings.substring(notice.title, 0, 15) + '...' : notice.title}"></a>
+                           </div>
+                        </div>
+                        <div class="col-md-5">
+                           <div style="display: flex; align-items: center;">
+                              <span th:text="${notice.formattedRegTime}" style="min-width:90px"></span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                </div>
-               <div class="main--page--notice">
+               <!-- 학사일정 -->
+               <div class="main--page--notice" style="flex: 1;">
                   <h3>
                      <a href="/schedule">학사일정</a>
                   </h3>
                   <div class="main--page--split"></div>
-<!--                  <table class="schedule-tb">-->
-<!--                     <tr>-->
-<!--                        <td>수업수업수업수업수업수업</td>-->
-<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
-<!--                     </tr>-->
-<!--                     <tr>-->
-<!--                        <td>수업수업수업수업수업수업</td>-->
-<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
-<!--                     </tr>-->
-<!--                     <tr>-->
-<!--                        <td>수업수업수업수업수업수업</td>-->
-<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
-<!--                     </tr>-->
-<!--                     <tr>-->
-<!--                        <td>수업수업수업수업수업수업</td>-->
-<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
-<!--                     </tr>-->
-<!--                     <tr>-->
-<!--                        <td>수업수업수업수업수업수업</td>-->
-<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
-<!--                     </tr>-->
-<!--                     <tr>-->
-<!--                        <td>수업수업수업수업수업수업</td>-->
-<!--                        <td>2024-05-23&nbsp;-&nbsp;2024-06-19</td>-->
-<!--                     </tr>-->
-<!--                  </table>-->
+                  <div th:if="${schedules} != null">
+                     <div th:each="schedule, status: ${schedules}" style="display:flex; align-items: center;">
+                        <div style="vertical-align: middle;" class="main--page--ellipsis col-md-6">
+                           <div class="content" style="display: flex; align-items: center; height: 40px;">
+                              <a th:href="'/schedule/list'" th:text="${#strings.length(schedule.content) > 10 ? #strings.substring(schedule.content, 0, 10) + '...' : schedule.content}" style="white-space: nowrap;"></a>
+                           </div>
+                        </div>
+                        <div class="col-md-6">
+                           <div style="display: flex; align-items: center;">
+                              <span th:text="${schedule.start} + ' ~ ' + ${schedule.end}" style="min-width:183px"></span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </div>
          </div>
          <div>
-            <!-- 사용자 간단한 프로필 -->
-
             <br />
          </div>
       </div>
    </div>
 </div>
 </body>
+
+<th:block layout:fragment="script">
+   <script th:inline="javascript">
+      //에러메시지 출력
+      var errorMessage = [[${errorMessage}]];
+      if(errorMessage != null) alert(errorMessage);
+   </script>
+</th:block>
 </html>

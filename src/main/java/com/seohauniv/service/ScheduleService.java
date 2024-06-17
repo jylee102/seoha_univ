@@ -1,17 +1,12 @@
 package com.seohauniv.service;
 
-import com.seohauniv.dto.NoticeFormDto;
-import com.seohauniv.dto.NoticeSearchDto;
 import com.seohauniv.dto.ScheduleFormDto;
-import com.seohauniv.entity.Notice;
 import com.seohauniv.entity.Schedule;
 import com.seohauniv.entity.Staff;
 import com.seohauniv.repository.ScheduleRepository;
 import com.seohauniv.repository.StaffRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +19,8 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final StaffRepository staffRepository;
 
-    //가져오기
-    public Long saveSchedule(ScheduleFormDto scheduleFormDto) throws Exception{
+    // 학사일정 등록
+    public Long saveSchedule(ScheduleFormDto scheduleFormDto) {
         Schedule schedule = scheduleFormDto.creatSchedule();
         Staff staff = staffRepository.findById(scheduleFormDto.getMemberId()).orElseThrow(EntityNotFoundException::new);
         schedule.setStaff(staff);
@@ -33,29 +28,22 @@ public class ScheduleService {
         return schedule.getId();
     }
 
-    //목록
+    // 목록
     @Transactional(readOnly = true)
     public List<Schedule> getAdminSchedule(ScheduleFormDto scheduleFormDto) {
-        List<Schedule> scheduleList = scheduleRepository.getAdminSchedule(scheduleFormDto);
+        List<Schedule> scheduleList = scheduleRepository.findAllByOrderByStartAsc();
         return scheduleList;
     }
 
-    //상세페이지
+    // 상세페이지
+    @Transactional(readOnly = true)
     public ScheduleFormDto getScheduleDtl(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(EntityNotFoundException::new);
         ScheduleFormDto scheduleFormDto = ScheduleFormDto.of(schedule);
         return scheduleFormDto;
     }
 
-    //수정 가져오기
-    @Transactional(readOnly = true)
-    public ScheduleFormDto updateScheduleDtl(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(EntityNotFoundException::new);
-        ScheduleFormDto scheduleFormDto = ScheduleFormDto.of(schedule);
-        return scheduleFormDto;
-    }
-
-    //수정하기
+    // 수정하기
     public Long updateSchedule(ScheduleFormDto scheduleFormDto) throws Exception{
         Schedule schedule = scheduleRepository.findById(scheduleFormDto.getId()).orElseThrow(EntityNotFoundException::new);
 

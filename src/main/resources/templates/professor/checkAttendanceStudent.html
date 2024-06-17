@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <style>
+        @media screen and (min-width: 1024px) {
+            .input--box {
+                width: 70%;
+            }
+        }
+
+        @media screen and (max-width: 700px) {
+            table > thead > tr > th:nth-child(1),
+            table > tbody > tr > td:nth-child(1) {
+                display: none;
+            }
+        }
+
+        ul{
+            padding-left: 0;
+        }
+
+        .btn {
+            height: 28px;
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-bottom: 8px; /* 버튼 아래 여백 조절 */
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content" style="margin-bottom:0;">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <th:block th:if="${not attendances.content.empty}">
+                <h1>[[${attendances.content[0].course.syllabus.courseName}]] 학생 리스트 조회</h1>
+                <div class="split--div" style="margin-bottom:40px;"></div>
+                <div class="table-div">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>학생 번호</th>
+                            <th>이름</th>
+                            <th>소속</th>
+                            <th>출석</th>
+                            <th>지각</th>
+                            <th>결석</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="attendance : ${attendances.content}">
+                            <tr>
+                                <td>[[${attendance.studentId}]]</td>
+                                <td>[[${attendance.studentName}]]</td>
+                                <td>[[${attendance.majorName}]]</td>
+                                <td>
+                                    <!--  출석                              -->
+                                    <a th:id="'present-'+${attendance.studentId}" href="javascript:void(0);"
+                                       th:onclick="addAttendance([[${attendance.studentId}]],[[${attendance.course.id}]], 'PRESENT')"
+                                       th:style="${#strings.contains(attendance.status,'PRESENT')} ? 'color:green;' : ''">
+                                        <i class="fa-solid fa-o"></i></a>
+
+                                </td>
+                                <td>
+                                    <a th:id="'late-'+${attendance.studentId}" href="javascript:void(0);"
+                                       th:onclick="addAttendance([[${attendance.studentId}]],[[${attendance.course.id}]], 'LATE')"
+                                       th:style="${#strings.contains(attendance.status,'LATE')} ? 'color:orange;' : ''">
+                                        <i class="fa-solid fa-check"></i></a>
+
+                                </td>
+                                <td>
+                                    <a th:id="'absent-'+${attendance.studentId}" href="javascript:void(0);"
+                                       th:onclick="addAttendance([[${attendance.studentId}]],[[${attendance.course.id}]], 'ABSENT')"
+                                       th:style="${#strings.contains(attendance.status,'ABSENT')} ? 'color:red;' : ''">
+                                        <i class="fa-solid fa-x"></i></a>
+
+                                </td>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" th:with="start=${(attendances.number / maxPage) * maxPage + 1},
+                                         end=${(attendances.totalPages == 0) ? 1 : (start + (maxPage - 1) < attendances.totalPages ? start + (maxPage - 1) : attendances.totalPages)}"
+                     aria-label="Page navigation example">
+                    <ul>
+                        <li>
+                            <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+                        </li>
+                        <li th:classappend="${attendances.first} ? 'disabled' : ''"
+                            th:onclick="'javascript:page(' + ${attendances.number - 1} +')'"
+                        >
+                            <a><i class="fa-solid fa-angle-left"></i></a>
+                        </li>
+                        <li th:each="page: ${#numbers.sequence(start, end)}"
+                            th:classappend="${attendances.number eq page - 1} ? 'page-active' : 'page'"
+                        >
+                            <a th:onclick="'javascript:page(' + ${attendances.number} +')'" th:text="${page}"></a>
+                        </li>
+                        <li th:classappend="${attendances.last} ? 'disabled' : ''"
+                            th:onclick="'javascript:page(' + ${attendances.number + 1} +')'"
+                        >
+                            <a><i class="fa-solid fa-angle-right"></i></a>
+                        </li>
+                        <li>
+                            <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </th:block>
+
+            <p th:if="${attendances.content.empty}" class="no--list--p">해당 강의를 수강하는 학생이 존재하지 않습니다.</p>
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+
+        function page(page) {
+            var week = urlParams.get('week');
+            var day = urlParams.get('day');
+            // 페이지 이동
+            location.href = "/professors/checkAttendanceStudent/" + [[${attendances.content[0].course.id}]] + "/" + page +"?week="+week+"&day="+day;
+        }
+
+        function goToFirstPage() {
+            page(0);
+        }
+
+        function goToLastPage() {
+            var totalPages = [[${attendances.totalPages}]];
+            page(totalPages - 1);
+        }
+
+        function getCsrfToken() {
+            return $("meta[name='_csrf']").attr("content");
+        }
+
+        function getCsrfHeader() {
+            return $("meta[name='_csrf_header']").attr("content");
+        }
+
+        function addAttendance(studentId, courseId, status) {
+            var urlParams = new URLSearchParams(window.location.search);
+            var week = urlParams.get('week');
+            var day = urlParams.get('day');
+            var jsonData = JSON.stringify({ studentId: studentId, courseId: courseId, status: status, week: week, day: day });
+            console.log(jsonData);
+
+            $.ajax({
+                url: '/professors/attendance/add',
+                type: 'POST',
+                dataType: 'text',
+                contentType: 'application/json',
+                data: jsonData,
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(getCsrfHeader(), getCsrfToken());
+                },
+                success: function(response) {
+                    console.log(response);
+                    alert("출석체크 완료");
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                    alert('출석 체크 오류: ' + xhr.responseText);
+                }
+            });
+        }
+    </script>
+</th:block>
+
+</html>

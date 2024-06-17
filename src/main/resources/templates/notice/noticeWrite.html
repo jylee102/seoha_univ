@@ -2,8 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <style>
         @media screen and (max-width: 1680px) {
             .table-div tr > th:nth-child(9),
@@ -50,6 +48,10 @@
             padding-left:20px;
             margin-top:20px;
         }
+
+        .fieldError {
+            color: #bd2130;
+        }
     </style>
 </th:block>
 
@@ -57,11 +59,10 @@
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1 style="font-weight:600">공지사항 작성</h1>
-            <div class="split--div"></div>
+            <div class="split--div" style="margin-bottom:47px;"></div>
                 <div class="col-md-12">
                         <form role="form" th:action="@{/staff/notice/write/new}" method="post" enctype="multipart/form-data"
                               name="noticeForm" th:object="${noticeFormDto}">
-                            <input type="hidden" name="memberId" th:value="${#authentication.principal.username}" />
                             <div class="form-group row">
                                 <div class="col-md-12">
                                     <label th:for="title" class="text-black">제목</label>
@@ -80,7 +81,7 @@
 
                             <div class="form-group">
                                 <div class="col-md-12 d-flex justify-content-center">
-                                    <button type="submit"  class="btn btn-seoha mb-3" style="width: 150px">등록</button>
+                                    <button type="submit"  class="btn btn-seoha mb-3" style="width:250px;">등록</button>
                                 </div>
                             </div>
 

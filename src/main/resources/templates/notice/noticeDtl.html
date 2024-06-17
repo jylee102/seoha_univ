@@ -10,13 +10,41 @@
 
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <style>
         .card {
            padding-left:20px;
            margin-top:20px;
-       }
+        }
+
+        .content {
+            overflow-wrap: break-word; /* 긴 단어가 자동으로 줄바꿈 되게 함 */
+            word-break: break-all; /* 추가 옵션: 모든 문자에서 줄바꿈 허용 */
+        }
+
+        tr {
+            display: flex;
+        }
+
+        td {
+            border: none !important;
+        }
+
+         @media screen and (max-width: 800px) {
+            .title1 {
+                display: none;
+            }
+         }
+
+        @media screen and (min-width: 799px) {
+            .title2 {
+                display: none;
+            }
+        }
+
+        .content {
+            word-wrap: break-word; /* 길게 작성된 단어를 줄 바꿈 */
+            word-break: keep-all; /* 단어 중간에 줄 바꿈을 하지 않도록 */
+        }
     </style>
 </th:block>
 
@@ -26,18 +54,25 @@
             <h1 style="font-weight:600">공지사항</h1>
             <div class="split--div"></div>
             <form role="form" th:action="@{'/notice/detail/' + ${noticeId}}" method="post" enctype="multipart/form-data"
-                  th:object="${noticeFormDto}" name="noticeForm">
-                <div class="site-section">
-                    <div class="container">
-                        <div class="row">
-                            <input type="hidden" id="noticeId" th:value="${notice.id}">
-                            <div class="col-md-12">
-                                <h2 class="text-black" th:text="${notice.title}"></h2>
-                                <span th:text="${notice.content}" id="content" name="content"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                   name="notice" th:object="${notice}">
+                <table class="table--container table">
+                    <tr class="title1">
+                        <td style="border: none !important; min-width:70px;">제목 :&nbsp;</td>
+                        <td th:text="${notice.title}" style="font-weight:bold; margin-left:-10px;"></td>
+                    </tr>
+                    <tr class="title2">
+                        <td style="border: none !important; min-width:70px;">제목 :&nbsp;</td>
+                        <td th:text="${#strings.length(notice.title) > 18 ? #strings.substring(notice.title, 0, 18) + '...' : notice.title}" style="font-weight:bold; margin-left:-10px;"></td>
+                    </tr>
+                    <tr>
+                        <td style="min-width:130px;">작성자 :&nbsp;<span th:text="${notice.createdBy.name}" style="margin-left:10px;"></span></td>
+                        <td style="text-align: right;">등록일 :&nbsp;<span th:text="${#temporals.format(notice.regDate, 'yyyy-MM-dd')}"></span></td>
+                    </tr>
+                    <tr>
+                        <td style="min-width:60px;">내용</td>
+                        <td class="content" th:text="${notice.content}"></td>
+                    </tr>
+                </table>
                 <div class="form-group">
                     <div class="col-md-12 d-flex justify-content-center">
                         <a th:href="@{'/notice/rewrite/' + ${noticeId}}" type="button" class="btn btn-seoha mb-3"
@@ -47,13 +82,16 @@
                 </div>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             </form>
+
         </div>
     </div>
 </div>
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-
+        //에러메시지 출력
+             var errorMessage = [[${errorMessage}]];
+             if(errorMessage != null) alert(errorMessage);
     </script>
 </th:block>
 

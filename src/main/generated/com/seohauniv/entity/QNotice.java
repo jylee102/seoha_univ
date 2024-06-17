@@ -22,24 +22,22 @@ public class QNotice extends EntityPathBase<Notice> {
 
     public static final QNotice notice = new QNotice("notice");
 
-    public final QBaseEntity _super = new QBaseEntity(this);
+    public final QBaseEntity _super;
 
     public final StringPath content = createString("content");
 
-    //inherited
-    public final StringPath createdBy = _super.createdBy;
+    // inherited
+    public final QMember createdBy;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     //inherited
-    public final DateTimePath<java.time.LocalDateTime> regDate = _super.regDate;
-
-    public final QStaff staff;
+    public final DateTimePath<java.time.LocalDateTime> regDate;
 
     public final StringPath title = createString("title");
 
     //inherited
-    public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
+    public final DateTimePath<java.time.LocalDateTime> updateDate;
 
     public final NumberPath<Integer> views = createNumber("views", Integer.class);
 
@@ -61,7 +59,10 @@ public class QNotice extends EntityPathBase<Notice> {
 
     public QNotice(Class<? extends Notice> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.staff = inits.isInitialized("staff") ? new QStaff(forProperty("staff"), inits.get("staff")) : null;
+        this._super = new QBaseEntity(type, metadata, inits);
+        this.createdBy = _super.createdBy;
+        this.regDate = _super.regDate;
+        this.updateDate = _super.updateDate;
     }
 
 }

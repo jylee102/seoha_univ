@@ -20,30 +20,35 @@ public class SecurityConfig {
         // 1. 페이지 접근에 관한 설정(인증, 인가 - 로그인 이후에)
         httpSecurity.authorizeHttpRequests(authorize -> authorize
                         // 모든 사용자가 로그인(인증)없이 접근할 수 있도록 설정
-                        .requestMatchers("/css/**", "/js/**", "/docs/**", "/images/**", "/fonts/**", "/scss/**", "/vendors/**", "/partials/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/vendors/**", "/excels/**", "/themes/**", "/pdfs/**").permitAll()
                         .requestMatchers( "/members/**").permitAll()
                         .requestMatchers("/favicon.ico", "/error").permitAll()
+
+                        .requestMatchers("/staff/**", "/staffs/**").hasRole("STAFF")
+                        .requestMatchers("/professor/**", "/professors/**").hasRole("PROFESSOR")
+                        .requestMatchers("/student/**", "/students/**").hasRole("STUDENT")
 
                         // 그 외의 페이지는 모두 로그인(인증)을 해야 한다.
                         .anyRequest().authenticated() // CustomAuthenticationEntryPoint에 있는 commence() 메소드를 실행
 
-                // 2. 로그인에 관한 설정
+        // 2. 로그인에 관한 설정
         ).formLogin(formLogin -> formLogin
                         .loginPage("/members/login") // 로그인 페이지 URL
                         .defaultSuccessUrl("/") // 로그인 성공시 이동할 페이지 URL
                         .usernameParameter("id") // ★ 로그인시 id로 사용할 파라메터 이름(내 사이트에 맞는 걸로 바꿔줘야 한다.)
                         .failureUrl("/members/login/error") // 로그인 실패시 이동할 페이지 URL
 
-                // 3. 로그아웃에 관한 설정
+        // 3. 로그아웃에 관한 설정
         ).logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout")) // 로그아웃시 이동할 URL
                         .logoutSuccessUrl("/") // 로그아웃 성공시 이동할 URL
                         .invalidateHttpSession(true) // 세션 무효화
                         .deleteCookies("JSESSIONID") // 쿠키 삭제
 
-                // 4. 인증되지 않은 사용자가 리소스에 접근시 설정
+        // 4. 인증되지 않은 사용자가 리소스에 접근시 설정
         ).exceptionHandling(handling -> handling
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 인증되지 않은 사용자가 접근시 처리
+                .accessDeniedHandler(new AccessDeniedHandlerImpl()) // 권한이 없는 사용자가 접근시 처리
 
         ).sessionManagement(sessionManagement -> sessionManagement
                 .sessionFixation().migrateSession() // 세션 고정 보호 정책

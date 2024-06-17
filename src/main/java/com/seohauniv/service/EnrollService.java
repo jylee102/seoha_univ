@@ -1,23 +1,28 @@
 package com.seohauniv.service;
 
-import com.seohauniv.entity.Course;
-import com.seohauniv.entity.CourseTime;
-import com.seohauniv.entity.Enroll;
-import com.seohauniv.entity.Student;
+import com.seohauniv.entity.*;
+import com.seohauniv.repository.CourseRepository;
 import com.seohauniv.repository.EnrollRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class EnrollService {
     private final EnrollRepository enrollRepository;
-    private final CourseService courseService;
+    private final MemberService memberService;
 
+    // 선택한 강의가 이미 신청한 강의인지 확인
+    @Transactional(readOnly = true)
     public boolean checkAlreadyEnrolled(Course course, Student student) {
         List<Enroll> enrolls = enrollRepository.findByStudent(student);
         for (Enroll enroll : enrolls) {
@@ -27,6 +32,8 @@ public class EnrollService {
         return false;
     }
 
+    // 선택한 강의의 강의시간과 이미 신청된 강의의 강의시간과 겹치는지 확인
+    @Transactional(readOnly = true)
     public boolean checkTimeConflict(Course course, Student student) {
         List<Enroll> enrolls = enrollRepository.findByStudent(student);
 
@@ -52,5 +59,50 @@ public class EnrollService {
         enroll.setStudent(student);
 
         return enrollRepository.save(enroll);
+    }
+
+    // 신청한 강의 목록 가져오기
+    @Transactional(readOnly = true)
+    public Page<Enroll> getMyEnrollList(String memberId, Pageable pageable) {
+        return enrollRepository.findByStudentId(memberId, pageable);
+    }
+
+    // 본인 확인(현재 로그인한 학생과 수강 신청한 사용자가 같은지 검사)
+    @Transactional(readOnly = true)
+    public boolean validateEnroll(Long enrollId, String id) {
+        // 로그인한 사용자 찾기
+        Member curMember = memberService.getMember(id);;
+
+        // 수강신청내역
+        Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(EntityNotFoundException::new);
+
+        Member savedMember = enroll.getStudent().getMember(); //수강 신청한 사용자 찾기
+
+        //로그인한 사용자의 이메일과 수강 신청한 사용자의 학번이 같은지 비교
+        return StringUtils.equals(curMember.getId(), savedMember.getId());
+    }
+
+    // 수강신청 취소
+    public void deleteEnroll(Long enrollId) {
+        Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(EntityNotFoundException::new);
+
+        enrollRepository.delete(enroll);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isAlreadyEnrolled(Course course, String id) {
+        List<Enroll> enrolls = enrollRepository.findByCourseAndStudentId(course, id);
+        return !enrolls.isEmpty();
+    }
+
+    @Transactional(readOnly = true)
+    public Enroll findByStudentIdAndCourseId(String courseId, String studentId) {
+        return enrollRepository.findByCourseIdAndStudentId(courseId, studentId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Course> getCoursesByStudentId(String studentId) {
+        List<Enroll> enrollments = enrollRepository.findByStudentId(studentId);
+        return enrollments.stream().map(Enroll::getCourse).collect(Collectors.toList());
     }
 }

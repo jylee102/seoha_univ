@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <style>
+        @media screen and (min-width: 1024px) {
+            .input--box {
+                width: 70%;
+            }
+        }
+        ul{
+        padding-left: 0;
+        }
+        .btn {
+            height: 28px;
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-bottom: 8px; /* 버튼 아래 여백 조절 */
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content">
+    <h1>학생 성적 기입</h1>
+    <div class="split--div"></div>
+    <table border="1" class="sub--list--table">
+        <thead>
+        <tr>
+            <th>학생 번호</th>
+            <th>이름</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${enroll.student.id}"></td>
+            <td th:text="${enroll.student.name}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <form th:action="'/professors/updateEvaluation/'+${enroll.course.id}+'/'+${enroll.student.id}" method="post" th:object="${evaluationFormDto}">
+
+        <table class="form--table">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:value="${enroll.course.id}" name="courseId" id="courseId">
+            <input type="hidden" th:value="${enroll.id}" name="enrollId" id="enrollId">
+            <tr>
+                <td><label>과제점수</label></td>
+                <td><input type="number" th:field="*{homework}"></td>
+            </tr>
+            <tr>
+                <td><label>중간시험</label></td>
+                <td><input type="number" th:field="*{midExam}"></td>
+            </tr>
+            <tr>
+                <td><label>기말시험</label></td>
+                <td><input th:field="*{finalExam}" type="number" ></td>
+            </tr>
+
+            <tr>
+                <td colspan="2"><button type="submit" class="btn btn-dark update--button">제출하기</button> </td>
+            </tr>
+
+        </table>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </form>
+
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+
+
+    </script>
+</th:block>
+
+</html>

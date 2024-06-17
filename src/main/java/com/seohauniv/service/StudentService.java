@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudentService {
     private final StudentRepository studentRepository;
 
+    @Transactional(readOnly = true)
     public Student findById(String id) {
         return studentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }

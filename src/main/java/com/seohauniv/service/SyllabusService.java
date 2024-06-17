@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +24,13 @@ import java.util.stream.Collectors;
 public class SyllabusService {
     private final SyllabusRepository syllabusRepository;
 
+    @Transactional(readOnly = true)
     public Syllabus findById(Long id) {
         return syllabusRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     // 강의계획서 등록
-    public Syllabus create(SyllabusFormDto syllabusFormDto, Professor professor) {
+    public Syllabus create(SyllabusFormDto syllabusFormDto, Professor professor) throws Exception {
 
         Syllabus syllabus = syllabusFormDto.toEntity();
         syllabus.setProfessor(professor);
@@ -55,6 +55,7 @@ public class SyllabusService {
     }
 
     // 강의 계획서 리스트(with 페이징 처리)
+    @Transactional(readOnly = true)
     public Page<SyllabusFormDto> getAllSyllabusToRead(Pageable pageable, String searchValue) {
         Page<SyllabusFormDto> syllabusPage = syllabusRepository.getSyllabuses(pageable, searchValue);
         syllabusPage.forEach(this::setCourseTimes);

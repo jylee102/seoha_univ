@@ -24,7 +24,7 @@ public class MemberFormDto {
     @Email(message = "이메일 형식으로 입력해주세요.")
     private String email;
 
-    @Pattern(regexp="^\\d{3}-\\d{3,4}-\\d{4}$", message="전화번호 형식이 올바르지 않습니다.")
+    @Pattern(regexp="^$|^\\d{3}-\\d{3,4}-\\d{4}$", message="전화번호 형식이 올바르지 않습니다.")
     private String phone;
 
     private String address;
@@ -41,7 +41,32 @@ public class MemberFormDto {
 
     // entity -> dto
     public static MemberFormDto of(Member member) {
-        return modelMapper.map(member, MemberFormDto.class);
+        MemberFormDto memberFormDto = modelMapper.map(member, MemberFormDto.class);
+
+        switch (member.getRole().toString()) {
+            case "STAFF":
+                memberFormDto.setPhone(member.getStaff().getPhone());
+                memberFormDto.setAddress(member.getStaff().getAddress());
+                memberFormDto.setEmail(member.getStaff().getEmail());
+                memberFormDto.setBirth(member.getStaff().getBirth());
+                break;
+            case "STUDENT":
+                memberFormDto.setPhone(member.getStudent().getPhone());
+                memberFormDto.setAddress(member.getStudent().getAddress());
+                memberFormDto.setEmail(member.getStudent().getEmail());
+                memberFormDto.setBirth(member.getStudent().getBirth());
+                memberFormDto.setDept(member.getStudent().getMajor());
+                break;
+            case "PROFESSOR":
+                memberFormDto.setPhone(member.getProfessor().getPhone());
+                memberFormDto.setAddress(member.getProfessor().getAddress());
+                memberFormDto.setEmail(member.getProfessor().getEmail());
+                memberFormDto.setBirth(member.getProfessor().getBirth());
+                memberFormDto.setDept(member.getProfessor().getMajor());
+                break;
+        }
+
+        return memberFormDto;
     }
 
     // dto -> entity

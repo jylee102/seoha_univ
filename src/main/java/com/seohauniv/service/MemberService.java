@@ -4,20 +4,20 @@ import com.seohauniv.config.MemberContext;
 import com.seohauniv.constant.Role;
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.dto.MemberSearchDto;
-import com.seohauniv.entity.Member;
-import com.seohauniv.entity.Professor;
-import com.seohauniv.entity.Staff;
-import com.seohauniv.entity.Student;
+import com.seohauniv.entity.*;
 import com.seohauniv.repository.MemberRepository;
 import com.seohauniv.repository.ProfessorRepository;
 import com.seohauniv.repository.StaffRepository;
 import com.seohauniv.repository.StudentRepository;
 import com.seohauniv.util.IdGenerator;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,6 +41,7 @@ public class MemberService implements UserDetailsService {
     private final StudentRepository studentRepository;
     private final ProfessorRepository professorRepository;
 
+    // 회원 등록
     public Member createMember(Object entity) {
         Member member = new Member();
         String rawPw = generateRawPassword(entity);
@@ -86,6 +87,7 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(member);
     }
 
+    // 비밀번호 생성 메소드
     public String generateRawPassword(Object entity) {
         LocalDate birth = null;
         if (entity instanceof Staff) {
@@ -102,14 +104,17 @@ public class MemberService implements UserDetailsService {
                 String.format("%02d!", birth.getDayOfMonth());
     }
 
+    @Transactional(readOnly = true)
     public Long count() {
         return memberRepository.count();
     }
 
+    @Transactional(readOnly = true)
     public boolean existsById(String id) {
         return memberRepository.existsById(id);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return memberRepository.findByEmail(email) != null;
     }
@@ -139,11 +144,13 @@ public class MemberService implements UserDetailsService {
     }
 
     // 학번/교번으로 회원 찾기
+    @Transactional(readOnly = true)
     public Member getMember(String id) {
         return memberRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     // 비밀번호 확인(현재 비밀번호와 같은지)
+    @Transactional(readOnly = true)
     public Boolean checkPassword(Member member, String password) {
         return passwordEncoder.matches(password, member.getPassword());
     }
@@ -185,75 +192,82 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
+    @Transactional(readOnly = true)
+    public Page<?> getMemberListPage(MemberSearchDto memberSearchDto, Pageable pageable) {
+        switch (memberSearchDto.getTabValue()) {
+            case "STUDENT":
+                if (memberSearchDto.getSearchBy().equals("id")) {
+                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().isEmpty()) {
+                        return studentRepository.findByIdStartingWith(memberSearchDto.getSearchQuery(), pageable);
+                    } else {
+                        return studentRepository.findById(memberSearchDto.getSearchQuery(),
+                                pageable);
+                    }
+                } else if (memberSearchDto.getSearchBy().equals("name")) {
+                    return studentRepository.findByNameContaining(memberSearchDto.getSearchQuery(),
+                            pageable);
+                }
+            case "STAFF":
+                if (memberSearchDto.getSearchBy().equals("id")) {
+                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().isEmpty()) {
+                        return staffRepository.findByIdStartingWith(memberSearchDto.getSearchQuery(),
+                                pageable);
+                    } else {
+                        return staffRepository.findById(memberSearchDto.getSearchQuery(),
+                                pageable);
+                    }
+                } else if (memberSearchDto.getSearchBy().equals("name")) {
+                    return staffRepository.findByNameContaining(memberSearchDto.getSearchQuery(), pageable);
+                }
+            case "PROFESSOR":
+                if (memberSearchDto.getSearchBy().equals("id")) {
+                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().isEmpty()) {
+                        return professorRepository.findByIdStartingWith(memberSearchDto.getSearchQuery(), pageable);
+                    } else {
+                        return professorRepository.findById(memberSearchDto.getSearchQuery()
+                                , pageable);
+                    }
+                } else if (memberSearchDto.getSearchBy().equals("name")) {
+                    return professorRepository.findByNameContaining(memberSearchDto.getSearchQuery(),
+                            pageable);
+                }
+        }
+        return null;
+    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Transactional(readOnly = true)
+    public Member getMemberWithMessages(String id) {
+        return entityManager.createQuery(
+                        "SELECT m FROM Member m LEFT JOIN FETCH m.messages WHERE m.id = :id", Member.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Message> getUnreadMessages(String memberId) {
+        return entityManager.createQuery(
+                        "SELECT msg FROM Message msg WHERE msg.sendTo.id = :memberId AND msg.isRead = 'f' ORDER BY msg.regDate DESC", Message.class)
+                .setParameter("memberId", memberId)
+                .getResultList();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         //해당 id 계정을 가진 사용자가 있는지 확인
-        Member member = memberRepository.getById(id);
-
-        if (member == null) { //사용자가 없다면
-            throw new UsernameNotFoundException(id);
-        }
+        Member member = getMemberWithMessages(id);
 
         if (member == null) { //사용자가 없다면
             throw new UsernameNotFoundException(id);
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getRole().toString()));
 
-        return new MemberContext(member, authorities); //Member 객체를 상속받은 MemberContext을 넣어주면 스프링이 알아서 처리한다.
-    }
+        List<Message> unreadMessages = getUnreadMessages(id);
 
-    @Transactional(readOnly = true)
-    public Page<?> getMemberListPage(MemberSearchDto memberSearchDto, Pageable pageable) {
-        switch (memberSearchDto.getTabValue()) {
-            case "STUDENT":
-                if (memberSearchDto.getSearchBy().equals("id")) {
-                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Student> memberPage =
-                                studentRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
-                        return memberPage;
-                    } else {
-                        Page<Student> memberPage = studentRepository.getPageById(memberSearchDto.getSearchQuery(),
-                                pageable);
-                        return memberPage;
-                    }
-                } else if (memberSearchDto.getSearchBy().equals("name")) {
-                    Page<Student> memberPage = studentRepository.getPageByName(memberSearchDto.getSearchQuery(),
-                            pageable);
-                    return memberPage;
-                }
-            case "STAFF":
-                if (memberSearchDto.getSearchBy().equals("id")) {
-                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Staff> memberPage = staffRepository.getPageByRegYear(memberSearchDto.getSearchQuery(),
-                                pageable);
-                        return memberPage;
-                    } else {
-                        Page<Staff> memberPage = staffRepository.getPageById(memberSearchDto.getSearchQuery(),
-                                pageable);
-                        return memberPage;
-                    }
-                } else if (memberSearchDto.getSearchBy().equals("name")) {
-                    Page<Staff> memberPage = staffRepository.getPageByName(memberSearchDto.getSearchQuery(), pageable);
-                    return memberPage;
-                }
-            case "PROFESSOR":
-                if (memberSearchDto.getSearchBy().equals("id")) {
-                    if (memberSearchDto.getSearchQuery().length() == 2 || memberSearchDto.getSearchQuery().length() == 0) {
-                        Page<Professor> memberPage =
-                                professorRepository.getPageByRegYear(memberSearchDto.getSearchQuery(), pageable);
-                        return memberPage;
-                    } else {
-                        Page<Professor> memberPage = professorRepository.getPageById(memberSearchDto.getSearchQuery()
-                                , pageable);
-                        return memberPage;
-                    }
-                } else if (memberSearchDto.getSearchBy().equals("name")) {
-                    Page<Professor> memberPage = professorRepository.getPageByName(memberSearchDto.getSearchQuery(),
-                            pageable);
-                    return memberPage;
-                }
-        }
-        return null;
+        return new MemberContext(member, authorities, unreadMessages); //Member 객체를 상속받은 MemberContext을 넣어주면 스프링이 알아서 처리한다.
     }
 }

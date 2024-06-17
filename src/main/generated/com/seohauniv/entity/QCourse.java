@@ -24,6 +24,8 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final StringPath id = createString("id");
 
+    public final StringPath pdf = createString("pdf");
+
     public final QProfessor professor;
 
     public final NumberPath<Integer> restSeat = createNumber("restSeat", Integer.class);

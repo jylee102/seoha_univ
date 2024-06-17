@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/main_page.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <style>
+         @media screen and (max-width: 685px) {
+            .subjectGrade > thead > tr > th:nth-child(3),
+            .subjectGrade > tbody > tr > td:nth-child(3){
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 560px) {
+            .subjectGrade > thead > tr > th:nth-child(5),
+            .subjectGrade > tbody > tr > td:nth-child(5){
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 650px) {
+            .search {
+                padding-left: 0;
+                padding-bottom: 1rem;
+            }
+        }
+
+        ul{
+            padding-left: 0;
+        }
+
+        .btn {
+            height: 32px;
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-bottom: 8px; /* 버튼 아래 여백 조절 */
+        }
+
+        .btn-search {
+            padding-left: 15px;
+            padding-top: 7px;
+        }
+
+        .select-search {
+            width: 9rem;
+        }
+
+        table > thead > tr > th,
+        table > tbody> tr > td {
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>학기별 성적 조회</h1>
+            <div class="split--div" style="margin-bottom:20px; min-width:385px;"></div>
+            <div class="sub--filter">
+                <form action="/students/gradeFor" method="get" th:object="${myCourseSearchDto}">
+                    <div class="d-flex align-items-center search" style="min-width: 380px;">
+                        <div>
+                            <select class="input-search select-search" name="searchYear" id="yearSelect"
+                                    style="margin-right:5px;"></select>
+                            <select class="input-search select-search" name="searchSemester">
+                                <option value="1" selected>1학기</option>
+                                <option value="2">2학기</option>
+                            </select>
+                        </div>
+                        <!-- 검색 버튼 -->
+                        <div class="btn-search">
+                            <button class="btn btn-info" type="submit" style="min-width: 54px;">조회</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div>
+                <h4 th:if="${totalGradeDto != null}" style="font-weight: 600; margin-top:7px;">과목별 성적</h4>
+                <div class="table-div">
+                    <table th:if="${totalGradeDto != null}" class="sub--list--table subjectGrade" style="min-width:380px;">
+                        <thead>
+                        <tr>
+                            <th>연도</th>
+                            <th>학기</th>
+                            <th>과목번호</th>
+                            <th>과목명</th>
+                            <th>강의구분</th>
+                            <th>이수학점</th>
+                            <th>성적</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:if="${grades}" th:each="grade :${grades}">
+                            <td>[[${grade.course.syllabus.year}]]년</td>
+                            <td>[[${grade.course.syllabus.semester}]]학기</td>
+                            <td>[[${grade.course.id}]]</td>
+                            <td class="sub--list--name">[[${grade.course.syllabus.courseName}]]</td>
+                            <td>[[${grade.course.syllabus.courseType.getDescription}]]</td>
+                            <td>[[${grade.course.syllabus.credit}]]</td>
+                            <td th:if="${grade.convertedScore >= 95}">A+</td>
+                            <td th:if="${grade.convertedScore < 95 and grade.convertedScore >= 90}">A</td>
+                            <td th:if="${grade.convertedScore < 90 and grade.convertedScore >= 85}">B+</td>
+                            <td th:if="${grade.convertedScore < 85 and grade.convertedScore >= 80}">B</td>
+                            <td th:if="${grade.convertedScore < 80 and grade.convertedScore >= 75}">C+</td>
+                            <td th:if="${grade.convertedScore < 75 and grade.convertedScore >= 70}">C</td>
+                            <td th:if="${grade.convertedScore < 70 and grade.convertedScore >= 65}">D+</td>
+                            <td th:if="${grade.convertedScore < 65 and grade.convertedScore >= 60}">D</td>
+                            <td th:if="${grade.convertedScore < 60}">F</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr style="margin-top:2rem; min-width:380px;">
+            <br>
+            <div th:if="${totalGradeDto != null}" class="table-div">
+                <h4 style="font-weight: 600">누계 성적</h4>
+                <table class="sub--list--table" style="min-width:380px;">
+                    <thead>
+                    <tr>
+                        <th>연도</th>
+                        <th>학기</th>
+                        <th>신청학점</th>
+                        <th>취득학점</th>
+                        <th>평점평균</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>[[${totalGradeDto.year}]]년</td>
+                        <td>[[${totalGradeDto.semester}]]학기</td>
+                        <td>[[${totalGradeDto.sumGrades}]]</td>
+                        <td>[[${totalGradeDto.sumGrades}]]</td>
+                        <td>[[${totalGradeDto.average}]]</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="no--list--p" th:unless="${totalGradeDto != null}">
+                강의 신청 및 수강 이력 확인 바랍니다.
+            </p>
+            <p th:unless="${grades}" class="no--list--p">강의 신청 및 수강 이력 확인 바랍니다.</p>
+
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+
+        // 현재 연도 구하기
+        var currentYear = new Date().getFullYear();
+        var selectElement = document.getElementById("yearSelect");
+
+        // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
+        for (var i = 0; i < 3; i++) {
+            var option = document.createElement("option");
+            option.value = currentYear + i;
+            option.textContent = (currentYear + i) + "학년도";
+            selectElement.appendChild(option);
+        }
+         function page(page) {
+            var searchYear = document.getElementById("yearSelect").value;
+            var searchSemester = document.querySelector("select[name='searchSemester']").value;
+            // 페이지 이동
+            location.href = "/students/gradeFor/"
+                + "?searchYear=" + searchYear
+                + "&searchSemester=" + searchSemester;
+        }
+
+
+    </script>
+</th:block>
+
+</html>

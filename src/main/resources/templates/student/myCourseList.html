@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+</head>
+
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/memberList.css}">
+    <style>
+        @media screen and (max-width: 1300px) {
+            .table-div tr > th:nth-child(3),
+            .table-div tr > td:nth-child(3),
+            .table-div tr > th:nth-child(6),
+            .table-div tr > td:nth-child(6) {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 1127px) {
+            .table-div tr > th:nth-child(1),
+            .table-div tr > td:nth-child(1) {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 735px) {
+            .table-div tr > th:nth-child(4),
+            .table-div tr > td:nth-child(4) {
+                display: none;
+            }
+        }
+    </style>
+</th:block>
+
+<main layout:fragment="content" style="margin:0;">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>내 강의 목록</h1>
+            <div class="div-split" style="min-width: 410px; margin-bottom:40px;"></div>
+
+                <div class="table-div">
+                    <table style="min-width: 410px;">
+                        <tr>
+                            <th>강의코드</th>
+                            <th>강의명</th>
+                            <th style="min-width: 56px;">구분</th>
+                            <th style="min-width: 82px;">담당교수</th>
+                            <th style="min-width: 147px;">강의시간</th>
+                            <th style="min-width: 109px;">강의실</th>
+                            <th>여석</th>
+                            <th style="min-width: 86px;"></th>
+                        </tr>
+                        <tr th:each="enroll : ${enrolls.getContent()}" th:object="${enroll.course}">
+                            <td th:text="*{id}"></td>
+                            <td th:text="*{syllabus.courseName}"></td>
+                            <td th:text="*{syllabus.courseTypeDescription}"></td>
+                            <td th:text="*{professor.name}"></td>
+                            <td th:utext="*{syllabus.courseTimeDescription}"></td>
+                            <td th:text="*{room.buildingName} + ' ' + *{room.roomNo} + '호'"></td>
+                            <td th:text="*{restSeat} + '/' + *{syllabus.capacity}"></td>
+                            <td>
+                                <button class="btn btn-inverse-dark" type="button"
+                                        th:onclick="deleteEnroll([[${enroll.id}]], [[*{id}]])">취소</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            <div class="pagination" th:with="start=${(enrolls.number/maxPage)*maxPage + 1},
+			                 end=(${(enrolls.totalPages == 0) ? 1 : (start + (maxPage - 1) < enrolls.totalPages ? start + (maxPage - 1) : enrolls.totalPages)})"
+                 aria-label="Page navigation example">
+                <ul>
+                    <li>
+                        <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+                    </li>
+                    <li th:classappend="${enrolls.first} ? 'disabled' : ''" onclick="javascript:goLeft()">
+                        <a><i class="fa-solid fa-angle-left"></i></a>
+                    </li>
+                    <li th:each="page: ${#numbers.sequence(start, end)}"
+                        th:classappend="${enrolls.number eq page - 1} ? 'page-active' : 'page'"
+                        th:onclick="'javascript:page(' + (${page - 1}) + ')'">
+                        <a>[[${page}]]</a>
+                    </li>
+                    <li th:classappend="${enrolls.last} ? 'disabled' : ''" onclick="javascript:goRight()">
+                        <a><i class="fa-solid fa-angle-right"></i></a>
+                    </li>
+                    <li>
+                        <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<th:block layout:fragment="script">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        // 수강신청 취소
+        function deleteEnroll(enrollId, courseId) {
+            const deleteConf = confirm("수강 신청을 취소하시겠습니까?");
+            if (!deleteConf) return;
+
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            $.ajax({
+				url : "/students/myCourse/" + enrollId + "/delete",
+				type : "DELETE",
+				contentType : "application/json",
+				data: JSON.stringify({ courseId : courseId }),
+				beforeSend : function(xhr) {
+				    // 데이터를 전송하기 전에 헤더에 csrf 값을 설정
+                    xhr.setRequestHeader(header, token);
+				},
+				dataType : "json",
+				cache : false,
+				success : function(result, status) {
+				    var path = location.pathname;
+
+				    // 페이지 번호만 가져온다.
+				    var page = path.substring(path.lastIndexOf("/") + 1);
+
+				    if (page == 'myCourse') {
+				        page = 0;
+				    }
+
+				    // 수강신청 취소 후에 원래 페이지로 이동 시켜준다.
+				    location.href = '/students/myCourse/' + page;
+				},
+				error : function(jqXHR, status, error) {
+				    if(jqXHR.status == '401') {
+                        alert('로그인 후 이용해주세요.');
+                        location.href = '/members/login';
+                    } else {
+                        alert(jqXHR.responseText);
+                    }
+				}
+			});
+        }
+
+        function page(page) {
+            // 주소 이동
+            location.href = "/students/myCourse/" + page;
+        }
+
+        function goToFirstPage() {
+            page(0);
+        }
+
+        function goToLastPage() {
+            var lastPage = [[${enrolls.totalPages}]] - 1; // 마지막 페이지 번호는 총 페이지 수 - 1
+            page(lastPage);
+        }
+
+        function goLeft() {
+            if (![[${enrolls.first}]]) {
+                location.href = '/students/myCourse/' + ([[${enrolls.number}]] - 1);
+            }
+        }
+
+        function goRight() {
+            if (![[${enrolls.last}]]) {
+                location.href = '/students/myCourse/' + ([[${enrolls.number}]] + 1);
+            }
+        }
+    </script>
+</th:block>
+
+</html>

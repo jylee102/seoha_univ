@@ -35,4 +35,9 @@ public class Break extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Student student;
+
+    //status 확인하는 메서드
+    public boolean isProcessing() {
+        return this.status == ProcedureStatus.PROCESSING;
+    }
 }

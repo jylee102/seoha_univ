@@ -24,7 +24,9 @@ public class QAttendance extends EntityPathBase<Attendance> {
 
     public final QBaseTimeEntity _super = new QBaseTimeEntity(this);
 
-    public final QEvaluation evaluation;
+    public final EnumPath<com.seohauniv.constant.Day> day = createEnum("day", com.seohauniv.constant.Day.class);
+
+    public final QEnroll enroll;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -37,6 +39,8 @@ public class QAttendance extends EntityPathBase<Attendance> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updateDate = _super.updateDate;
+
+    public final NumberPath<Integer> week = createNumber("week", Integer.class);
 
     public QAttendance(String variable) {
         this(Attendance.class, forVariable(variable), INITS);
@@ -56,7 +60,7 @@ public class QAttendance extends EntityPathBase<Attendance> {
 
     public QAttendance(Class<? extends Attendance> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.evaluation = inits.isInitialized("evaluation") ? new QEvaluation(forProperty("evaluation"), inits.get("evaluation")) : null;
+        this.enroll = inits.isInitialized("enroll") ? new QEnroll(forProperty("enroll"), inits.get("enroll")) : null;
         this.student = inits.isInitialized("student") ? new QStudent(forProperty("student"), inits.get("student")) : null;
     }
 

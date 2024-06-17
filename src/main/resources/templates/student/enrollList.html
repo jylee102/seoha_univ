@@ -10,8 +10,6 @@
 
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
         .input-search {
@@ -72,7 +70,7 @@
                     </div>
                     <div class="input-container">
                         <input type="text" class="input-search" id="searchQuery" name="searchQuery"
-                            placeholder="강의명 또는 교수 이름으로 검색하세요."/>
+                            placeholder="강의명 또는 교수명으로 검색하세요."/>
                         <i class="fa-solid fa-xmark" onclick="clearSearch()"></i>
                     </div>
                     <div class="btn-search">
@@ -87,23 +85,33 @@
                         <tr>
                             <th>강의코드</th>
                             <th>강의명</th>
-                            <th>구분</th>
-                            <th>담당교수</th>
-                            <th>강의시간</th>
-                            <th>강의실</th>
+                            <th>강의계획서</th>
+                            <th style="min-width: 56px;">구분</th>
+                            <th style="min-width: 82px;">담당교수</th>
+                            <th style="min-width: 147px;">강의시간</th>
+                            <th style="min-width: 109px;">강의실</th>
                             <th>여석</th>
-                            <th>신청</th>
+                            <th style="min-width: 86px;"></th>
                         </tr>
                         <tr th:each="courses, status: ${courses.getContent()}">
-                            <td id="courseId" th:text="${courses.id}"></td>
+                            <td th:text="${courses.id}"></td>
                             <td th:text="${courses.syllabus.courseName}"></td>
+                            <td>
+                                <button type="button" th:onclick="window.open('/course/syllabus/'+[[${courses.id}]], '_blank', 'width=1000, height=1000'); return false;"
+                                        style="padding: 0.2rem; border: 1px solid black; border-radius: 2px;"><i class="fa-regular fa-file-pdf"></i></button>
+                            </td>
                             <td th:text="${courses.syllabus.courseTypeDescription}"></td>
                             <td th:text="${courses.professorName}"></td>
-                            <td th:text="${courses.courseTimeDescription}"></td>
+                            <td th:utext="${courses.courseTimeDescription}"></td>
                             <td th:text="${courses.room.buildingName} + ' ' + ${courses.room.roomNo} + '호'"></td>
                             <td th:text="${courses.restSeat} + '/' + ${courses.syllabus.capacity}"></td>
                             <td>
-                                <button class="btn btn-seoha" type="button" onclick="beforeSubmit()">신청</button>
+                                <button class="btn btn-seoha" type="button"
+                                        th:onclick="beforeSubmit([[${courses.id}]])"
+                                        th:unless="${enrollStatus.get(courses.id)}">신청</button>
+                                <button class="btn btn-inverse-dark" type="button"
+                                        th:onclick="beforeCancel([[${courses.id}]])"
+                                        th:if="${enrollStatus.get(courses.id)}">취소</button>
                             </td>
                         </tr>
                     </table>
@@ -140,23 +148,22 @@
 <th:block layout:fragment="script">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
-        var errorMessage = [[${errorMessage}]];
-        if(errorMessage != null || errorMessage == "") alert(errorMessage);
-
-        function updatePlaceholder() {
-            var inputSearch = document.querySelector('.input-search');
+        document.addEventListener('DOMContentLoaded', function() {
+            function updatePlaceholder() {
+                var inputSearch = document.querySelector('#searchQuery');
                 if (window.innerWidth <= 650) {
-                   inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색');
+                    inputSearch.setAttribute('placeholder', '강의명 또는 교수명으로 검색');
                 } else {
-                   inputSearch.setAttribute('placeholder', '강의명 또는 교수 이름으로 검색하세요.');
+                    inputSearch.setAttribute('placeholder', '강의명 또는 교수명으로 검색하세요.');
                 }
-        }
+            }
 
-        // 초기 로드 시 실행
-        updatePlaceholder();
+            // 초기 로드 시 실행
+            updatePlaceholder();
 
-        // 창 크기가 변경될 때마다 실행
-        window.addEventListener('resize', updatePlaceholder);
+            // 창 크기가 변경될 때마다 실행
+            window.addEventListener('resize', updatePlaceholder);
+        });
 
         $("#searchBtn").on("click", function(e) {
             e.preventDefault(); // submit 방지
@@ -172,6 +179,11 @@
                 $("#searchQuery").val(savedSearchQuery);
             }
         });
+
+        // input창의 x 클릭시 검색어 삭제
+        function clearSearch() {
+            document.getElementById('searchQuery').value = '';
+        }
 
         function page(page) {
             // 입력한 값을 전부 가지고 온다.
@@ -193,15 +205,27 @@
             page(lastPage);
         }
 
-        function clearSearch() {
-            document.getElementById('searchQuery').value = '';
+        var courses = [[${courses}]];
+        var courseSearchDto = [[${courseSearchDto}]];
+        if (courseSearchDto.searchCourseType == null) courseSearchDto.searchCourseType = '';
+
+        function goLeft() {
+            if (!courses.first) {
+                location.href = '/students/enroll/' + (courses.number - 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
+            }
+        }
+
+        function goRight() {
+            if (!courses.last) {
+                location.href = '/students/enroll/' + (courses.number + 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
+            }
         }
 
         var token = $("meta[name='_csrf']").attr("content");
         var header = $("meta[name='_csrf_header']").attr("content");
 
-        function beforeSubmit() {
-            var courseId = $('#courseId').text();
+        // 수강신청
+        function beforeSubmit(courseId) {
 
             $.ajax({
                 url: "/student/enrollCourse/" + courseId,
@@ -220,20 +244,44 @@
             });
         }
 
-        var courses = [[${courses}]];
-        var courseSearchDto = [[${courseSearchDto}]];
-        if (courseSearchDto.searchCourseType == null) courseSearchDto.searchCourseType = '';
+        // 수강신청 취소
+        function beforeCancel(courseId) {
+            const deleteConf = confirm("수강 신청을 취소하시겠습니까?");
+            if (!deleteConf) return;
 
-        function goLeft() {
-            if (!courses.first) {
-                location.href = '/students/enroll/' + (courses.number - 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
-            }
-        }
+            $.ajax({
+				url : "/students/enroll/" + courseId + "/delete",
+				type : "DELETE",
+				contentType : "application/json",
+				data: JSON.stringify({ courseId : courseId }),
+				beforeSend : function(xhr) {
+				    // 데이터를 전송하기 전에 헤더에 csrf 값을 설정
+                    xhr.setRequestHeader(header, token);
+				},
+				dataType : "json",
+				cache : false,
+				success : function(result, status) {
+				    var path = location.pathname;
 
-        function goRight() {
-            if (!courses.last) {
-                location.href = '/students/enroll/' + (courses.number + 1) + '?searchCourseType=' + courseSearchDto.searchCourseType + '&searchQuery=' + courseSearchDto.searchQuery;
-            }
+				    // 페이지 번호만 가져온다.
+				    var page = path.substring(path.lastIndexOf("/") + 1);
+
+				    if (page == 'enroll') {
+				        page = 0;
+				    }
+
+				    // 수강신청 취소 후에 원래 페이지로 이동 시켜준다.
+				    location.reload();
+				},
+				error : function(jqXHR, status, error) {
+				    if(jqXHR.status == '401') {
+                        alert('로그인 후 이용해주세요.');
+                        location.href = '/members/login';
+                    } else {
+                        alert(jqXHR.responseText);
+                    }
+				}
+			});
         }
     </script>
 </th:block>

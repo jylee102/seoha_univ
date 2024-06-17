@@ -26,9 +26,11 @@ public class QEvaluation extends EntityPathBase<Evaluation> {
 
     public final QCourse course;
 
-    public final QCourseDetail courseDetail;
+    public final QEnroll enroll;
 
     public final NumberPath<Integer> finalExam = createNumber("finalExam", Integer.class);
+
+    public final NumberPath<Float> grade = createNumber("grade", Float.class);
 
     public final NumberPath<Integer> homework = createNumber("homework", Integer.class);
 
@@ -55,7 +57,7 @@ public class QEvaluation extends EntityPathBase<Evaluation> {
     public QEvaluation(Class<? extends Evaluation> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.course = inits.isInitialized("course") ? new QCourse(forProperty("course"), inits.get("course")) : null;
-        this.courseDetail = inits.isInitialized("courseDetail") ? new QCourseDetail(forProperty("courseDetail"), inits.get("courseDetail")) : null;
+        this.enroll = inits.isInitialized("enroll") ? new QEnroll(forProperty("enroll"), inits.get("enroll")) : null;
     }
 
 }
