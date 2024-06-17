@@ -15,6 +15,8 @@ import java.util.List;
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     int countByStatusAndEnrollIdAndStudentId(AttendStatus status,Long enrollId ,String studentId);
     Attendance findByEnrollIdAndStudentIdAndWeekAndDay(Long enrollId, String studentId, int week, Day day);
-    @Query("SELECT a FROM Attendance a WHERE a.enroll.course.id = :courseId AND a.week = :week AND a.day = :day")
-    Page<Attendance> findByCourseIdAndWeekAndDay(@Param("courseId") String courseId, @Param("week") int week, @Param("day") Day day, Pageable pageable);
+    @Query("SELECT a FROM Attendance a WHERE a.enroll.course.id = :courseId AND a.enroll.student.id = :studentId AND a.week = :week AND a.day = :day")
+    Attendance findByCourseIdAndWeekAndDay(@Param("courseId") String courseId, @Param("studentId") String studentId, @Param("week") int week, @Param("day") Day day);
+    @Query("SELECT a FROM Attendance a WHERE a.enroll.id = :enrollId AND a.week = :week AND a.day = :day")
+    Attendance findByEnrollIdAndWeekAndDay(@Param("enrollId") Long enrollId, @Param("week") int week, @Param("day") Day day);
 }

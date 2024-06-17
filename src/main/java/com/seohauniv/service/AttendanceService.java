@@ -59,8 +59,17 @@ public class AttendanceService {
         return attendanceRepository.countByStatusAndEnrollIdAndStudentId(status, enrollId, studentId);
     }
     @Transactional(readOnly = true)
-    public Page<Attendance> findByEnrollIdAndStudentIdAndWeekAndDay(String courseId, int week, Day day,Pageable pageable){
-        return attendanceRepository.findByCourseIdAndWeekAndDay(courseId,week,day,
-        pageable);
+    public Attendance findByCourseIdAndWeekAndDay(AttendanceFormDto attendanceFormDto){
+        return attendanceRepository.findByCourseIdAndWeekAndDay(attendanceFormDto.getCourseId(),attendanceFormDto.getStudentId(),attendanceFormDto.getWeek(),Day.valueOf(attendanceFormDto.getDay()));
+    }
+
+    @Transactional(readOnly = true)
+    public Attendance findByEnrollIdAndWeekAndDay(Long enrollId, int week, Day day){
+        return attendanceRepository.findByEnrollIdAndWeekAndDay(enrollId,week,day);
     };
+    public Attendance updateStatus(AttendanceFormDto attendanceFormDto) {
+        Attendance attendance = findByCourseIdAndWeekAndDay(attendanceFormDto);
+        attendance.setStatus(AttendStatus.valueOf(attendanceFormDto.getStatus()));
+        return attendance;
+    }
 }

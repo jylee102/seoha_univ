@@ -41,4 +41,8 @@ public class EvaluationService {
 
         return evaluation.getId();
     }
+    @Transactional(readOnly = true)
+    public Evaluation findByEnrollId(Long enrollId){
+        return evaluationRepository.findByEnrollId(enrollId);
+    }
 }

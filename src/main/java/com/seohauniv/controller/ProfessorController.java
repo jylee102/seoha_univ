@@ -1,6 +1,7 @@
 package com.seohauniv.controller;
 
 import com.seohauniv.constant.AttendStatus;
+import com.seohauniv.constant.Day;
 import com.seohauniv.dto.*;
 import com.seohauniv.entity.*;
 import com.seohauniv.service.AttendanceService;
@@ -9,6 +10,7 @@ import com.seohauniv.service.EvaluationService;
 import com.seohauniv.service.ProfessorService;
 import org.springframework.data.domain.Page;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -51,25 +53,27 @@ public class ProfessorController {
     public String myCourseStudent(Model model, @PathVariable("courseId") String courseId,@PathVariable("page") Optional<Integer> page) {
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
-        List<Evaluation> evaluations = evaluationService.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
         List<StudentAttendanceDto> studentAttendanceDto = new ArrayList<>();
-
 
         for (Enroll enroll : myCourseStudentList) {
             int countStatusPresent = attendanceService.countByStatusAndStudentId(AttendStatus.PRESENT, enroll.getId(), enroll.getStudent().getId());
             int countStatusLate = attendanceService.countByStatusAndStudentId(AttendStatus.LATE,enroll.getId(),enroll.getStudent().getId());
             int countStatusAbsent = attendanceService.countByStatusAndStudentId(AttendStatus.ABSENT,enroll.getId(),enroll.getStudent().getId());
+            Evaluation evaluation = evaluationService.findByEnrollId(enroll.getId());
+            Course course = courseService.findById(courseId);
             StudentAttendanceDto attendanceDto = new StudentAttendanceDto();
             attendanceDto.setStudent(enroll.getStudent());
             attendanceDto.setCountPresent(countStatusPresent);
             attendanceDto.setCountLate(countStatusLate);
             attendanceDto.setCountAbsent(countStatusAbsent);
-
+            attendanceDto.setCourse(course);
+            if(evaluation != null){attendanceDto.setEvaluation(evaluation);}
             studentAttendanceDto.add(attendanceDto);
         }
-        model.addAttribute("students", myCourseStudentList);
-        model.addAttribute("attendances",studentAttendanceDto);
-        model.addAttribute("evaluations", evaluations);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), studentAttendanceDto.size());
+        Page<StudentAttendanceDto> studentAttendance = new PageImpl<>(studentAttendanceDto.subList(start, end), pageable, studentAttendanceDto.size());
+        model.addAttribute("students",studentAttendance);
         model.addAttribute("maxPage", 5);
 
         return "professor/myCourseStudent";
@@ -105,14 +109,14 @@ public class ProfessorController {
 
         try {
             Enroll enroll = professorService.findStudentsByCourseIdAndStudentId(courseId,studentId);
-//            EvaluationFormDto evaluationFormDto = evaluationService.updateEvaluationDtl(studentId,courseId);
+            EvaluationFormDto evaluationFormDto = evaluationService.updateEvaluationDtl(studentId,courseId);
             model.addAttribute("enroll",enroll);
-//            model.addAttribute("evaluationFormDto", evaluationFormDto);
+            model.addAttribute("evaluationFormDto", evaluationFormDto);
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("errorMessage", "에러가 발생했습니다.");
             //에러발생시 비어있는 객체를 넘겨준다.
-            model.addAttribute("noticeFormDto", new NoticeFormDto());
+            model.addAttribute("evaluationFormDto", new EvaluationFormDto());
             return "professor/updateEvaluation";
         }
 
@@ -121,9 +125,9 @@ public class ProfessorController {
     }
     //성적 수정
     @PostMapping(value = "professors/updateEvaluation/{courseId}/{studentId}")
-    public String updateEvaluation(EvaluationFormDto evaluationFormDto, RedirectAttributes redirectAttributes, @PathVariable("studentId")String studentId){
+    public String updateEvaluation(EvaluationFormDto evaluationFormDto, RedirectAttributes redirectAttributes){
         try {
-//            evaluationService.updateEvaluation(evaluationFormDto);
+            evaluationService.updateEvaluation(evaluationFormDto);
             return "redirect:/professors/myCourse";
         }
         catch (Exception e){
@@ -177,19 +181,42 @@ public class ProfessorController {
                                          @RequestParam("day") String day) {
         Pageable pageable = PageRequest.of(page.isPresent()? page.get() : 0, 5);
         Page<Enroll> myCourseStudentList = professorService.getMyCourseStudentList(courseId,pageable);
-//        Page<Attendance> attendances = attendanceService.findByEnrollIdAndStudentIdAndWeekAndDay(courseId,week,Day.valueOf(day),pageable);
-        model.addAttribute("enrolls", myCourseStudentList);
-//        model.addAttribute("attendances",attendances);
+        List<AttendanceStudentListDto> attendanceStudentListDtos = new ArrayList<>();
+        for (Enroll enroll : myCourseStudentList) {
+            Attendance attendance = attendanceService.findByEnrollIdAndWeekAndDay(enroll.getId(), week, Day.valueOf(day));
+
+            AttendanceStudentListDto attendanceStudentListDto = new AttendanceStudentListDto();
+            attendanceStudentListDto.setStudentId(enroll.getStudent().getId());
+            attendanceStudentListDto.setStudentName(enroll.getStudent().getName());
+            attendanceStudentListDto.setMajorName(enroll.getStudent().getMajor().getTitle());
+            if (attendance != null) {
+                attendanceStudentListDto.setStatus(attendance.getStatus().toString());
+            } else {
+                attendanceStudentListDto.setStatus("");
+            }
+            attendanceStudentListDto.setCourse(enroll.getCourse());
+            attendanceStudentListDtos.add(attendanceStudentListDto);
+        }
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), attendanceStudentListDtos.size());
+        Page<AttendanceStudentListDto> attendancePage = new PageImpl<>(attendanceStudentListDtos.subList(start, end), pageable, attendanceStudentListDtos.size());
+
+        model.addAttribute("attendances",attendancePage);
         model.addAttribute("maxPage", 5);
 
         return "professor/checkAttendanceStudent";
     }
 
     @PostMapping(value = "/professors/attendance/add")
-    public @ResponseBody ResponseEntity<String> addAttendance(@RequestBody AttendanceFormDto attendanceFormDto){
+    public @ResponseBody ResponseEntity<String> addAttendance(@RequestBody AttendanceFormDto attendanceFormDto,RedirectAttributes redirectAttributes){
 
         try {
-            Attendance attendance = attendanceService.addAttendance(attendanceFormDto.getStudentId(),attendanceFormDto.getCourseId(),attendanceFormDto.getStatus(),attendanceFormDto.getDay(),attendanceFormDto.getWeek());
+            Attendance attendance = attendanceService.findByCourseIdAndWeekAndDay(attendanceFormDto);
+            if(attendance != null){
+                attendanceService.updateStatus(attendanceFormDto);
+                return new ResponseEntity<String>("출석체크에 성공했습니다.",HttpStatus.OK);
+            }
+            attendanceService.addAttendance(attendanceFormDto.getStudentId(),attendanceFormDto.getCourseId(),attendanceFormDto.getStatus(),attendanceFormDto.getDay(),attendanceFormDto.getWeek());
 
             return new ResponseEntity<String>("출석체크에 성공했습니다.",HttpStatus.OK);
         }

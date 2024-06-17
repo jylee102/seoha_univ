@@ -27,8 +27,7 @@
 </th:block>
 
 <main layout:fragment="content">
-    <th:block th:if="${not students.content.empty}">
-        <h1>[[${students.content[0].course.syllabus.courseName}]] 학생 리스트 조회</h1>
+    <h1>[[${students.content[0].course.syllabus.courseName}]] 학생 리스트 조회</h1>
         <div class="split--div"></div>
         <div class="table-div">
             <table>
@@ -48,95 +47,55 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:each="student : ${students.content}">
-                    <tr>
-                        <td>[[${student.student.id}]]</td>
-                        <td>[[${student.student.name}]]</td>
-                        <td>[[${student.student.major.title}]]</td>
-                        <th:block th:each="attendance : ${attendances}">
-                            <td th:if="${attendance.student.id == student.student.id}">
-                                <span>[[${attendance.countPresent}]]</span>
-                            </td>
-                        </th:block>
-                        <th:block th:each="attendance : ${attendances}">
-                            <td th:if="${attendance.student.id == student.student.id}">
-                                <span>[[${attendance.countAbsent}]]</span>
-                            </td>
-                        </th:block>
-                        <th:block th:each="attendance : ${attendances}">
-                            <td th:if="${attendance.student.id == student.student.id}">
-                                <span>[[${attendance.countLate}]]</span>
-                            </td>
-                        </th:block>
-                        <td>
-                            <th:block th:each="evaluation : ${evaluations}">
-                                <span th:if="${evaluation.enroll.student.id == student.student.id}" th:text="${evaluation.homework}"></span>
-                            </th:block>
-                        </td>
-
-                        <td>
-                            <th:block th:each="evaluation : ${evaluations}">
-                                <span th:if="${evaluation.enroll.student.id == student.student.id}" th:text="${evaluation.midExam}"></span>
-                            </th:block>
-                        </td>
-
-                        <td>
-                            <th:block th:each="evaluation : ${evaluations}">
-                                <span th:if="${evaluation.enroll.student.id == student.student.id}" th:text="${evaluation.finalExam}"></span>
-                            </th:block>
-                        </td>
-                        <td>
-                            <th:block th:each="evaluation : ${evaluations}">
-                                <span th:if="${evaluation.enroll.student.id == student.student.id}" th:text="${evaluation.convertedScore}"></span>
-                            </th:block>
-                        </td>
-                        <td>
-                            <th:block th:each="evaluation : ${evaluations}">
-                                <a th:if="${evaluation.enroll.student.id == student.student.id}" th:href="'/professors/updateEvaluation/'+${student.course.id}+'/'+${student.student.id}">수정</a>
-                            </th:block>
-                            <th:block th:if="${#lists.isEmpty(evaluations)}">
-                                <a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a>
-                            </th:block>
-                            <th:block th:each="evaluation : ${evaluations}">
-                                <a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a>
-                            </th:block>
-                        </td>
-                    </tr>
+                <th:block th:each="student :${students.content}">
+                <tr>
+                    <td>[[${student.student.id}]]</td>
+                    <td>[[${student.student.name}]]</td>
+                    <td>[[${student.student.major.title}]]</td>
+                    <td>[[${student.countPresent}]]</td>
+                    <td>[[${student.countAbsent}]]</td>
+                    <td>[[${student.countLate}]]</td>
+                    <td th:if="${student.evaluation}">[[${student.evaluation.homework}]]</td>
+                    <td th:unless="${student.evaluation}">-</td>
+                    <td th:if="${student.evaluation}">[[${student.evaluation.midExam}]]</td>
+                    <td th:unless="${student.evaluation}">-</td>
+                    <td th:if="${student.evaluation}">[[${student.evaluation.finalExam}]]</td>
+                    <td th:unless="${student.evaluation}">-</td>
+                    <td th:if="${student.evaluation}">[[${student.evaluation.convertedScore}]]</td>
+                    <td th:unless="${student.evaluation}">-</td>
+                    <td th:if="${student.evaluation}"><a th:href="'/professors/updateEvaluation/'+${student.course.id}+'/'+${student.student.id}">수정</a></td>
+                    <td th:unless="${student.evaluation}"><a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a></td>
+                </tr>
                 </th:block>
                 </tbody>
             </table>
-        </div>
-        <div class="pagination" th:with="start=${(students.number / maxPage) * maxPage + 1},
+        </div><div class="pagination" th:with="start=${(students.number / maxPage) * maxPage + 1},
                                      end=${(students.totalPages == 0) ? 1 : (start + (maxPage - 1) < students.totalPages ? start + (maxPage - 1) : students.totalPages)}"
-             aria-label="Page navigation example">
-            <ul>
-                <li>
-                    <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
-                </li>
-                <li th:classappend="${students.first} ? 'disabled' : ''"
-                    th:onclick="'javascript:page(' + ${students.number - 1} +')'"
-                >
-                    <a  ><i class="fa-solid fa-angle-left"></i></a>
-                </li>
-                <li th:each="page: ${#numbers.sequence(start, end)}"
-                    th:classappend="${students.number eq page - 1} ? 'page-active' : 'page'"
-                >
-                    <a th:onclick="'javascript:page(' + ${students.number} +')'" th:text="${page}"></a>
-                </li>
-                <li th:classappend="${students.last} ? 'disabled' : ''"
-                    th:onclick="'javascript:page(' + ${students.number + 1} +')'"
-                >
-                    <a ><i class="fa-solid fa-angle-right"></i></a>
-                </li>
-                <li>
-                    <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
-                </li>
-            </ul>
-        </div>
-    </th:block>
-
-    <p th:if="${students.content.empty}" class="no--list--p">해당 강의를 수강하는 학생이 존재하지 않습니다.</p>
-
+                   aria-label="Page navigation example">
+    <ul>
+        <li>
+            <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+        </li>
+        <li th:classappend="${students.first} ? 'disabled' : ''"
+            th:onclick="'javascript:page(' + ${students.number - 1} +')'"
+        >
+            <a  ><i class="fa-solid fa-angle-left"></i></a>
+        </li>
+        <li th:each="page: ${#numbers.sequence(start, end)}"
+            th:classappend="${students.number eq page - 1} ? 'page-active' : 'page'"
+        >
+            <a th:text="${page}"></a>
+        </li>
+        <li th:classappend="${students.last} ? 'disabled' : ''"
+            th:onclick="'javascript:page(' + ${students.number + 1} +')'"
+        >
+            <a ><i class="fa-solid fa-angle-right"></i></a>
+        </li>
+        <li>
+            <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+        </li>
+    </ul>
+</div>
 </main>
 
 <th:block layout:fragment="script">
@@ -145,9 +104,9 @@
         var errorMessage = [[${errorMessage}]];
         if(errorMessage != null || errorMessage == "") alert(errorMessage);
 
-        function page(page) {
+         function page(page) {
             // 페이지 이동
-            location.href = "/professors/course/" + [[${students.content[0].course.id}]] + "/" + page;
+            location.href = "/professors/course/"+ "[[${students.content[0].course.id}]]"+"/" + page;
         }
 
         function goToFirstPage() {
@@ -158,6 +117,7 @@
             var totalPages = [[${students.totalPages}]];
             page(totalPages - 1);
         }
+
 
     </script>
 </th:block>

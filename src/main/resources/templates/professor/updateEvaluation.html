@@ -47,6 +47,7 @@
     <form th:action="'/professors/updateEvaluation/'+${enroll.course.id}+'/'+${enroll.student.id}" method="post" th:object="${evaluationFormDto}">
 
         <table class="form--table">
+            <input type="hidden" th:field="*{id}">
             <input type="hidden" th:value="${enroll.course.id}" name="courseId" id="courseId">
             <input type="hidden" th:value="${enroll.id}" name="enrollId" id="enrollId">
             <tr>

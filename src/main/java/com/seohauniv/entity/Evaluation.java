@@ -36,5 +36,6 @@ public class Evaluation {
         this.homework = evaluationFormDto.getHomework();
         this.midExam = evaluationFormDto.getMidExam();
         this.finalExam = evaluationFormDto.getFinalExam();
+        this.convertedScore = (0.2F*evaluationFormDto.getHomework())+(0.3F*evaluationFormDto.getMidExam())+(0.5F*evaluationFormDto.getFinalExam());
     }
 }

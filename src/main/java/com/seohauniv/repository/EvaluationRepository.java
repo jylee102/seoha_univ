@@ -12,4 +12,6 @@ public interface EvaluationRepository extends JpaRepository<Evaluation,Long> {
     List<Evaluation> findByEnrollStudentId(String studentId);
     List<Evaluation> findByCourseIdOrderByEnrollStudentIdAsc(String courseId);
     Evaluation findByEnrollStudentIdAndCourseId(String studentId,String courseId);
+    List<Evaluation> findByEnrollStudentIdAndCourseSyllabusYearAndCourseSyllabusSemester(String studentId,int year,int semester);
+    Evaluation findByEnrollId(Long enrollId);
 }

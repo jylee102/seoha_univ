@@ -32,8 +32,8 @@
 </th:block>
 
 <main layout:fragment="content">
-    <th:block th:if="${not enrolls.content.empty}">
-        <h1>[[${enrolls.content[0].course.syllabus.courseName}]] 학생 리스트 조회</h1>
+    <th:block th:if="${not attendances.content.empty}">
+        <h1>[[${attendances.content[0].course.syllabus.courseName}]] 학생 리스트 조회</h1>
         <div class="split--div"></div>
         <div class="table-div">
             <table>
@@ -48,102 +48,56 @@
                 </tr>
                 </thead>
                 <tbody>
-                <th:block th:each="enroll : ${enrolls.content}">
+                <th:block th:each="attendance : ${attendances.content}">
                     <tr>
-                        <td>[[${enroll.student.id}]]</td>
-                        <td>[[${enroll.student.name}]]</td>
-                        <td>[[${enroll.student.major.title}]]</td>
-
-                        <!-- attendances가 없을때 -->
-                        <th:block th:if="${attendances.content.empty}">
+                        <td>[[${attendance.studentId}]]</td>
+                        <td>[[${attendance.studentName}]]</td>
+                        <td>[[${attendance.majorName}]]</td>
                             <td>
-                                <a th:id="'present-'+${enroll.student.id}" href="javascript:void(0);"
-                                   th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'PRESENT')">
-                                    <i class="fa-solid fa-o"></i></a>
-                            </td>
-                            <td>
-                                <a th:id="'late-'+${enroll.student.id}" href="javascript:void(0);"
-                                   th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'LATE')">
-                                    <i class="fa-solid fa-check"></i></a>
-                            </td>
-                            <td>
-                                <a th:id="'absent-'+${enroll.student.id}" href="javascript:void(0);"
-                                   th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'ABSENT')">
-                                    <i class="fa-solid fa-x"></i></a>
-                            </td>
-                        </th:block>
-                        <th:block th:unless="${attendances.content.empty}">
-                            <td>
-                                <th:block th:each="attendance : ${attendances}">
-                                    <a th:id="'present-'+${enroll.student.id}" href="javascript:void(0);"
-                                       th:if="${attendance.student.id == enroll.student.id}"
-                                       th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'PRESENT')"
+                                <!--  출석                              -->
+                                    <a th:id="'present-'+${attendance.studentId}" href="javascript:void(0);"
+                                       th:onclick="addAttendance([[${attendance.studentId}]],[[${attendance.course.id}]], 'PRESENT')"
                                        th:style="${#strings.contains(attendance.status,'PRESENT')} ? 'color:green;' : ''">
                                         <i class="fa-solid fa-o"></i></a>
-                                    <a th:id="'present-'+${enroll.student.id}" href="javascript:void(0);"
-                                       th:unless="${attendance.student.id == enroll.student.id}"
-                                       th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'PRESENT')"
-                                       >
-                                        <i class="fa-solid fa-o"></i></a>
-                                </th:block>
+
                             </td>
                             <td>
-                                <th:block th:each="attendance : ${attendances}">
-                                    <a th:id="'late-'+${enroll.student.id}" href="javascript:void(0);"
-                                       th:if="${attendance.student.id == enroll.student.id}"
-                                       th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'LATE')"
-                                       th:style="${#strings.contains(attendance.status,'LATE')} ? 'color:yellow;' : ''">
+                                    <a th:id="'late-'+${attendance.studentId}" href="javascript:void(0);"
+                                       th:onclick="addAttendance([[${attendance.studentId}]],[[${attendance.course.id}]], 'LATE')"
+                                       th:style="${#strings.contains(attendance.status,'LATE')} ? 'color:orange;' : ''">
                                         <i class="fa-solid fa-check"></i></a>
-                                    <a th:id="'late-'+${enroll.student.id}" href="javascript:void(0);"
-                                       th:unless="${attendance.student.id == enroll.student.id}"
-                                       th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'LATE')"
-                                       th:style="${#strings.contains(attendance.status,'LATE')} ? 'color:yellow;' : ''">
-                                        <i class="fa-solid fa-check"></i></a>
-                                </th:block>
+
                             </td>
                             <td>
-                                <th:block th:each="attendance : ${attendances}">
-                                    <a th:id="'absent-'+${enroll.student.id}" href="javascript:void(0);"
-                                       th:if="${attendance.student.id == enroll.student.id}"
-                                       th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'ABSENT')"
+                                    <a th:id="'absent-'+${attendance.studentId}" href="javascript:void(0);"
+                                       th:onclick="addAttendance([[${attendance.studentId}]],[[${attendance.course.id}]], 'ABSENT')"
                                        th:style="${#strings.contains(attendance.status,'ABSENT')} ? 'color:red;' : ''">
                                         <i class="fa-solid fa-x"></i></a>
-                                    <a th:id="'absent-'+${enroll.student.id}" href="javascript:void(0);"
-                                       th:unless="${attendance.student.id == enroll.student.id}"
-                                       th:onclick="addAttendance([[${enroll.student.id}]],[[${enroll.course.id}]], 'ABSENT')"
-                                       >
-                                        <i class="fa-solid fa-x"></i></a>
-                                </th:block>
+
                             </td>
                         </th:block>
-                        <!-- attendances가 있고 특정 주 특정 요일이 있을때 -->
-
-                    </tr>
-
-                </th:block>
-
                 </tbody>
             </table>
         </div>
-        <div class="pagination" th:with="start=${(enrolls.number / maxPage) * maxPage + 1},
-                                         end=${(enrolls.totalPages == 0) ? 1 : (start + (maxPage - 1) < enrolls.totalPages ? start + (maxPage - 1) : enrolls.totalPages)}"
+        <div class="pagination" th:with="start=${(attendances.number / maxPage) * maxPage + 1},
+                                         end=${(attendances.totalPages == 0) ? 1 : (start + (maxPage - 1) < attendances.totalPages ? start + (maxPage - 1) : attendances.totalPages)}"
              aria-label="Page navigation example">
             <ul>
                 <li>
                     <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
                 </li>
-                <li th:classappend="${enrolls.first} ? 'disabled' : ''"
-                    th:onclick="'javascript:page(' + ${enrolls.number - 1} +')'"
+                <li th:classappend="${attendances.first} ? 'disabled' : ''"
+                    th:onclick="'javascript:page(' + ${attendances.number - 1} +')'"
                 >
                     <a><i class="fa-solid fa-angle-left"></i></a>
                 </li>
                 <li th:each="page: ${#numbers.sequence(start, end)}"
-                    th:classappend="${enrolls.number eq page - 1} ? 'page-active' : 'page'"
+                    th:classappend="${attendances.number eq page - 1} ? 'page-active' : 'page'"
                 >
-                    <a th:onclick="'javascript:page(' + ${enrolls.number} +')'" th:text="${page}"></a>
+                    <a th:onclick="'javascript:page(' + ${attendances.number} +')'" th:text="${page}"></a>
                 </li>
-                <li th:classappend="${enrolls.last} ? 'disabled' : ''"
-                    th:onclick="'javascript:page(' + ${enrolls.number + 1} +')'"
+                <li th:classappend="${attendances.last} ? 'disabled' : ''"
+                    th:onclick="'javascript:page(' + ${attendances.number + 1} +')'"
                 >
                     <a><i class="fa-solid fa-angle-right"></i></a>
                 </li>
@@ -154,7 +108,7 @@
         </div>
     </th:block>
 
-    <p th:if="${enrolls.content.empty}" class="no--list--p">해당 강의를 수강하는 학생이 존재하지 않습니다.</p>
+    <p th:if="${attendances.content.empty}" class="no--list--p">해당 강의를 수강하는 학생이 존재하지 않습니다.</p>
 </main>
 
 <th:block layout:fragment="script">
@@ -165,7 +119,7 @@
 
         function page(page) {
             // 페이지 이동
-            location.href = "/professors/checkAttendanceStudent/" + [[${enrolls.content[0].course.id}]] + "/" + page;
+            location.href = "/professors/checkAttendanceStudent/" + [[${attendances.content[0].course.id}]] + "/" + page;
         }
 
         function goToFirstPage() {
@@ -173,7 +127,7 @@
         }
 
         function goToLastPage() {
-            var totalPages = [[${enrolls.totalPages}]];
+            var totalPages = [[${attendances.totalPages}]];
             page(totalPages - 1);
         }
 
