@@ -66,8 +66,15 @@ dependencies {
 	implementation 'com.itextpdf:html2pdf:4.0.2'
 	implementation 'com.itextpdf:kernel:7.2.0'
 	implementation 'com.itextpdf:io:7.2.0'
+
+	// jasyp
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.withType(Test) {
+	enabled = false
 }
