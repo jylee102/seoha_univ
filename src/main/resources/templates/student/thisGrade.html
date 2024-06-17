@@ -30,32 +30,45 @@
             }
         }
         @media screen and (max-width: 560px) {
-            .table thead tr th:nth-child(6),
-            .table tbody tr td:nth-child(6){
+            .table thead tr th:nth-child(5),
+            .table tbody tr td:nth-child(5){
                 display: none;
             }
         }
+
+        table > thead > tr > th,
+        table > tbody> tr > td {
+            border: 1px solid #dee2e6;
+        }
+
     </style>
 </th:block>
 
 <main layout:fragment="content">
     <div class="card-body px-5 py-5">
     <h1>금학기 성적 조회</h1>
-    <div class="split--div"></div>
+    <div class="split--div" style="margin-bottom:40px; min-width:385px;"></div>
 
             <div>
                 <h4 th:if="${totalGradeDto != null}" style="font-weight: 600">과목별 성적</h4>
                 <div class="table-div">
-                    <table th:if="${totalGradeDto != null}" border="1" class="sub--list--table table">
+                    <table th:if="${totalGradeDto != null}" class="sub--list--table table" style="min-width:380px;">
                         <thead>
                         <tr>
-                            <th>연도</th>
-                            <th>학기</th>
-                            <th>과목번호</th>
-                            <th>과목명</th>
-                            <th>강의구분</th>
-                            <th>이수학점</th>
-                            <th>성적</th>
+                            <th style="font-size:14px !important;
+            font-weight:bold !important;">연도</th>
+                            <th style="font-size:14px !important;
+            font-weight:bold !important;">학기</th>
+                            <th style="font-size:14px !important;
+            font-weight:bold !important;">과목번호</th>
+                            <th style="font-size:14px !important;
+            font-weight:bold !important;">과목명</th>
+                            <th style="font-size:14px !important;
+            font-weight:bold !important;">강의구분</th>
+                            <th style="font-size:14px !important;
+            font-weight:bold !important;">이수학점</th>
+                            <th style="font-size:14px !important;
+            font-weight:bold !important;">성적</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -82,11 +95,11 @@
                     </table>
                 </div>
             </div>
-    <hr>
+    <hr style="margin-top:2rem; min-width:380px;">
     <br>
     <div th:if="${totalGradeDto != null}" class="table-div">
         <h4 style="font-weight: 600">누계 성적</h4>
-        <table  border="1" class="sub--list--table">
+        <table class="sub--list--table" style="min-width:380px;">
             <thead>
             <tr>
                 <th>연도</th>
