@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout}">
+      layout:decorate="~{layouts/layout2}">
 
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
@@ -28,33 +28,59 @@
 </th:block>
 
 <main layout:fragment="content">
-    <th:block th:if="${not students.content.empty}">
-        <canvas id="pdfViewer"></canvas>
-    </th:block>
+    <div id="pdfContainer"></div>
 </main>
 
 <th:block layout:fragment="script">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf_viewer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script th:inline="javascript">
-        var errorMessage = [[${errorMessage}]];
-        if(errorMessage != null || errorMessage == "") alert(errorMessage);
+        var url = /*[[${pdfURL}]]*/ '/path/to/your/pdf.pdf'; // PDF 파일 URL을 여기에 넣습니다.
 
-        function page(page) {
-            // 페이지 이동
-            location.href = "/professors/course/" + [[${students.content[0].course.id}]] + "/" + page;
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
+        var pdfDoc = null,
+            scale = 1.5,
+            pdfContainer = document.getElementById('pdfContainer');
+
+        function renderPage(page) {
+            var viewport = page.getViewport({scale: scale});
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            canvas.classList.add('pdf-page');
+            pdfContainer.appendChild(canvas);
+
+            var renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            return page.render(renderContext).promise;
         }
 
-        function goToFirstPage() {
-            page(0);
+        function renderAllPages(pdfDoc) {
+            var pagesPromises = [];
+            for (var num = 1; num <= pdfDoc.numPages; num++) {
+                pagesPromises.push(
+                    pdfDoc.getPage(num).then(renderPage)
+                );
+            }
+            return Promise.all(pagesPromises);
         }
 
-        function goToLastPage() {
-            var totalPages = [[${students.totalPages}]];
-            page(totalPages - 1);
+        pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            pdfDoc = pdf;
+            renderAllPages(pdfDoc);
+        });
+
+        var errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage != null && errorMessage != "") {
+            alert(errorMessage);
         }
-
-
     </script>
 </th:block>
 

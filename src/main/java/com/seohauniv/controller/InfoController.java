@@ -1,11 +1,9 @@
 package com.seohauniv.controller;
 
-import com.seohauniv.dto.InfoFormDto;
 import com.seohauniv.dto.MemberFormDto;
 import com.seohauniv.entity.Break;
 import com.seohauniv.entity.Member;
 import com.seohauniv.service.BreakService;
-import com.seohauniv.service.InfoService;
 import com.seohauniv.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ import java.util.List;
 public class InfoController {
     private final MemberService memberService;
     private final BreakService breakService;
-    private final InfoService infoService;
 
     //내정보 페이지 보기
     @GetMapping(value = "/myInfo")
@@ -72,7 +69,7 @@ public class InfoController {
 
     //수정
     @PostMapping(value = "/myInfo/update")
-    public String InfoUpdate(@Valid InfoFormDto infoFormDto, BindingResult bindingResult,
+    public String InfoUpdate(@Valid MemberFormDto memberFormDto, BindingResult bindingResult,
                              Principal principal, RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()) {
@@ -90,7 +87,7 @@ public class InfoController {
         }
 
         try {
-            Member member = infoService.updateInfo(infoFormDto, principal.getName());
+            Member member = memberService.updateInfo(memberFormDto, principal.getName());
 
             return "redirect:/myInfo";
         } catch (Exception e){

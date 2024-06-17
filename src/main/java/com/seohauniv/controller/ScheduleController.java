@@ -72,7 +72,7 @@ public class ScheduleController {
     public String scheduleUpdatePage(@PathVariable("scheduleId") Long scheduleId, Model model) {
 
         try {
-            ScheduleFormDto scheduleFormDto = scheduleService.updateScheduleDtl(scheduleId);
+            ScheduleFormDto scheduleFormDto = scheduleService.getScheduleDtl(scheduleId);
             model.addAttribute("scheduleFormDto", scheduleFormDto);
             return "schedule/scheduleRewrite";
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class ScheduleController {
             return "schedule/scheduleRewrite";
         }
 
-        ScheduleFormDto getScheduleFormDto = scheduleService.updateScheduleDtl(scheduleId);
+        ScheduleFormDto getScheduleFormDto = scheduleService.getScheduleDtl(scheduleId);
 
         try {
             scheduleService.updateSchedule(scheduleFormDto);

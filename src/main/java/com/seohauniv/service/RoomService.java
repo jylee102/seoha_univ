@@ -21,15 +21,18 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
+    @Transactional(readOnly = true)
     public Long count() {
         return roomRepository.count();
     }
 
+    @Transactional(readOnly = true)
     public List<Room> findAllRoom() {
         return roomRepository.findAll();
     }
 
     // 선택한 강의의 강의시간과 해당 강의실 시간표가 겹치는지 확인
+    @Transactional(readOnly = true)
     public boolean checkTimeConflict(CourseFormDto courseFormDto) {
         // 해당 강의실을 이용하는 모든 강의 목록
         List<Course> courses = courseService.findByRoomId(courseFormDto.getRoom());

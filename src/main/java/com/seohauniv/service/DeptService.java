@@ -15,10 +15,12 @@ import java.util.List;
 public class DeptService {
     private final DeptRepository deptRepository;
 
+    @Transactional(readOnly = true)
     public Dept findById(Long id) {
         return deptRepository.findById(id).orElseThrow(EntityExistsException::new);
     }
 
+    @Transactional(readOnly = true)
     public Dept findByTitle(String title) {
         return deptRepository.findByTitle(title);
     }
@@ -30,10 +32,12 @@ public class DeptService {
         return deptRepository.save(dept);
     }
 
+    @Transactional(readOnly = true)
     public Long count() {
         return deptRepository.count();
     }
 
+    @Transactional(readOnly = true)
     public List<Dept> getAllDept() {
         return deptRepository.findAll();
     }

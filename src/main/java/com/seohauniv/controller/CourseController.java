@@ -112,4 +112,12 @@ public class CourseController {
             return "redirect:/";
         }
     }
+
+    // 강의 계획서 PDF 보기
+    @GetMapping("/course/syllabus/{courseId}")
+    public String viewPDF(@PathVariable("courseId") String courseId, Model model) {
+        Course course = courseService.findById(courseId);
+        model.addAttribute("pdfURL", course.getPdf());
+        return "professor/readSyllabus";
+    }
 }
