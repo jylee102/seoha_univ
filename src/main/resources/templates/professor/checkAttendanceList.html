@@ -14,15 +14,18 @@
                 width: 70%;
             }
         }
+
         ul {
             padding-left: 0;
         }
+
         .btn {
             height: 28px;
             padding: 5px 10px;
             font-size: 14px;
             margin-bottom: 8px; /* 버튼 아래 여백 조절 */
         }
+
         .fixed-cell {
             white-space: nowrap;
             overflow: hidden;
@@ -31,64 +34,68 @@
     </style>
 </th:block>
 
-<main layout:fragment="content">
-    <h1>출석체크</h1>
-    <div class="split--div"></div>
+<main layout:fragment="content" style="margin-bottom:0;">
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>출석체크</h1>
+            <div class="split--div" style="margin-bottom:30px;"></div>
 
-    <h4 style="margin-bottom: 10px;">
-        <span style="font-weight: 600;">강의 목록</span>
-    </h4>
-    <div class="table-div">
-        <table class="fixed-cell">
-            <tr>
-                <th>주차</th>
-                <th style="min-width: 72px;">강의명</th>
-                <th style="min-width: 103px;">강의시간</th>
-                <th>출석 체크</th>
-            </tr>
-            <tbody>
-            <th:block th:each="myCourse, status : ${myCourses.getContent}">
-                <tr>
-                    <td th:text="${myCourse.week} + '주차'"></td>
-                    <td th:text="${myCourse.courseName}"></td>
-                    <td>
-                        <p th:text="${myCourse.courseTime.day.getDescription()} + ' ' + ${myCourse.courseTime.startTime} + ' ~ ' + ${myCourse.courseTime.endTime}"></p>
-                    </td>
-                    <td>
-                        <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
-                            <li style="height: 24px;">
-                                <a th:href="'/professors/checkAttendanceStudent/'+${courseId}+'?week='+${myCourse.week}+'&day='+${myCourse.courseTime.day}">조회</a>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </th:block>
-            </tbody>
-        </table>
+            <h4 style="margin-bottom: 20px;">
+                <span style="font-weight: 600;">강의 목록</span>
+            </h4>
+            <div class="table-div">
+                <table class="fixed-cell">
+                    <tr>
+                        <th>주차</th>
+                        <th style="min-width: 72px;">강의명</th>
+                        <th style="min-width: 103px;">강의시간</th>
+                        <th>출석 체크</th>
+                    </tr>
+                    <tbody>
+                    <th:block th:each="myCourse, status : ${myCourses.getContent}">
+                        <tr>
+                            <td th:text="${myCourse.week} + '주차'"></td>
+                            <td th:text="${myCourse.courseName}"></td>
+                            <td>
+                                <p th:text="${myCourse.courseTime.day.getDescription()} + ' ' + ${myCourse.courseTime.startTime} + ' ~ ' + ${myCourse.courseTime.endTime}"></p>
+                            </td>
+                            <td>
+                                <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
+                                    <li style="height: 24px;">
+                                        <a th:href="'/professors/checkAttendanceStudent/'+${courseId}+'?week='+${myCourse.week}+'&day='+${myCourse.courseTime.day}">조회</a>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
 
-    </div>
-    <div class="pagination" th:with="start=${(myCourses.number/maxPage)*maxPage + 1},
+            </div>
+            <div class="pagination" th:with="start=${(myCourses.number/maxPage)*maxPage + 1},
 			                 end=(${(myCourses.totalPages == 0) ? 1 : (start + (maxPage - 1) < myCourses.totalPages ? start + (maxPage - 1) : myCourses.totalPages)})"
-         aria-label="Page navigation example">
-        <ul>
-            <li>
-                <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
-            </li>
-            <li th:classappend="${myCourses.first} ? 'disabled' : ''" onclick="javascript:goLeft()">
-                <a><i class="fa-solid fa-angle-left"></i></a>
-            </li>
-            <li th:each="page: ${#numbers.sequence(start, end)}"
-                th:classappend="${myCourses.number eq page - 1} ? 'page-active' : 'page'"
-                th:onclick="'javascript:page(' + (${page - 1}) + ')'">
-                <a>[[${page}]]</a>
-            </li>
-            <li th:classappend="${myCourses.last} ? 'disabled' : ''" onclick="javascript:goRight()">
-                <a><i class="fa-solid fa-angle-right"></i></a>
-            </li>
-            <li>
-                <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
-            </li>
-        </ul>
+                 aria-label="Page navigation example">
+                <ul>
+                    <li>
+                        <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+                    </li>
+                    <li th:classappend="${myCourses.first} ? 'disabled' : ''" onclick="javascript:goLeft()">
+                        <a><i class="fa-solid fa-angle-left"></i></a>
+                    </li>
+                    <li th:each="page: ${#numbers.sequence(start, end)}"
+                        th:classappend="${myCourses.number eq page - 1} ? 'page-active' : 'page'"
+                        th:onclick="'javascript:page(' + (${page - 1}) + ')'">
+                        <a>[[${page}]]</a>
+                    </li>
+                    <li th:classappend="${myCourses.last} ? 'disabled' : ''" onclick="javascript:goRight()">
+                        <a><i class="fa-solid fa-angle-right"></i></a>
+                    </li>
+                    <li>
+                        <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </main>
 
@@ -97,8 +104,6 @@
     <script th:inline="javascript">
         var errorMessage = [[${errorMessage}]];
         if (errorMessage != null || errorMessage == "") alert(errorMessage);
-
-
 
         function page(page) {
 

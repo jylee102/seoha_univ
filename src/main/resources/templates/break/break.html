@@ -25,7 +25,7 @@
   <div class="card">
     <div class="card-body px-5 py-5">
       <h1>휴학 신청서</h1>
-      <div class="split--div"></div>
+      <div class="split--div" style="margin-bottom:40px;"></div>
 
       <form name="breaks" th:object="${breaks}" action="/staff/break/create" method="post">
         <input type="hidden" name="break" th:value="*{id}">
