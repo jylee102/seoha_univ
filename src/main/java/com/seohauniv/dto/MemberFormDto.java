@@ -41,7 +41,32 @@ public class MemberFormDto {
 
     // entity -> dto
     public static MemberFormDto of(Member member) {
-        return modelMapper.map(member, MemberFormDto.class);
+        MemberFormDto memberFormDto = modelMapper.map(member, MemberFormDto.class);
+
+        switch (member.getRole().toString()) {
+            case "STAFF":
+                memberFormDto.setPhone(member.getStaff().getPhone());
+                memberFormDto.setAddress(member.getStaff().getAddress());
+                memberFormDto.setEmail(member.getStaff().getEmail());
+                memberFormDto.setBirth(member.getStaff().getBirth());
+                break;
+            case "STUDENT":
+                memberFormDto.setPhone(member.getStudent().getPhone());
+                memberFormDto.setAddress(member.getStudent().getAddress());
+                memberFormDto.setEmail(member.getStudent().getEmail());
+                memberFormDto.setBirth(member.getStudent().getBirth());
+                memberFormDto.setDept(member.getStudent().getMajor());
+                break;
+            case "PROFESSOR":
+                memberFormDto.setPhone(member.getProfessor().getPhone());
+                memberFormDto.setAddress(member.getProfessor().getAddress());
+                memberFormDto.setEmail(member.getProfessor().getEmail());
+                memberFormDto.setBirth(member.getProfessor().getBirth());
+                memberFormDto.setDept(member.getProfessor().getMajor());
+                break;
+        }
+
+        return memberFormDto;
     }
 
     // dto -> entity

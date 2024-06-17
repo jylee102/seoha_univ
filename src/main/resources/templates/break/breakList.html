@@ -15,20 +15,21 @@
   <link rel="stylesheet" th:href="@{/css/memberList.css}">
   <style>
     .clickable-row:hover {
-        cursor: pointer;
+      cursor: pointer;
         background-color: #e0e0e0;
     }
 
-     @media screen and (max-width: 750px) {
-            .table--container th:nth-child(4), /* 학점 */
-            .table--container td:nth-child(4) {
-                display: none;
-            }
-        }
+    @media screen and (max-width: 520px) {
+      .table > thead > tr > th:nth-child(3),
+      .table > tbody > tr > td:nth-child(3) {
+        display: none;
+      }
+    }
+
     .table thead tr th {
-            font-weight:600;
-            font-size:14px;
-        }
+      font-weight:600;
+      font-size:14px;
+    }
   </style>
 </th:block>
 
@@ -36,10 +37,10 @@
   <div class="card">
     <div class="card-body px-5 py-5">
       <h1>휴학 신청서 목록</h1>
-      <div class="split--div"></div>
+      <div class="div-split" style="min-width: 370px;"></div>
 
-      <form name="syllabusForm" onsubmit="return false;">
-        <div class="d-flex align-items-center search" style="margin-top: -35px; margin-bottom:11px;">
+      <form name="breakForm" onsubmit="return false;">
+        <div class="d-flex align-items-center search">
           <div class="input-container">
             <input type="text" class="input-search" id="searchValue"
                    placeholder="학생명으로 검색" />
@@ -54,11 +55,11 @@
         <table class="table" style="text-align:center;">
           <thead>
           <tr>
-            <th style="min-width:80px">학생명</th>
+            <th style="min-width:85px">학생명</th>
             <th>학번</th>
             <th style="min-width:130px">학과</th>
             <th>신청기간</th>
-            <th style="min-width:72px">상태</th>
+            <th style="min-width:71px">상태</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -85,7 +86,7 @@
         loadData(currentPage, searchValue);
     });
 
-    $(document.syllabusForm).on('submit', function() {
+    $(document.breakForm).on('submit', function() {
         loadData(currentPage, searchValue);
     })
 

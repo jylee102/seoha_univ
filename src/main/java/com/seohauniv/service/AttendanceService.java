@@ -10,6 +10,8 @@ import com.seohauniv.repository.EvaluationRepository;
 import com.seohauniv.repository.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,5 +58,9 @@ public class AttendanceService {
     public int countByStatusAndStudentId(AttendStatus status, Long enrollId, String studentId) {
         return attendanceRepository.countByStatusAndEnrollIdAndStudentId(status, enrollId, studentId);
     }
-
+    @Transactional(readOnly = true)
+    public Page<Attendance> findByEnrollIdAndStudentIdAndWeekAndDay(String courseId, int week, Day day,Pageable pageable){
+        return attendanceRepository.findByCourseIdAndWeekAndDay(courseId,week,day,
+        pageable);
+    };
 }

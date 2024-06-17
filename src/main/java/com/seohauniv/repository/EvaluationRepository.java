@@ -11,4 +11,5 @@ import java.util.List;
 public interface EvaluationRepository extends JpaRepository<Evaluation,Long> {
     List<Evaluation> findByEnrollStudentId(String studentId);
     List<Evaluation> findByCourseIdOrderByEnrollStudentIdAsc(String courseId);
+    Evaluation findByEnrollStudentIdAndCourseId(String studentId,String courseId);
 }

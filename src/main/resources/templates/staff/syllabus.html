@@ -9,8 +9,6 @@
 
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/main_page.css}">
     <style>
         #weeklyPlan {
             transition: max-height 0.3s ease-out;
@@ -54,7 +52,7 @@
                     </tr>
                     <tr>
                         <td>강의 시간</td>
-                        <td th:text="${courseTimesDescription}"></td>
+                        <td th:utext="*{courseTimeDescription}"></td>
                     </tr>
 
                     <tr>

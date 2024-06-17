@@ -45,32 +45,13 @@ public class ExcelService {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            int dataRows = 0; // 데이터가 있는 행의 개수
-            int lastRowNum = sheet.getLastRowNum();
-            // 데이터가 있는 행의 개수를 세는 반복문
-            for (int i = 1; i <= lastRowNum; i++) {
-                Row row = sheet.getRow(i);
-                if (row != null && row.getCell(0) != null) {
-                    dataRows++; // 데이터가 있는 행이므로 개수를 증가시킴
-                }
-            }
+            int dataRows = getDataRows(sheet, messagingTemplate);
 
             for (int i = 1; i <= dataRows; i++) { // 첫 번째 행은 헤더이므로 건너뜀
                 Row row = sheet.getRow(i);
                 if (row != null) {
-                    MemberFormDto memberFormDto = new MemberFormDto();
-
-                    memberFormDto.setRole(row.getCell(0).getStringCellValue());
-                    memberFormDto.setName(row.getCell(1).getStringCellValue());
-                    memberFormDto.setEmail(row.getCell(2).getStringCellValue());
-                    memberFormDto.setBirth(row.getCell(3).getLocalDateTimeCellValue().toLocalDate());
-                    memberFormDto.setPhone(row.getCell(4).getStringCellValue());
-                    memberFormDto.setAddress(row.getCell(5).getStringCellValue());
-
-                    if (row.getCell(6) != null) {
-                        Dept dept = deptService.findByTitle(row.getCell(6).getStringCellValue());
-                        memberFormDto.setDept(dept);
-                    } else memberFormDto.setDept(null);
+                    // 각 행의 데이터를 통해 memberFormDto 만들기
+                    MemberFormDto memberFormDto = getMemberFormDto(row);
 
                     // 유효성 검사 수행
                     Errors validationErrors = new BeanPropertyBindingResult(memberFormDto, "memberFormDto");
@@ -103,12 +84,12 @@ public class ExcelService {
                                 break;
                         }
                     }
-                }
 
-                // 파일 읽는 것에 대한 진행 상황
-                int percentComplete = (int) ((i / (double) dataRows) * 100);
-                String message = "진행상황: " + (i + 1) + " / " + (dataRows + 1);
-                messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
+                    // 파일 읽는 것에 대한 진행 상황
+                    int percentComplete = (int) ((i / (double) dataRows) * 100);
+                    String message = "파일 읽는 중: " + (i + 1) + " / " + (dataRows + 1);
+                    messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
+                }
             }
         }
 
@@ -160,70 +141,13 @@ public class ExcelService {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            int dataRows = 0; // 데이터가 있는 행의 개수
-            int lastRowNum = sheet.getLastRowNum();
-            // 데이터가 있는 행의 개수를 세는 반복문
-            for (int i = 1; i <= lastRowNum; i++) {
-                Row row = sheet.getRow(i);
-                if (row != null && row.getCell(0) != null) {
-                    dataRows++; // 데이터가 있는 행이므로 개수를 증가시킴
-                }
-            }
+            int dataRows = getDataRows(sheet, messagingTemplate);
 
             for (int i = 1; i <= dataRows; i++) { // 첫 번째 행은 헤더이므로 건너뜀
                 Row row = sheet.getRow(i);
                 if (row != null) {
-                    SyllabusFormDto syllabusFormDto = new SyllabusFormDto();
-
-                    syllabusFormDto.setYear((int) row.getCell(0).getNumericCellValue());
-                    syllabusFormDto.setSemester((int) row.getCell(1).getNumericCellValue());
-                    syllabusFormDto.setCourseName(row.getCell(2).getStringCellValue());
-                    syllabusFormDto.setCourseType(CourseType.valueOf(row.getCell(3).getStringCellValue()));
-                    syllabusFormDto.setCredit((int) row.getCell(4).getNumericCellValue());
-                    syllabusFormDto.setCapacity((int) row.getCell(5).getNumericCellValue());
-                    syllabusFormDto.setOverview(row.getCell(6).getStringCellValue());
-                    syllabusFormDto.setObjective(row.getCell(7).getStringCellValue());
-                    syllabusFormDto.setTextbook(row.getCell(8).getStringCellValue());
-
-                    List<CourseTimeDto> courseTimes = new ArrayList<>();
-                    for (int j = 9; j < row.getLastCellNum(); j += 3) {
-                        if (row.getCell(j) == null) break;
-
-                        CourseTimeDto courseTimeDto = new CourseTimeDto();
-                        
-                        switch (row.getCell(j).getStringCellValue()) {
-                            case "월요일":
-                                courseTimeDto.setDay(Day.MON);
-                                break;
-                            case "화요일":
-                                courseTimeDto.setDay(Day.TUE);
-                                break;
-                            case "수요일":
-                                courseTimeDto.setDay(Day.WED);
-                                break;
-                            case "목요일":
-                                courseTimeDto.setDay(Day.THU);
-                                break;
-                            case "금요일":
-                                courseTimeDto.setDay(Day.FRI);
-                                break;
-                        }
-
-                        courseTimeDto.setStartTime(row.getCell(j + 1).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-                        courseTimeDto.setEndTime(row.getCell(j + 2).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-                        courseTimes.add(courseTimeDto);
-                    }
-                    syllabusFormDto.setCourseTimes(courseTimes);
-
-                    List<WeeklyPlan> weeklyPlans = new ArrayList<>();
-                    for (int j = 1; j <= 16; j++) {
-                        WeeklyPlan weeklyPlan = new WeeklyPlan();
-                        weeklyPlan.setWeek(j);
-                        if (row.getCell(j + 18) == null) weeklyPlan.setContent("");
-                        else weeklyPlan.setContent(row.getCell(j + 18).getStringCellValue());
-                        weeklyPlans.add(weeklyPlan);
-                    }
-                    syllabusFormDto.setWeeklyPlans(weeklyPlans);
+                    // 각 행의 데이터를 통해 syllabusFormDto 만들기
+                    SyllabusFormDto syllabusFormDto = getSyllabusFormDto(row);
 
                     // 유효성 검사 수행
                     Errors validationErrors = new BeanPropertyBindingResult(syllabusFormDto, "syllabusFormDto");
@@ -240,7 +164,7 @@ public class ExcelService {
 
                 // 파일 읽는 것에 대한 진행 상황
                 int percentComplete = (int) ((i / (double) dataRows) * 100);
-                String message = "진행상황: " + (i + 1) + " / " + (dataRows + 1);
+                String message = "파일 읽는 중: " + (i + 1) + " / " + (dataRows + 1);
                 messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
             }
         }
@@ -279,4 +203,97 @@ public class ExcelService {
         return failedSyllabuses;
     }
 
+    // 데이터가 있는 행의 개수를 세는 메소드
+    private int getDataRows(Sheet sheet, SimpMessagingTemplate messagingTemplate) {
+        int dataRows = 0; // 데이터가 있는 행의 개수
+        int lastRowNum = sheet.getLastRowNum();
+
+        for (int i = 1; i <= lastRowNum; i++) {
+            Row row = sheet.getRow(i);
+            if (row != null && row.getCell(0) != null) {
+                dataRows++;
+            }
+            int percentComplete = (int) ((i / (double) lastRowNum) * 100);
+            String message = "데이터 행 개수 세는 중: " + i + " / " + lastRowNum;
+            messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
+        }
+
+        return dataRows;
+    }
+
+    // 엑셀의 데이터를 통해 memberFormDto 생성
+    private MemberFormDto getMemberFormDto(Row row) {
+        MemberFormDto memberFormDto = new MemberFormDto();
+
+        memberFormDto.setRole(row.getCell(0).getStringCellValue());
+        memberFormDto.setName(row.getCell(1).getStringCellValue());
+        memberFormDto.setEmail(row.getCell(2).getStringCellValue());
+        memberFormDto.setBirth(row.getCell(3).getLocalDateTimeCellValue().toLocalDate());
+        memberFormDto.setPhone(row.getCell(4).getStringCellValue());
+        memberFormDto.setAddress(row.getCell(5).getStringCellValue());
+
+        if (row.getCell(6) != null) {
+            Dept dept = deptService.findByTitle(row.getCell(6).getStringCellValue());
+            memberFormDto.setDept(dept);
+        } else memberFormDto.setDept(null);
+
+        return memberFormDto;
+    }
+
+    // 엑셀의 데이터를 통해 syllabusFormDto 생성
+    private SyllabusFormDto getSyllabusFormDto(Row row) {
+        SyllabusFormDto syllabusFormDto = new SyllabusFormDto();
+
+        syllabusFormDto.setYear((int) row.getCell(0).getNumericCellValue());
+        syllabusFormDto.setSemester((int) row.getCell(1).getNumericCellValue());
+        syllabusFormDto.setCourseName(row.getCell(2).getStringCellValue());
+        syllabusFormDto.setCourseType(CourseType.valueOf(row.getCell(3).getStringCellValue()));
+        syllabusFormDto.setCredit((int) row.getCell(4).getNumericCellValue());
+        syllabusFormDto.setCapacity((int) row.getCell(5).getNumericCellValue());
+        syllabusFormDto.setOverview(row.getCell(6).getStringCellValue());
+        syllabusFormDto.setObjective(row.getCell(7).getStringCellValue());
+        syllabusFormDto.setTextbook(row.getCell(8).getStringCellValue());
+
+        List<CourseTimeDto> courseTimes = new ArrayList<>();
+        for (int j = 9; j < row.getLastCellNum(); j += 3) {
+            if (row.getCell(j) == null) break;
+
+            CourseTimeDto courseTimeDto = new CourseTimeDto();
+
+            switch (row.getCell(j).getStringCellValue()) {
+                case "월요일":
+                    courseTimeDto.setDay(Day.MON);
+                    break;
+                case "화요일":
+                    courseTimeDto.setDay(Day.TUE);
+                    break;
+                case "수요일":
+                    courseTimeDto.setDay(Day.WED);
+                    break;
+                case "목요일":
+                    courseTimeDto.setDay(Day.THU);
+                    break;
+                case "금요일":
+                    courseTimeDto.setDay(Day.FRI);
+                    break;
+            }
+
+            courseTimeDto.setStartTime(row.getCell(j + 1).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+            courseTimeDto.setEndTime(row.getCell(j + 2).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+            courseTimes.add(courseTimeDto);
+        }
+        syllabusFormDto.setCourseTimes(courseTimes);
+
+        List<WeeklyPlan> weeklyPlans = new ArrayList<>();
+        for (int j = 1; j <= 16; j++) {
+            WeeklyPlan weeklyPlan = new WeeklyPlan();
+            weeklyPlan.setWeek(j);
+            if (row.getCell(j + 18) == null) weeklyPlan.setContent("");
+            else weeklyPlan.setContent(row.getCell(j + 18).getStringCellValue());
+            weeklyPlans.add(weeklyPlan);
+        }
+        syllabusFormDto.setWeeklyPlans(weeklyPlans);
+
+        return syllabusFormDto;
+    }
 }

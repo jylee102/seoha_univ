@@ -5,36 +5,37 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 
     <link rel="stylesheet" href="/css/admin.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/main_page.css">
-    <link rel="stylesheet" href="/css/memberList.css">
 
     <!-- DayPilot CSS -->
     <link type="text/css" rel="stylesheet" href="/themes/calendar_white.css" />
 
-    <style>
-        @media screen and (max-width: 1300px) {}
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/admin.css}">
+        <link rel="stylesheet" th:href="@{/css/memberList.css}">
+        <style>
+            @media screen and (max-width: 1300px) {}
 
-        table tr {
-            border: none !important;
-        }
+            table tr {
+                border: none !important;
+            }
 
-        #dp > div:nth-of-type(2) {
-            overflow: hidden !important;
-        }
+            #dp > div:nth-of-type(2) {
+                overflow: hidden !important;
+            }
 
-        #dp > div:first-of-type > table > tbody > tr > td:last-of-type {
-            display: none;
-        }
+            #dp > div:first-of-type > table > tbody > tr > td:last-of-type {
+                display: none;
+            }
 
-        .calendar_default_cornerright {
-            height: 0 !important;
-        }
+            .calendar_default_cornerright {
+                height: 0 !important;
+            }
 
-        .calendar_default_event {
-            width: 101.5% !important;
-        }
-    </style>
+            .calendar_default_event {
+                width: 101.5% !important;
+            }
+        </style>
+    </th:block>
 </head>
 
 <body>

@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="css">
-    <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <link rel="stylesheet" th:href="@{/css/main_page.css}">
-    <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
         select {
              margin: 2px;
@@ -145,6 +141,8 @@
 <th:block layout:fragment="script">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script th:inline="javascript">
+        var errorMessage = [[${errorMessage}]];
+        if (errorMessage != null) alert(errorMessage);
 
         function deleteSchedule(scheduleId) {
          const deleteConf = confirm("삭제하시겠습니까?");

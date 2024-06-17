@@ -7,7 +7,6 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.font.FontProvider;
 import com.seohauniv.entity.Course;
-import com.seohauniv.entity.Syllabus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,8 +36,7 @@ public class PdfService {
     public String makePdf(Course course) throws Exception {
 
         // 중복되지 않는 파일이름 생성
-        UUID uuid = UUID.randomUUID();
-        String savedFileName = uuid.toString() + ".pdf";
+        String savedFileName = UUID.randomUUID().toString() + ".pdf";
 
         // 파일 경로 + 파일 이름
         String fileUploadFullUrl = pdfLocation + "/" + savedFileName;
@@ -48,25 +45,12 @@ public class PdfService {
         String htmlContent1 = generateHtml("/forPDF/syllabus-template1", course);
         String htmlContent2 = generateHtml("/forPDF/syllabus-template2", course);
 
-        System.out.println(htmlContent1);
-
         // 각 HTML을 개별 PDF로 변환
         String pdf1 = pdfLocation + "/temp1.pdf";
         String pdf2 = pdfLocation + "/temp2.pdf";
 
-        try (FileOutputStream fos1 = new FileOutputStream(pdf1)) {
-            convertHtmlToPdf(htmlContent1, fos1);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new Exception("PDF 생성 중 오류가 발생했습니다.");
-        }
-
-        try (FileOutputStream fos2 = new FileOutputStream(pdf2)) {
-            convertHtmlToPdf(htmlContent2, fos2);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new Exception("PDF 생성 중 오류가 발생했습니다.");
-        }
+        convertHtmlToPdf(htmlContent1, pdf1);
+        convertHtmlToPdf(htmlContent2, pdf2);
 
         // 두 개의 PDF를 합치기
         mergePdfs(fileUploadFullUrl, pdf1, pdf2);
@@ -83,30 +67,23 @@ public class PdfService {
         return templateEngine.process(template, context);
     }
 
-    private void convertHtmlToPdf(String htmlContent, FileOutputStream outputStream) throws IOException {
+    private void convertHtmlToPdf(String htmlContent, String outputPath) throws IOException {
         ConverterProperties converterProperties = new ConverterProperties();
-
-        // 한글 폰트 설정 (기본 폰트 사용)
         FontProvider fontProvider = new FontProvider();
 
         // 폰트 파일 경로 설정
         ClassPathResource fontResource = new ClassPathResource("static/fonts/notoSansKR/NotoSansKR-Regular.ttf");
-
-        // 폰트 파일이 실제로 존재하는지 확인
         if (!fontResource.exists()) {
-            throw new FileNotFoundException("Font file not found: " + fontResource.getPath());
+            throw new IOException("Font file not found: " + fontResource.getPath());
         }
 
-        // 폰트 파일을 byte[]로 읽어들입니다.
         byte[] fontBytes = Files.readAllBytes(Paths.get(fontResource.getURI()));
-
-        // byte[] 배열을 사용하여 폰트를 추가합니다.
         fontProvider.addFont(fontBytes, "Identity-H");
-
         converterProperties.setFontProvider(fontProvider);
 
-        // PDF로 변환
-        HtmlConverter.convertToPdf(htmlContent, outputStream, converterProperties);
+        try (FileOutputStream outputStream = new FileOutputStream(outputPath)) {
+            HtmlConverter.convertToPdf(htmlContent, outputStream, converterProperties); // PDF로 변환
+        }
     }
 
     private void mergePdfs(String outputFile, String pdf1, String pdf2) throws IOException {

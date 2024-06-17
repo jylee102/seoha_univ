@@ -24,28 +24,26 @@ public class BreakService {
         return breakRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
-    public Long saveBreak(BreakFormDto breakFormDto)throws Exception{
-
+    // 휴학 신청
+    public Long saveBreak(BreakFormDto breakFormDto) {
         Break breaks = breakFormDto.creatBreak();
-        breaks.setStatus(ProcedureStatus.PROCESSING);
         breakRepository.save(breaks);
         return breaks.getId();
     }
 
+    // 특정 회원(학생)의 휴학 내역 가져오기
     @Transactional(readOnly = true)
     public List<Break> getBreakInfo(String memberId){
-        List<Break> breakList = breakRepository.findByStudentId(memberId);
-
-        return breakList;
+        return breakRepository.findByStudentId(memberId);
     }
 
-    //status 처리중일때 데이터 거르기
+    // status가 처리중인 데이터만 가져오기
     @Transactional(readOnly = true)
     public List<Break> getProcessingBreaks(String memberId) {
         return breakRepository.findByStudentMemberIdAndStatus(memberId, ProcedureStatus.PROCESSING);
     }
 
-    //삭제
+    // 휴학 취소(삭제)
     public void deleteBreak(Long breakId) {
         //★delete하기 전에 select 를 한번 해준다
         //->영속성 컨텍스트에 엔티티를 저장한 후 변경 감지를 하도록 하기 위해
@@ -57,17 +55,12 @@ public class BreakService {
         breakRepository.delete(b);
     }
 
-    //휴학 신청서 리스트(with 페이징 처리)
+    // 휴학 신청서 리스트(with 페이징 처리)
     public Page<BreakDto> getAllBreakToRead(Pageable pageable, String searchValue) {
        return breakRepository.getBreaks(pageable, searchValue);
     }
 
-    //상세페이지 데이터가져오기
-    public Break getBreakDtl(Long id) {
-        return breakRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-    }
-
-    //휴학 신청서 반려 처리
+    // 휴학 신청서 반려 처리
     public Break refuseBreak(Long id) {
         Break breaks = findById(id);
         breaks.setStatus(ProcedureStatus.REFUSAL);
@@ -79,7 +72,7 @@ public class BreakService {
     }
 
     // 휴학신청 승인
-    public Break create(Break abreak) {
+    public Break approvalBreak(Break abreak) {
         abreak.setStatus(ProcedureStatus.APPROVAL);
         
         Message message = new Message(abreak.getStudent().getMember(), "휴학 승인", abreak.getStudent().getName() + " 님의 휴학 신청이 승인되었습니다.");

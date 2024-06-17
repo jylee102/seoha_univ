@@ -18,9 +18,7 @@
     <link rel="stylesheet" th:href="@{/vendors/font-awesome/css/font-awesome.min.css}">
     <link rel="stylesheet" th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css}">
 
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-
-<!--    파비콘-->
+    <!-- 파비콘 -->
     <link rel="apple-touch-icon" sizes="57x57" th:href="@{/images/favicon/apple-icon-57x57.png}">
     <link rel="apple-touch-icon" sizes="60x60" th:href="@{/images/favicon/apple-icon-60x60.png}">
     <link rel="apple-touch-icon" sizes="72x72" th:href="@{/images/favicon/apple-icon-72x72.png}">
@@ -38,6 +36,11 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/main_page.css}" />
+
     <!-- 각 페이지의 CSS가 작성될 위치 지정 -->
     <th:block layout:fragment="css"></th:block>
 </head>
@@ -78,7 +81,22 @@
                     xhr.setRequestHeader(header, token);
                 },
                 success: function(data) {
-                    $('#header').html(data); // 헤더를 새로고침된 데이터로 업데이트
+                    $('#header').replaceWith(data); // 헤더를 새로고침된 데이터로 업데이트
+
+                    // 헤더를 새로고침 하면서 사라진 이벤트 재등록
+                    const body = $('body');
+
+                    $('[data-toggle="offcanvas"]').on("click", function() {
+                      $('.sidebar-offcanvas').toggleClass('active')
+                    });
+
+                    $('[data-toggle="minimize"]').on("click", function() {
+                      if ((body.hasClass('sidebar-toggle-display')) || (body.hasClass('sidebar-absolute'))) {
+                        body.toggleClass('sidebar-hidden');
+                      } else {
+                        body.toggleClass('sidebar-icon-only');
+                      }
+                    });
                 },
                 error: function(error) {
                     console.error('Failed to refresh header', error);
@@ -126,7 +144,7 @@
                                 `</table>` +
                             `</div>` +
                             `<div class="modal-footer" style="border:none;">` +
-                                `<button type="button" class="btn btn-secondary" onclick="$('#modal-${data.id}').modal('hide'); loadData(currentPage, searchValue);">닫기</button>` +
+                                `<button type="button" id="message-close-btn" class="btn btn-secondary" onclick="$('#modal-${data.id}').modal('hide');">닫기</button>` +
                             `</div>` +
                         `</div>` +
                     `</div>`);

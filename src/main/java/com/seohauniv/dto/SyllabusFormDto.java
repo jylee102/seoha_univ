@@ -64,10 +64,12 @@ public class SyllabusFormDto {
         return this.courseType.getDescription();
     }
 
-    // CourseTimes의 설명을 얻는 메소드
+    // 강의 시간 데이터 목록을 재구성하여 문자열로 반환하는 메소드
+    // ex. 월·수 10:30 - 11: 45 또는 월 10:30 - 11:45<br>수 12:30 - 13:15
     public String getCourseTimesDescription() {
         StringBuilder convertedDays = new StringBuilder();
 
+        // 시간(ex. 10:30 - 11: 45)을 키, 요일을 값으로 갖는 해시맵
         Map<String, List<String>> courseMap = new HashMap<>();
 
         for (CourseTimeDto courseTime : this.courseTimes) {
@@ -94,11 +96,11 @@ public class SyllabusFormDto {
                 )).toList();
 
         for (Map.Entry<String, List<String>> entry : sortedEntries) {
-            entry.getValue().forEach(day -> convertedDays.append(day).append("·"));
+            entry.getValue().forEach(day -> convertedDays.append(day).append("·")); // 같은 시간대라면 요일을 "·"으로 묶어서 표현
             convertedDays.replace(convertedDays.length() - 1, convertedDays.length(), " ");
-            convertedDays.append(entry.getKey()).append("<br>");
+            convertedDays.append(entry.getKey()).append("<br>"); // 시간대가 다른 요일은 줄바꿈
         }
-        convertedDays.delete(convertedDays.length() - 4, convertedDays.length());
+        convertedDays.delete(convertedDays.length() - 4, convertedDays.length()); // 마지막 <br> 삭제
 
         return convertedDays.toString();
     }

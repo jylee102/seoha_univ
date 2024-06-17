@@ -1,17 +1,13 @@
 package com.seohauniv.dto;
 
-import com.seohauniv.constant.Day;
 import com.seohauniv.constant.LeaveReason;
 import com.seohauniv.constant.ProcedureStatus;
 import com.seohauniv.entity.Break;
-import com.seohauniv.entity.Course;
 import com.seohauniv.entity.Student;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
-
-import java.util.*;
 
 @Getter
 @Setter
@@ -46,8 +42,5 @@ public class BreakFormDto {
     }
     public static BreakFormDto of(Break breaks) {
         return modelMapper.map(breaks, BreakFormDto.class);
-    }
-    public Break toEntity() {
-        return modelMapper.map(this, Break.class);
     }
 }

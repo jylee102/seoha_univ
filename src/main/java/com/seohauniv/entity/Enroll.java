@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "enroll")
 @Getter
@@ -23,4 +26,7 @@ public class Enroll {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
+    @OneToMany(mappedBy = "enroll",cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,orphanRemoval = true)
+    private List<Attendance> attendances = new ArrayList<>();
 }
