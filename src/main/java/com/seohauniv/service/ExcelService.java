@@ -8,6 +8,7 @@ import com.seohauniv.dto.ProgressUpdate;
 import com.seohauniv.dto.SyllabusFormDto;
 import com.seohauniv.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -45,7 +46,7 @@ public class ExcelService {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            int dataRows = getDataRows(sheet, messagingTemplate);
+            int dataRows = getDataRows(sheet);
 
             for (int i = 1; i <= dataRows; i++) { // 첫 번째 행은 헤더이므로 건너뜀
                 Row row = sheet.getRow(i);
@@ -141,13 +142,13 @@ public class ExcelService {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            int dataRows = getDataRows(sheet, messagingTemplate);
+            int dataRows = getDataRows(sheet);
 
             for (int i = 1; i <= dataRows; i++) { // 첫 번째 행은 헤더이므로 건너뜀
                 Row row = sheet.getRow(i);
                 if (row != null) {
                     // 각 행의 데이터를 통해 syllabusFormDto 만들기
-                    SyllabusFormDto syllabusFormDto = getSyllabusFormDto(row);
+                    SyllabusFormDto syllabusFormDto = getSyllabusFormDto(row, i);
 
                     // 유효성 검사 수행
                     Errors validationErrors = new BeanPropertyBindingResult(syllabusFormDto, "syllabusFormDto");
@@ -204,7 +205,7 @@ public class ExcelService {
     }
 
     // 데이터가 있는 행의 개수를 세는 메소드
-    private int getDataRows(Sheet sheet, SimpMessagingTemplate messagingTemplate) {
+    private int getDataRows(Sheet sheet) {
         int dataRows = 0; // 데이터가 있는 행의 개수
         int lastRowNum = sheet.getLastRowNum();
 
@@ -213,9 +214,6 @@ public class ExcelService {
             if (row != null && row.getCell(0) != null) {
                 dataRows++;
             }
-            int percentComplete = (int) ((i / (double) lastRowNum) * 100);
-            String message = "데이터 행 개수 세는 중: " + i + " / " + lastRowNum;
-            messagingTemplate.convertAndSend("/topic/progress", new ProgressUpdate(percentComplete, message));
         }
 
         return dataRows;
@@ -241,7 +239,7 @@ public class ExcelService {
     }
 
     // 엑셀의 데이터를 통해 syllabusFormDto 생성
-    private SyllabusFormDto getSyllabusFormDto(Row row) {
+    private SyllabusFormDto getSyllabusFormDto(Row row, int i) {
         SyllabusFormDto syllabusFormDto = new SyllabusFormDto();
 
         syllabusFormDto.setYear((int) row.getCell(0).getNumericCellValue());
@@ -255,7 +253,7 @@ public class ExcelService {
         syllabusFormDto.setTextbook(row.getCell(8).getStringCellValue());
 
         List<CourseTimeDto> courseTimes = new ArrayList<>();
-        for (int j = 9; j < row.getLastCellNum(); j += 3) {
+        for (int j = 9; j < 18; j += 3) {
             if (row.getCell(j) == null) break;
 
             CourseTimeDto courseTimeDto = new CourseTimeDto();
@@ -278,8 +276,17 @@ public class ExcelService {
                     break;
             }
 
-            courseTimeDto.setStartTime(row.getCell(j + 1).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
-            courseTimeDto.setEndTime(row.getCell(j + 2).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+            if (row.getCell(j + 1).getCellType() == CellType.NUMERIC) {
+                courseTimeDto.setStartTime(row.getCell(j + 1).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+            } else {
+                throw new IllegalStateException(i + "행," + (j+1) + "열: 시작시간의 데이터타입이 적절하지 않습니다.");
+            }
+
+            if (row.getCell(j + 2).getCellType() == CellType.NUMERIC) {
+                courseTimeDto.setEndTime(row.getCell(j + 2).getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalTime());
+            } else {
+                throw new IllegalStateException(i + "행: 종료시간의 데이터타입이 적절하지 않습니다.");
+            }
             courseTimes.add(courseTimeDto);
         }
         syllabusFormDto.setCourseTimes(courseTimes);

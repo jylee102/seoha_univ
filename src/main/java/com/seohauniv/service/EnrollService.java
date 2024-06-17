@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class EnrollService {
     private final EnrollRepository enrollRepository;
-    private final CourseRepository courseRepository;
     private final MemberService memberService;
 
     // 선택한 강의가 이미 신청한 강의인지 확인
+    @Transactional(readOnly = true)
     public boolean checkAlreadyEnrolled(Course course, Student student) {
         List<Enroll> enrolls = enrollRepository.findByStudent(student);
         for (Enroll enroll : enrolls) {
@@ -33,6 +33,7 @@ public class EnrollService {
     }
 
     // 선택한 강의의 강의시간과 이미 신청된 강의의 강의시간과 겹치는지 확인
+    @Transactional(readOnly = true)
     public boolean checkTimeConflict(Course course, Student student) {
         List<Enroll> enrolls = enrollRepository.findByStudent(student);
 
@@ -75,14 +76,10 @@ public class EnrollService {
         // 수강신청내역
         Enroll enroll = enrollRepository.findById(enrollId).orElseThrow(EntityNotFoundException::new);
 
-        Member savedMember = enroll.getStudent().getMember(); //주문한 사용자 찾기
+        Member savedMember = enroll.getStudent().getMember(); //수강 신청한 사용자 찾기
 
-        //로그인한 사용자의 이메일과 주문한 사용자의 이메일이 같은지 비교
-        if (!StringUtils.equals(curMember.getId(), savedMember.getId())) {
-            return false;
-        }
-
-        return true;
+        //로그인한 사용자의 이메일과 수강 신청한 사용자의 학번이 같은지 비교
+        return StringUtils.equals(curMember.getId(), savedMember.getId());
     }
 
     // 수강신청 취소
@@ -92,11 +89,13 @@ public class EnrollService {
         enrollRepository.delete(enroll);
     }
 
+    @Transactional(readOnly = true)
     public boolean isAlreadyEnrolled(Course course, String id) {
         List<Enroll> enrolls = enrollRepository.findByCourseAndStudentId(course, id);
         return !enrolls.isEmpty();
     }
 
+    @Transactional(readOnly = true)
     public Enroll findByStudentIdAndCourseId(String courseId, String studentId) {
         return enrollRepository.findByCourseIdAndStudentId(courseId, studentId);
     }

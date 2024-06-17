@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MessageService {
     private final MessageRepository messageRepository;
 
+    @Transactional(readOnly = true)
     public Message findById(Long messageId) {
         return messageRepository.findById(messageId).orElseThrow(EntityNotFoundException::new);
     }
@@ -23,6 +24,7 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
+    @Transactional(readOnly = true)
     public Page<Message> findBySendToId(String memberId, Pageable pageable, String searchValue) {
         return messageRepository.myMessageList(memberId, pageable, searchValue);
     }

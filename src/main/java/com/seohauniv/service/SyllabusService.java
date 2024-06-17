@@ -14,9 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.itextpdf.html2pdf.HtmlConverter;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +24,7 @@ import java.util.List;
 public class SyllabusService {
     private final SyllabusRepository syllabusRepository;
 
+    @Transactional(readOnly = true)
     public Syllabus findById(Long id) {
         return syllabusRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
@@ -56,6 +55,7 @@ public class SyllabusService {
     }
 
     // 강의 계획서 리스트(with 페이징 처리)
+    @Transactional(readOnly = true)
     public Page<SyllabusFormDto> getAllSyllabusToRead(Pageable pageable, String searchValue) {
         Page<SyllabusFormDto> syllabusPage = syllabusRepository.getSyllabuses(pageable, searchValue);
         syllabusPage.forEach(this::setCourseTimes);

@@ -24,10 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,6 +41,7 @@ public class MemberService implements UserDetailsService {
     private final StudentRepository studentRepository;
     private final ProfessorRepository professorRepository;
 
+    // 회원 등록
     public Member createMember(Object entity) {
         Member member = new Member();
         String rawPw = generateRawPassword(entity);
@@ -89,6 +87,7 @@ public class MemberService implements UserDetailsService {
         return memberRepository.save(member);
     }
 
+    // 비밀번호 생성 메소드
     public String generateRawPassword(Object entity) {
         LocalDate birth = null;
         if (entity instanceof Staff) {
@@ -105,14 +104,17 @@ public class MemberService implements UserDetailsService {
                 String.format("%02d!", birth.getDayOfMonth());
     }
 
+    @Transactional(readOnly = true)
     public Long count() {
         return memberRepository.count();
     }
 
+    @Transactional(readOnly = true)
     public boolean existsById(String id) {
         return memberRepository.existsById(id);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return memberRepository.findByEmail(email) != null;
     }
@@ -142,11 +144,13 @@ public class MemberService implements UserDetailsService {
     }
 
     // 학번/교번으로 회원 찾기
+    @Transactional(readOnly = true)
     public Member getMember(String id) {
         return memberRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
     // 비밀번호 확인(현재 비밀번호와 같은지)
+    @Transactional(readOnly = true)
     public Boolean checkPassword(Member member, String password) {
         return passwordEncoder.matches(password, member.getPassword());
     }

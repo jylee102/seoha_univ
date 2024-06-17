@@ -85,6 +85,7 @@
                         <tr>
                             <th>강의코드</th>
                             <th>강의명</th>
+                            <th>강의계획서</th>
                             <th style="min-width: 56px;">구분</th>
                             <th style="min-width: 82px;">담당교수</th>
                             <th style="min-width: 147px;">강의시간</th>
@@ -95,6 +96,10 @@
                         <tr th:each="courses, status: ${courses.getContent()}">
                             <td th:text="${courses.id}"></td>
                             <td th:text="${courses.syllabus.courseName}"></td>
+                            <td>
+                                <button type="button" th:onclick="window.open('/course/syllabus/'+[[${courses.id}]], '_blank', 'width=1000, height=1000'); return false;"
+                                        style="padding: 0.2rem; border: 1px solid black; border-radius: 2px;"><i class="fa-regular fa-file-pdf"></i></button>
+                            </td>
                             <td th:text="${courses.syllabus.courseTypeDescription}"></td>
                             <td th:text="${courses.professorName}"></td>
                             <td th:utext="${courses.courseTimeDescription}"></td>

@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeService {
     private final NoticeRepository noticeRepository;
 
-    public Long saveNotice(NoticeFormDto noticeFormDto) throws Exception{
+    public Long saveNotice(NoticeFormDto noticeFormDto) {
         Notice notice = noticeFormDto.creatNotice();
         noticeRepository.save(notice);
         return notice.getId();
@@ -45,6 +45,7 @@ public class NoticeService {
     }
 
     //상세페이지
+    @Transactional(readOnly = true)
     public Notice getNoticeDtl(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(EntityNotFoundException::new);
         notice.updateViews();
