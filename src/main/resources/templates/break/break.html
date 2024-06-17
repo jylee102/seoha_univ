@@ -32,7 +32,7 @@
         <table class="table--container table">
           <tr>
             <td>학교</td>
-            <td>서하 대학교</td>
+            <td>서하대학교</td>
           </tr>
           <tr>
             <td>이름</td>
@@ -44,14 +44,14 @@
           </tr>
           <tr>
             <td>학년</td>
-            <td th:text="${breaks.student.grade}"></td>
+            <td th:text="${breaks.student.grade} + '학년'"></td>
           </tr>
           <tr>
             <td>학과</td>
             <td th:text="${breaks.student.major.title}"></td>
           </tr>
           <tr>
-            <td>전화번호</td>
+            <td style="min-width:84px;">전화번호</td>
             <td th:text="${breaks.student.phone}"></td>
           </tr>
           <tr>
