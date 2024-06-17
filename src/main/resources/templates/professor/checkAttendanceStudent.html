@@ -131,8 +131,10 @@
         if(errorMessage != null || errorMessage == "") alert(errorMessage);
 
         function page(page) {
+            var week = urlParams.get('week');
+            var day = urlParams.get('day');
             // 페이지 이동
-            location.href = "/professors/checkAttendanceStudent/" + [[${attendances.content[0].course.id}]] + "/" + page;
+            location.href = "/professors/checkAttendanceStudent/" + [[${attendances.content[0].course.id}]] + "/" + page +"?week="+week+"&day="+day;
         }
 
         function goToFirstPage() {
