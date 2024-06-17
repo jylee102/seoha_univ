@@ -23,14 +23,35 @@
             font-size: 14px;
             margin-bottom: 8px; /* 버튼 아래 여백 조절 */
         }
+         @media screen and (max-width: 840px) {
+            .table thead tr th:nth-child(7),
+            .table tbody tr td:nth-child(7),
+            .table thead tr th:nth-child(8),
+            .table tbody tr td:nth-child(8),
+            .table thead tr th:nth-child(9),
+            .table tbody tr td:nth-child(9),
+            .table thead tr th:nth-child(10),
+            .table tbody tr td:nth-child(10),
+            .table thead tr th:nth-child(11),
+            .table tbody tr td:nth-child(11){
+                display: none;
+            }
+        }
+        @media screen and (max-width: 630px) {
+            .table thead tr th:nth-child(3),
+            .table tbody tr td:nth-child(3){
+                display: none;
+            }
+        }
     </style>
 </th:block>
 
 <main layout:fragment="content">
+    <div class="card-body px-5 py-5">
     <h1>[[${students.content[0].course.syllabus.courseName}]] 학생 리스트 조회</h1>
         <div class="split--div"></div>
         <div class="table-div">
-            <table>
+            <table class="table">
                 <thead>
                 <tr>
                     <th>학생 번호</th>
@@ -99,6 +120,7 @@
         </li>
     </ul>
 </div>
+    </div>
 </main>
 
 <th:block layout:fragment="script">
