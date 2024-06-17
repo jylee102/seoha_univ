@@ -2,27 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="css">
     <style>
-        @media screen and (max-width: 1165px) {
-            table > thead > tr > th:nth-child(6),
-            table > tbody > tr > td:nth-child(6) {
-                display: none;
-            }
-        }
-
-        @media screen and (max-width: 995px) {
-            table > thead > tr > th:nth-child(5),
-            table > tbody > tr > td:nth-child(5) {
-                display: none;
-            }
-        }
-
-        @media screen and (max-width: 629px) {
-            table > thead > tr > th:nth-child(4),
-            table > tbody > tr > td:nth-child(4) {
-                display: none;
-            }
-        }
-
         @media (min-width: 576px) {
             .container, .container-sm, .container-md {
             max-width: 100%;
@@ -92,12 +71,9 @@
                 <table class="table" style="table-layout:fixed; text-align:center;">
                     <thead>
                     <tr class="first--tr">
-                        <th style="text-align:center; min-width:70px;">월</th>
-                        <th style="text-align:center; min-width:125px;">날짜</th>
-                        <th style="text-align:center; min-width:300px;">내용</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th style="text-align:center; width:100px;">월</th>
+                        <th style="text-align:center; width:160px;">날짜</th>
+                        <th style="text-align:center; width:60%;">내용</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -110,9 +86,6 @@
                             <td th:if="${#authentication.principal.role == 'STAFF'}"><a href="#" data-bs-toggle="modal" th:data-bs-target="'#exampleModal' + ${entry.value[0].id}" th:text="${entry.value[0].content}"></a></td>
                             <td th:if="${#authentication.principal.role == 'STUDENT'}" th:text="${entry.value[0].content}"></td>
                             <td class="content" th:if="${#authentication.principal.role == 'PROFESSOR'}" th:text="${entry.value[0].content}"></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
                         </tr>
                         <tr th:each="schedule, status : ${entry.value}" th:if="${status.index > 0}">
                             <td th:text="${#temporals.format(schedule.start, 'MM-dd') + ' ~ ' + #temporals.format(schedule.end, 'MM-dd')}" style="text-align:center;"></td>
@@ -120,9 +93,6 @@
                             <td th:if="${#authentication.principal.role == 'STAFF'}"><a href="#" data-bs-toggle="modal" th:data-bs-target="'#exampleModal' + ${schedule.id}" th:text="${schedule.content}"></a></td>
                             <td th:if="${#authentication.principal.role == 'STUDENT'}" th:text="${schedule.content}"></td>
                             <td class="content" th:if="${#authentication.principal.role == 'PROFESSOR'}" th:text="${schedule.content}"></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
                         </tr>
                     </th:block>
                     </tbody>
