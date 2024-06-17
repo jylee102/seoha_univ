@@ -14,109 +14,165 @@
                 width: 70%;
             }
         }
+
+        @media screen and (max-width: 630px) {
+            table th:nth-child(1), /* 강의코드 */
+            table tbody tr td:nth-child(1) {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 710px) {
+            .search {
+                padding-left: 0;
+                padding-bottom: 1rem;
+            }
+        }
+
+        @media screen and (max-width: 670px) {
+            .minYear {
+                width: 130px !important;
+            }
+
+            .minSemester {
+                width: 92px !important;
+            }
+
+            .minWeek {
+                position: absolute;
+                right: -3px;
+                width: 92px !important;
+            }
+        }
+
         ul {
             padding-left: 0;
         }
+
         .btn {
             height: 28px;
             padding: 5px 10px;
             font-size: 14px;
             margin-bottom: 8px; /* 버튼 아래 여백 조절 */
         }
-        @media screen and (max-width: 630px) {
-                table th:nth-child(1), /* 강의코드 */
-                table tbody tr td:nth-child(1) {
-                    display: none;
-                }
+
+        td ul li a:hover {
+            font-weight: bolder !important;
+            color: black !important;
+            text-decoration: underline !important;
+            cursor:pointer !important;
         }
-          td ul li a:hover {
-                font-weight: bolder !important;
-                color: black !important;
-                text-decoration: underline !important;
-                cursor:pointer !important;
-            }
+
+        .btn {
+            height: 32px;
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-bottom: 8px; /* 버튼 아래 여백 조절 */
+        }
+
+        .btn-search {
+            padding-left: 15px;
+            padding-top: 9px;
+        }
+
+        .select-search {
+            width: 140px;
+        }
     </style>
 </th:block>
 
 <main layout:fragment="content">
-    <h1>출석체크</h1>
-    <div class="split--div"></div>
-    <div class="sub--filter" style="display:flex; justify-content:space-between">
-        <form action="/professors/checkAttendance" method="get" th:object="${myCourseSearchDto}">
-            <div style="margin-bottom: 10px;">
-                <select class="input-search select-search" name="searchYear" id="yearSelect"></select>
-                <select class="input-search select-search" name="searchSemester">
-                    <option value="1" selected>1학기</option>
-                    <option value="2">2학기</option>
-                </select>
-                <!-- 검색 버튼 -->
-                <button class="btn btn-seoha" type="submit">조회</button>
+    <div class="card">
+        <div class="card-body px-5 py-5">
+            <h1>출석체크</h1>
+            <div class="div-split" style="min-width: 398px;"></div>
+            <div class="sub--filter" style="display:flex; justify-content:space-between">
+                <form action="/professors/checkAttendance" method="get" th:object="${myCourseSearchDto}">
+                    <div class="d-flex align-items-center search" style="min-width: 380px;">
+                        <div>
+                            <select class="input-search select-search minYear" name="searchYear" id="yearSelect"
+                                    style="margin-right:5px;"></select>
+                            <select class="input-search select-search minSemester" name="searchSemester">
+                                <option value="1" selected>1학기</option>
+                                <option value="2">2학기</option>
+                            </select>
+                        </div>
+                        <!-- 검색 버튼 -->
+                        <div class="btn-search">
+                            <button class="btn btn-info" type="submit" tyle="min-width: 54px;">조회</button>
+                        </div>
+                    </div>
+                </form>
+                <div>
+                    <select class="input-search select-search minWeek" name="week" id="weekSelect"
+                        style="margin-top:10px;"></select>
+                </div>
             </div>
-        </form>
-        <div style="margin-bottom: 10px;">
-            <select class="input-search select-search" name="week" id="weekSelect"></select>
-        </div>
-    </div>
-    <h4 style="margin-bottom: 10px;">
-        <span style="font-weight: 600;">강의 목록</span>
-    </h4>
-    <div class="table-div">
-        <table class="fixed-cell">
-            <tr>
-                <th>강의코드</th>
-                <th style="min-width: 72px;">강의명</th>
-                <th style="min-width: 103px;">강의시간</th>
-                <th>출석 체크</th>
-            </tr>
-            <tbody>
-            <tr th:each="myCourse, status : ${myCourses}">
-                <td th:text="${myCourse.id}"></td>
-                <td th:text="${myCourse.syllabus.courseName}"></td>
-                <td>
-                    <ul th:each="courseTime, status : ${myCourse.syllabus.courseTimes}">
-                        <li>
-                            <a
-                                    th:text="${courseTime.day.getDescription}+' '+${courseTime.startTime}+' ~ '+${courseTime.endTime}"
-                                    th:onclick="checkAttendance([[${myCourse.id}]],[[${courseTime.day}]])">
-                            </a>
-                        </li>
-                    </ul>
-                </td>
-                <td>
-                    <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
-                        <li style="height: 24px;"><a th:href="'/professors/checkAttendanceList/'+${myCourse.id}">조회</a>
-                    </ul>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination" th:with="start=${(myCourses.number / maxPage) * maxPage + 1},
+            <h4 style="margin-bottom:10px;">
+                <span style="font-weight:600;">강의 목록</span>
+            </h4>
+            <div class="card">
+                <div class="table-div">
+                    <table class="fixed-cell" style="table-layout:fixed; min-width:380px;">
+                        <tr>
+                            <th>강의코드</th>
+                            <th style="min-width: 72px;">강의명</th>
+                            <th style="min-width: 103px;">강의시간</th>
+                            <th>출석 체크</th>
+                        </tr>
+                        <tbody>
+                        <tr th:each="myCourse, status : ${myCourses}">
+                            <td th:text="${myCourse.id}"></td>
+                            <td th:text="${myCourse.syllabus.courseName}"></td>
+                            <td>
+                                <ul th:each="courseTime, status : ${myCourse.syllabus.courseTimes}">
+                                    <li>
+                                        <a
+                                                th:text="${courseTime.day.getDescription}+' '+${courseTime.startTime}+' ~ '+${courseTime.endTime}"
+                                                th:onclick="checkAttendance([[${myCourse.id}]],[[${courseTime.day}]])">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="d-flex justify-content-center sub--plan--view" style="margin: 0;">
+                                    <li style="height: 24px;"><a
+                                            th:href="'/professors/checkAttendanceList/'+${myCourse.id}">조회</a>
+                                </ul>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pagination" th:with="start=${(myCourses.number / maxPage) * maxPage + 1},
                                      end=${(myCourses.totalPages == 0) ? 1 : (start + (maxPage - 1) < myCourses.totalPages ? start + (maxPage - 1) : myCourses.totalPages)}"
-         aria-label="Page navigation example">
-        <ul>
-            <li>
-                <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
-            </li>
-            <li th:classappend="${myCourses.first} ? 'disabled' : ''"
-                th:onclick="'javascript:page(' + ${myCourses.number - 1} +')'"
-            >
-                <a><i class="fa-solid fa-angle-left"></i></a>
-            </li>
-            <li th:each="page: ${#numbers.sequence(start, end)}"
-                th:classappend="${myCourses.number eq page - 1} ? 'page-active' : 'page'"
-            >
-                <a th:text="${page}"></a>
-            </li>
-            <li th:classappend="${myCourses.last} ? 'disabled' : ''"
-                th:onclick="'javascript:page(' + ${myCourses.number + 1} +')'"
-            >
-                <a><i class="fa-solid fa-angle-right"></i></a>
-            </li>
-            <li>
-                <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
-            </li>
-        </ul>
+                 aria-label="Page navigation example">
+                <ul>
+                    <li>
+                        <a href="javascript:goToFirstPage()"><i class="fa-solid fa-angles-left"></i></a>
+                    </li>
+                    <li th:classappend="${myCourses.first} ? 'disabled' : ''"
+                        th:onclick="'javascript:page(' + ${myCourses.number - 1} +')'"
+                    >
+                        <a><i class="fa-solid fa-angle-left"></i></a>
+                    </li>
+                    <li th:each="page: ${#numbers.sequence(start, end)}"
+                        th:classappend="${myCourses.number eq page - 1} ? 'page-active' : 'page'"
+                    >
+                        <a th:text="${page}"></a>
+                    </li>
+                    <li th:classappend="${myCourses.last} ? 'disabled' : ''"
+                        th:onclick="'javascript:page(' + ${myCourses.number + 1} +')'"
+                    >
+                        <a><i class="fa-solid fa-angle-right"></i></a>
+                    </li>
+                    <li>
+                        <a href="javascript:goToLastPage()"><i class="fa-solid fa-angles-right"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </main>
 

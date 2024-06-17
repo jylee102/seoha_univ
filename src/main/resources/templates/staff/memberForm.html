@@ -28,7 +28,7 @@
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1>직원 등록</h1>
-            <div class="split--div"></div>
+            <div class="split--div" style="margin-bottom:35px;"></div>
             <nav class="nav nav-tabs">
                 <button class="nav-link active" data-bs-toggle="tab" role="tab" value="STUDENT">학생</button>
                 <button class="nav-link" data-bs-toggle="tab" role="tab" value="PROFESSOR">교수</button>
@@ -75,7 +75,7 @@
                     </tr>
                 </table>
                 <div class="button--container">
-                    <button class="btn btn-seoha" type="submit">등록</button>
+                    <button class="btn btn-seoha" type="submit" style="width:150px;">등록</button>
                 </div>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             </form>
@@ -102,7 +102,7 @@
                     </tr>
                 </table>
                 <div class="button--container">
-                    <button class="btn btn-seoha" type="submit" id="file-submit">등록</button>
+                    <button class="btn btn-seoha" type="submit" id="file-submit" style="width:150px;">등록</button>
                 </div>
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             </form>

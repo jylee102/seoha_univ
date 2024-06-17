@@ -66,17 +66,14 @@
                     <form th:action="@{'/notice/rewrite/' + ${notices.number}}"
                           method="get" th:object="${notices}">
                         <table class="table" style="overflow-x:hidden; text-align:center;">
-                            <thead>
                             <tr style="text-align:center;">
-                                <th scope="col" style="width: 70px;">번호</th>
-                                <th scope="col">제목</th>
-                                <th scope="col" class="sName" style="width: 80px;">작성자</th>
-                                <th scope="col" style="width: 110px;">등록일</th>
-                                <th scope="col" class="sName" style="width: 80px;">조회수</th>
-                                <th scope="col" style="width: 100px;"></th>
+                                <th style="width: 70px;">번호</th>
+                                <th>제목</th>
+                                <th class="sName" style="width: 80px;">작성자</th>
+                                <th style="width: 110px;">등록일</th>
+                                <th class="sName" style="width: 80px;">조회수</th>
+                                <th style="width: 100px;"></th>
                             </tr>
-                            </thead>
-                            <tbody>
                             <!-- 조회된 데이터를 출력한다. -->
                             <tr th:each="notice, status: ${notices.getContent()}">
                                 <th th:text="${notices.totalElements - ((notices.number * notices.size) + status.index)}"
@@ -93,11 +90,10 @@
                                             th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])" th:if="${#authentication.principal.role == 'STAFF'}">삭제
                                     </button>
                                 </td>
-
                             </tr>
-                            </tbody>
                         </table>
-                        <div class="pagination" th:with="start=${(notices.number/maxPage)*maxPage + 1},
+                        <div class="pagination" style="margin-top:20px;"
+                             th:with="start=${(notices.number/maxPage)*maxPage + 1},
                            end=(${(notices.totalPages == 0) ? 1 : (start + (maxPage - 1) < notices.totalPages ? start + (maxPage - 1) : notices.totalPages)})"
                              aria-label="Page navigation example">
                             <ul>
