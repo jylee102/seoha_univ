@@ -52,7 +52,7 @@
 
         <li class="nav-item" th:if="${#authentication.principal.role == 'STUDENT'}">
             <a class="nav-link" data-toggle="collapse" href="#ui-student-course" aria-expanded="false" aria-controls="ui-basic">
-                <i class="icon-head menu-icon"></i>
+                <i class="fa-solid fa-chalkboard-user menu-icon" style="margin-left:-5px;"></i>
                 <span class="menu-title">강의</span>
                 <i class="menu-arrow"></i>
             </a>
@@ -78,7 +78,7 @@
         </li>
         <li class="nav-item" th:if="${#authentication.principal.role == 'STUDENT'}">
             <a class="nav-link" data-toggle="collapse" href="#ui-student-grade" aria-expanded="false" aria-controls="ui-basic">
-                <i class="icon-head menu-icon"></i>
+                <i class="fa-solid fa-award menu-icon" style="margin-left:3px;"></i>
                 <span class="menu-title">성적</span>
                 <i class="menu-arrow"></i>
             </a>
@@ -100,7 +100,7 @@
 
         <li class="nav-item" th:if="${#authentication.principal.role == 'PROFESSOR'}">
             <a class="nav-link" data-toggle="collapse" href="#ui-professor-course" aria-expanded="false" aria-controls="ui-basic">
-                <i class="icon-head menu-icon"></i>
+                <i class="fa-solid fa-chalkboard-user menu-icon" style="margin-left:-5px;"></i>
                 <span class="menu-title">강의</span>
                 <i class="menu-arrow"></i>
             </a>
@@ -121,7 +121,7 @@
         </li>
         <li class="nav-item" th:if="${#authentication.principal.role == 'PROFESSOR'}">
             <a class="nav-link" data-toggle="collapse" href="#ui-professor-manageStudent" aria-expanded="false" aria-controls="ui-basic">
-                <i class="icon-head menu-icon"></i>
+                <i class="fa-regular fa-address-book menu-icon"></i>
                 <span class="menu-title">학생관리</span>
                 <i class="menu-arrow"></i>
             </a>
@@ -170,7 +170,7 @@
 
         <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-univInfo" aria-expanded="false" aria-controls="ui-basic">
-                <i class="icon-head menu-icon"></i>
+                <i class="fa-regular fa-file-lines menu-icon"  style="margin-left:3px;"></i>
                 <span class="menu-title">학사정보</span>
                 <i class="menu-arrow"></i>
             </a>
