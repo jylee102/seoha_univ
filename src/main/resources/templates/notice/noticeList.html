@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
 <th:block layout:fragment="css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <link rel="stylesheet" th:href="@{/css/memberList.css}">
     <style>
-
         a {
             cursor: pointer;
         }
@@ -43,19 +43,24 @@
                 display: none;
             }
         }
+
+        /* input 안의 X */
+        .input-container .fa-xmark {
+            right: 90px;
+        }
     </style>
 </th:block>
 
 <head>
-    <meta name="_csrf" th:content="${_csrf.token}" />
-    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 
 <div layout:fragment="content">
     <div class="site-section card">
         <div class="card-body px-5 py-5">
             <h1 style="font-weight:600">공지사항</h1>
-            <div class="split--div"></div>
+            <div class="split--div" style="margin-bottom:50px;"></div>
             <div class="row">
                 <div class="col-md-12">
                     <form th:action="@{'/notice/rewrite/' + ${notices.number}}"
@@ -74,15 +79,20 @@
                             <tbody>
                             <!-- 조회된 데이터를 출력한다. -->
                             <tr th:each="notice, status: ${notices.getContent()}">
-                                <th th:text="${notices.totalElements - ((notices.number * notices.size) + status.index)}" style="text-align:center;"></th>
+                                <th th:text="${notices.totalElements - ((notices.number * notices.size) + status.index)}"
+                                    style="text-align:center;"></th>
                                 <td>
-                                    <a class="ellipsis content" style="white-space: nowrap;" th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}"></a>
+                                    <a class="ellipsis content" style="white-space: nowrap;"
+                                       th:href="'/notice/detail/'+ ${notice.id}" th:text="${notice.title}"></a>
                                 </td>
                                 <td th:text="${notice.createdBy.name}" style="text-align:center;" class="sName"></td>
                                 <td th:text="${notice.formattedRegTime}" style="text-align:center;"></td>
                                 <td th:text="${notice.views}" style="text-align:center;" class="sName"></td>
-                                <td><button type="button" class="btn btn-seoha"
-                                            th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])">삭제</button></td>
+                                <td>
+                                    <button type="button" class="btn btn-seoha"
+                                            th:value="${notice.id}" th:onclick="deleteNotice([[${notice.id}]])" th:if="${#authentication.principal.role == 'STAFF'}">삭제
+                                    </button>
+                                </td>
 
                             </tr>
                             </tbody>
@@ -113,11 +123,12 @@
                             </ul>
                         </div>
 
-                        <div class="row" th:object="${noticeSearchDto}" style="height: 40px; margin: 20px 0;" >
+                        <div class="row" th:object="${noticeSearchDto}" style="height: 40px; margin: 20px 0;">
                             <div class="col-lg-2"></div>
                             <div class="col-lg-4" style="display: flex">
                                 <!-- 상품 등록일 -->
-                                <select class="form-control" th:field="*{searchDateType}" style="margin-right:20px; height:40px;">
+                                <select class="form-control" th:field="*{searchDateType}"
+                                        style="margin-right:20px; height:40px;">
                                     <option value="all">전체기간</option>
                                     <option value="1d">1일</option>
                                     <option value="1w">1주</option>
@@ -132,9 +143,14 @@
                                 </select>
                             </div>
                             <div class="col-lg-4">
-                                <div style="display: flex">
-                                    <input type="text" class="form-control" placeholder="검색어 입력" th:field="*{searchQuery}" style="margin-right:20px; margin-top:1px; height:40px;"/>
-                                    <button id="searchBtn" type="submit" class="btn btn-seoha mb-3" style="min-width:60px; margin:0 !important; height:40px;">검색</button>
+                                <div class="input-container" style="display: flex">
+                                    <input type="text" class="form-control" placeholder="검색어 입력"
+                                           th:field="*{searchQuery}"
+                                           style="margin-right:20px; margin-top:1px; height:40px;"/>
+                                    <i class="fa-solid fa-xmark" onclick="clearSearch()"></i>
+                                    <button id="searchBtn" type="submit" class="btn btn-seoha mb-3"
+                                            style="min-width:60px; margin:0 !important; height:40px;">검색
+                                    </button>
                                 </div>
                             </div>
                             <div class="col-lg-2"></div>
@@ -219,6 +235,11 @@
                }
             });
          }
+
+        // input창의 x 클릭시 검색어 삭제
+        function clearSearch() {
+            document.getElementById('searchQuery').value = '';
+        }
     </script>
 </th:block>
 </html>
