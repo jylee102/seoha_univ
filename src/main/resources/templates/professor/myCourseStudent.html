@@ -43,6 +43,7 @@
                     <th>중간시험</th>
                     <th>기말시험</th>
                     <th>환산점수</th>
+                    <th>학점</th>
                     <th>점수 기입</th>
                 </tr>
                 </thead>
@@ -62,6 +63,8 @@
                     <td th:if="${student.evaluation}">[[${student.evaluation.finalExam}]]</td>
                     <td th:unless="${student.evaluation}">-</td>
                     <td th:if="${student.evaluation}">[[${student.evaluation.convertedScore}]]</td>
+                    <td th:unless="${student.evaluation}">-</td>
+                    <td th:if="${student.evaluation}">[[${student.evaluation.grade}]]</td>
                     <td th:unless="${student.evaluation}">-</td>
                     <td th:if="${student.evaluation}"><a th:href="'/professors/updateEvaluation/'+${student.course.id}+'/'+${student.student.id}">수정</a></td>
                     <td th:unless="${student.evaluation}"><a th:href="'/professors/evaluation/'+${student.course.id}+'/'+${student.student.id}">기입</a></td>

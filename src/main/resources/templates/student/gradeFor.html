@@ -27,13 +27,30 @@
 </th:block>
 
 <main layout:fragment="content">
-    <h1>금학기 성적 조회</h1>
+    <h1>학기별 성적 조회</h1>
     <div class="split--div"></div>
-
-            <div>
-                <h4 style="font-weight: 600">과목별 성적</h4>
+    <div class="sub--filter">
+        <form action="/students/gradeFor" method="get" th:object="${myCourseSearchDto}">
+            <div class="d-flex align-items-center search" style="min-width: 380px;">
+                <div>
+                    <select class="input-search select-search" name="searchYear" id="yearSelect"
+                            style="margin-right:5px;"></select>
+                    <select class="input-search select-search" name="searchSemester">
+                        <option value="1" selected>1학기</option>
+                        <option value="2">2학기</option>
+                    </select>
+                </div>
+                <!-- 검색 버튼 -->
+                <div class="btn-search">
+                    <button class="btn btn-info" type="submit" style="min-width: 54px;">조회</button>
+                </div>
+            </div>
+        </form>
+    </div>
+            <div >
+                <h4 th:if="${totalGradeDto != null}" style="font-weight: 600">과목별 성적</h4>
                 <div class="table-div">
-                <table border="1" class="sub--list--table">
+                <table th:if="${totalGradeDto != null}" border="1" class="sub--list--table">
                     <thead>
                     <tr>
                         <th>연도</th>
@@ -47,7 +64,7 @@
                     </thead>
                     <tbody>
 
-                        <tr th:each="grade :${grades}">
+                        <tr th:if="${grades}" th:each="grade :${grades}">
                             <td>[[${grade.course.syllabus.year}]]년</td>
                             <td>[[${grade.course.syllabus.semester}]]학기</td>
                             <td>[[${grade.course.id}]]</td>
@@ -71,9 +88,9 @@
             </div>
             <hr>
             <br>
-            <div class="table-div">
+            <div th:if="${totalGradeDto != null}" class="table-div">
                 <h4 style="font-weight: 600">누계 성적</h4>
-                <table border="1" class="sub--list--table">
+                <table  border="1" class="sub--list--table">
                     <thead>
                     <tr>
                         <th>연도</th>
@@ -84,18 +101,21 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
+                    <tr >
                         <td>[[${totalGradeDto.year}]]년</td>
                         <td>[[${totalGradeDto.semester}]]학기</td>
                         <td>[[${totalGradeDto.sumGrades}]]</td>
                         <td>[[${totalGradeDto.sumGrades}]]</td>
                         <td>[[${totalGradeDto.average}]]</td>
                     </tr>
+
                     </tbody>
                 </table>
             </div>
-
-            <p th:unless="${grades}"class="no--list--p">강의 신청 및 수강 이력 확인 바랍니다.</p>
+    <p class="no--list--p" th:unless="${totalGradeDto != null}">
+        강의 신청 및 수강 이력 확인 바랍니다.
+    </p>
+            <p th:unless="${grades}" class="no--list--p">강의 신청 및 수강 이력 확인 바랍니다.</p>
 
 
 
@@ -109,7 +129,25 @@
         var errorMessage = [[${errorMessage}]];
         if(errorMessage != null || errorMessage == "") alert(errorMessage);
 
+        // 현재 연도 구하기
+        var currentYear = new Date().getFullYear();
+        var selectElement = document.getElementById("yearSelect");
 
+        // 현재 연도부터 그 이후 2개의 연도까지 옵션 추가
+        for (var i = 0; i < 3; i++) {
+            var option = document.createElement("option");
+            option.value = currentYear + i;
+            option.textContent = (currentYear + i) + "학년도";
+            selectElement.appendChild(option);
+        }
+         function page(page) {
+            var searchYear = document.getElementById("yearSelect").value;
+            var searchSemester = document.querySelector("select[name='searchSemester']").value;
+            // 페이지 이동
+            location.href = "/students/gradeFor/"
+                + "?searchYear=" + searchYear
+                + "&searchSemester=" + searchSemester;
+        }
 
 
     </script>

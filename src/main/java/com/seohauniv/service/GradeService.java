@@ -17,4 +17,13 @@ public class GradeService {
     public List<Evaluation> findByEnrollStudentIdAndCourseSyllabusYearAndCourseSyllabusSemester(String studentId,int year,int semester){
         return evaluationRepository.findByEnrollStudentIdAndCourseSyllabusYearAndCourseSyllabusSemester(studentId,year,semester);
     }
+    @Transactional(readOnly = true)
+    public int countByCredit(String studentId,int year,int semester){
+        Integer count = evaluationRepository.countByCredit(studentId, year, semester);
+        return (count != null) ? count : 0;
+    }
+    @Transactional(readOnly = true)
+    public float averageGrade(String studentId,int year,int semester){
+        return evaluationRepository.averageGrade(studentId,year,semester);
+    }
 }

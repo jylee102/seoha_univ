@@ -20,6 +20,8 @@ public class Evaluation {
     @Column(name = "converted_score")
     private float convertedScore;
 
+    private float grade;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
@@ -31,11 +33,51 @@ public class Evaluation {
     public void calcConvertedScore(){
         this.convertedScore = (0.2F*homework)+(0.3F*midExam)+(0.5F*finalExam);
     }
-
+    public void grade(){
+       convertedScore =(0.2F*homework)+(0.3F*midExam)+(0.5F*finalExam);
+        if(convertedScore >= 95){
+            this.grade = 4.5F;
+        } else if (convertedScore <95 && convertedScore>=90) {
+            this.grade = 4.0F;
+        } else if (convertedScore <90 && convertedScore>=85) {
+            this.grade = 3.5F;
+        } else if (convertedScore <85 && convertedScore>=80) {
+            this.grade = 3.0F;
+        } else if (convertedScore <80 && convertedScore>=75) {
+            this.grade = 2.5F;
+        } else if (convertedScore <75 && convertedScore>=70) {
+            this.grade = 2.0F;
+        } else if (convertedScore <70 && convertedScore>=65) {
+            this.grade = 1.5F;
+        } else if (convertedScore <65 && convertedScore>=60) {
+            this.grade = 1.0F;
+        } else {
+            this.grade = 0.0F;
+        }
+    }
     public void updateEvaluation(EvaluationFormDto evaluationFormDto){
         this.homework = evaluationFormDto.getHomework();
         this.midExam = evaluationFormDto.getMidExam();
         this.finalExam = evaluationFormDto.getFinalExam();
-        this.convertedScore = (0.2F*evaluationFormDto.getHomework())+(0.3F*evaluationFormDto.getMidExam())+(0.5F*evaluationFormDto.getFinalExam());
+        this.convertedScore = (0.2F*homework)+(0.3F*midExam)+(0.5F*finalExam);
+        if(convertedScore >= 95){
+            this.grade = 4.5F;
+        } else if (convertedScore <95 && convertedScore>=90) {
+            this.grade = 4.0F;
+        } else if (convertedScore <90 && convertedScore>=85) {
+            this.grade = 3.5F;
+        } else if (convertedScore <85 && convertedScore>=80) {
+            this.grade = 3.0F;
+        } else if (convertedScore <80 && convertedScore>=75) {
+            this.grade = 2.5F;
+        } else if (convertedScore <75 && convertedScore>=70) {
+            this.grade = 2.0F;
+        } else if (convertedScore <70 && convertedScore>=65) {
+            this.grade = 1.5F;
+        } else if (convertedScore <65 && convertedScore>=60) {
+            this.grade = 1.0F;
+        } else {
+            this.grade = 0.0F;
+        }
     }
 }

@@ -19,6 +19,7 @@ public class EvaluationService {
     public Long saveEvaluation(EvaluationFormDto evaluationFormDto){
     Evaluation evaluation = evaluationFormDto.createEvaluation();
     evaluation.calcConvertedScore();
+    evaluation.grade();
     evaluationRepository.save(evaluation);
 
     return evaluation.getId();

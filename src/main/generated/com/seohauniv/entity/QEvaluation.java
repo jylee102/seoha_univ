@@ -30,6 +30,8 @@ public class QEvaluation extends EntityPathBase<Evaluation> {
 
     public final NumberPath<Integer> finalExam = createNumber("finalExam", Integer.class);
 
+    public final NumberPath<Float> grade = createNumber("grade", Float.class);
+
     public final NumberPath<Integer> homework = createNumber("homework", Integer.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
