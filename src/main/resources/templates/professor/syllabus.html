@@ -70,6 +70,10 @@
         .input--box {
             margin-right: 0 !important;
         }
+
+        .text-align-left {
+            text-align: left;
+        }
     </style>
 </th:block>
 
@@ -95,7 +99,7 @@
                 <table class="table--container table" style="text-align:center;">
                     <tr>
                         <td><label for="name">강좌명</label></td>
-                        <td>
+                        <td class="text-align-left">
                             <input type="text" id="name" name="courseName" class="input--box" placeholder="강좌명"/>
                         </td>
                     </tr>
@@ -161,13 +165,13 @@
 
                     <tr>
                         <td><label for="overview">수업 개요</label></td>
-                        <td>
+                        <td class="text-align-left">
                             <textarea id="overview" name="overview" class="input--box auto-resize" placeholder="수업 개요"></textarea>
                         </td>
                     </tr>
                     <tr>
                         <td><label for="objective">강의 목표</label></td>
-                        <td>
+                        <td class="text-align-left">
                             <textarea id="objective" name="objective" class="input--box auto-resize" placeholder="강의 목표"></textarea>
                         </td>
                     </tr>
@@ -199,7 +203,7 @@
 
                     <tr>
                         <td><label th:for="textbook">수업 교재</label></td>
-                        <td>
+                        <td class="text-align-left">
                             <input type="text" id="textbook" name="textbook" class="input--box" placeholder="수업 교재"/>
                         </td>
                     </tr>
