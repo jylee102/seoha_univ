@@ -24,6 +24,7 @@ public class GradeController {
     private final GradeService gradeService;
     @GetMapping("/students/grade")
     public String thisGrade(Principal principal, Model model){
+        try{
         List<Evaluation> grades = gradeService.findByEnrollStudentIdAndCourseSyllabusYearAndCourseSyllabusSemester(principal.getName(),2024,1);
         int countByGrade = gradeService.countByCredit(principal.getName(),2024,1);
         float averageGrade = gradeService.averageGrade(principal.getName(), 2024,1);
@@ -37,6 +38,12 @@ public class GradeController {
         model.addAttribute("grades",grades);
         model.addAttribute("totalGradeDto",totalGradeDto);
         return "student/thisGrade";
+        }catch (Exception e){
+            e.printStackTrace();
+            model.addAttribute("grades", new ArrayList<Evaluation>());
+            model.addAttribute("totalGradeDto", null);
+            return "student/thisGrade";
+        }
     }
     @GetMapping("/students/gradeFor")
     public String gradeFor(@ModelAttribute MyCourseSearchDto myCourseSearchDto, Principal principal, Model model,

@@ -31,23 +31,23 @@
     <div class="split--div"></div>
 
             <div>
-                <h4 style="font-weight: 600">과목별 성적</h4>
+                <h4 th:if="${totalGradeDto != null}" style="font-weight: 600">과목별 성적</h4>
                 <div class="table-div">
-                <table border="1" class="sub--list--table">
-                    <thead>
-                    <tr>
-                        <th>연도</th>
-                        <th>학기</th>
-                        <th>과목번호</th>
-                        <th>과목명</th>
-                        <th>강의구분</th>
-                        <th>이수학점</th>
-                        <th>성적</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                    <table th:if="${totalGradeDto != null}" border="1" class="sub--list--table">
+                        <thead>
+                        <tr>
+                            <th>연도</th>
+                            <th>학기</th>
+                            <th>과목번호</th>
+                            <th>과목명</th>
+                            <th>강의구분</th>
+                            <th>이수학점</th>
+                            <th>성적</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-                        <tr th:each="grade :${grades}">
+                        <tr th:if="${grades}" th:each="grade :${grades}">
                             <td>[[${grade.course.syllabus.year}]]년</td>
                             <td>[[${grade.course.syllabus.semester}]]학기</td>
                             <td>[[${grade.course.id}]]</td>
@@ -65,37 +65,40 @@
                             <td th:if="${grade.convertedScore < 60}">F</td>
                         </tr>
 
-                    </tbody>
-                </table>
-                    </div>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <hr>
-            <br>
-            <div class="table-div">
-                <h4 style="font-weight: 600">누계 성적</h4>
-                <table border="1" class="sub--list--table">
-                    <thead>
-                    <tr>
-                        <th>연도</th>
-                        <th>학기</th>
-                        <th>신청학점</th>
-                        <th>취득학점</th>
-                        <th>평점평균</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>[[${totalGradeDto.year}]]년</td>
-                        <td>[[${totalGradeDto.semester}]]학기</td>
-                        <td>[[${totalGradeDto.sumGrades}]]</td>
-                        <td>[[${totalGradeDto.sumGrades}]]</td>
-                        <td>[[${totalGradeDto.average}]]</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+    <hr>
+    <br>
+    <div th:if="${totalGradeDto != null}" class="table-div">
+        <h4 style="font-weight: 600">누계 성적</h4>
+        <table  border="1" class="sub--list--table">
+            <thead>
+            <tr>
+                <th>연도</th>
+                <th>학기</th>
+                <th>신청학점</th>
+                <th>취득학점</th>
+                <th>평점평균</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr >
+                <td>[[${totalGradeDto.year}]]년</td>
+                <td>[[${totalGradeDto.semester}]]학기</td>
+                <td>[[${totalGradeDto.sumGrades}]]</td>
+                <td>[[${totalGradeDto.sumGrades}]]</td>
+                <td>[[${totalGradeDto.average}]]</td>
+            </tr>
 
-            <p th:unless="${grades}"class="no--list--p">강의 신청 및 수강 이력 확인 바랍니다.</p>
+            </tbody>
+        </table>
+    </div>
+    <p class="no--list--p" th:unless="${totalGradeDto != null}">
+        강의 신청 및 수강 이력 확인 바랍니다.
+    </p>
+    <p th:unless="${grades}" class="no--list--p">강의 신청 및 수강 이력 확인 바랍니다.</p>
 
 
 
