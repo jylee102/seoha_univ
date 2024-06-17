@@ -39,25 +39,17 @@
       margin-right: 20px;
     }
 
-    @media screen and (max-width: 585px) {
-      .radioInputDiv {
-        margin-right: 15px;
-      }
+    .flex {
+      display: flex;
     }
 
-    @media screen and (max-width: 540px) {
-      .radioInputDiv {
-        margin-right: 10px;
+    @media screen and (max-width: 615px) {
+      .flex {
+        display: block;
       }
 
-      .buter {
-        margin-right: 10px;
-      }
-    }
-
-    @media screen and (max-width: 520px) {
       .radioInputDiv {
-        margin-right: 5px;
+        margin-bottom: 5px;
       }
     }
   </style>
@@ -82,7 +74,8 @@
             </tr>
             <tr>
               <td><label for="address">주소</label></td>
-              <td><input type="text" th:value="*{address}" id="address" class="input--box" readonly /></td>
+              <td><input type="text" th:value="*{address}" id="address" class="input--box" readonly
+                    style="width:100%;"></td>
             </tr>
             <tr>
               <td><label for="phone">전화번호</label></td>
@@ -94,34 +87,38 @@
             </tr>
             <tr>
               <td><label>기간</label></td>
-              <td style="display:flex; min-width:630px;">
-                <select name="fromYear" id="fromYear" style="margin-right:5px;"></select>
-                <select name="fromSemester" id="fromSemester" style="margin-right:5px;">
-                  <option value="1">1학기</option>
-                  <option value="2">2학기</option>
-                </select>
-                <p class="buter" style="margin-bottom:0; place-content:center;">부터</p>
-                <select name="toYear" id="toYear" style="margin-right:5px;"></select>
-                <select name="toSemester" id="toSemester" style="margin-right:5px;">
-                  <option value="1">1학기</option>
-                  <option value="2">2학기</option>
-                </select>
-                <p style="margin-right:20px; margin-bottom:0; place-content:center;">까지</p>
+              <td class="flex">
+                <div style="display:flex;">
+                  <select name="fromYear" id="fromYear" style="margin-right:5px;"></select>
+                  <select name="fromSemester" id="fromSemester" style="margin-right:5px;">
+                    <option value="1">1학기</option>
+                    <option value="2">2학기</option>
+                  </select>
+                  <p class="buter" style="margin-bottom:0; place-content:center;">부터</p>
+                </div>
+                <div style="display:flex;">
+                  <select name="toYear" id="toYear" style="margin-right:5px;"></select>
+                  <select name="toSemester" id="toSemester" style="margin-right:5px;">
+                    <option value="1">1학기</option>
+                    <option value="2">2학기</option>
+                  </select>
+                  <p style="margin-right:20px; margin-bottom:0; place-content:center;">까지</p>
+                </div>
               </td>
             </tr>
             <tr>
               <td><label th:for="reasonType">휴학구분</label></td>
-              <td style="display: flex;">
-                <div class="radioInputDiv" style="display: flex;">
+              <td class="flex">
+                <div class="radioInputDiv" style="display: flex; margin-right: 20px;">
                   <input type="radio" name="reasonType" value="OTHER">&nbsp;일반</input>
                 </div>
-                <div class="radioInputDiv" style="display: flex;">
+                <div class="radioInputDiv" style="display: flex; margin-right: 20px;">
                   <input type="radio" name="reasonType" value="PARENTAL">&nbsp;임신·출산·육아</input>
                 </div>
-                <div class="radioInputDiv" style="display: flex;">
+                <div class="radioInputDiv" style="display: flex; margin-right: 20px;">
                   <input type="radio" name="reasonType" value="MEDICAL">&nbsp;질병</input>
                 </div>
-                <div class="radioInputDiv" style="display: flex;">
+                <div class="radioInputDiv" style="display: flex; margin-right: 20px;">
                   <input type="radio" name="reasonType" value="ENTREPRENEURSHIP">&nbsp;창업</input>
                 </div>
                 <div style="display: flex;">
