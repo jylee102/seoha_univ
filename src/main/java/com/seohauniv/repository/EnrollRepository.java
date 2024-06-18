@@ -12,9 +12,12 @@ import java.util.List;
 
 public interface EnrollRepository extends JpaRepository<Enroll, Long> {
     List<Enroll> findByStudent(Student student);
+
     List<Enroll> findByStudentId(String studentId);
 
     Page<Enroll> findByCourseId(String courseId, Pageable pageable);
+
+    List<Enroll> findByCourseId(String courseId);
 
     Enroll findByCourseIdAndStudentId(String courseId, String studentId);
 
