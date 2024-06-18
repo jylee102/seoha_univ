@@ -24,24 +24,29 @@ public class EvaluationService {
 
     return evaluation.getId();
     }
+
     @Transactional(readOnly = true)
-    public List<Evaluation> findByEnrollStudentId(String studentId) {
-        return evaluationRepository.findByEnrollStudentId(studentId);
+    public Evaluation findByEnrollStudentId(String courseId, String studentId) {
+        return evaluationRepository.findByEnrollStudentIdAndCourseId(courseId, studentId);
     }
+
     public List<Evaluation> findByCourseIdOrderByEnrollStudentIdAsc(String courseId){
         return evaluationRepository.findByCourseIdOrderByEnrollStudentIdAsc(courseId);
     }
+
     @Transactional(readOnly = true)
     public EvaluationFormDto updateEvaluationDtl(String studentId,String courseId){
         Evaluation evaluation =evaluationRepository.findByEnrollStudentIdAndCourseId(studentId,courseId);
         return EvaluationFormDto.of(evaluation);
     }
+
     public Long updateEvaluation(EvaluationFormDto evaluationFormDto){
         Evaluation evaluation = evaluationRepository.findById(evaluationFormDto.getId()).orElseThrow(EntityNotFoundException::new);
         evaluation.updateEvaluation(evaluationFormDto);
 
         return evaluation.getId();
     }
+
     @Transactional(readOnly = true)
     public Evaluation findByEnrollId(Long enrollId){
         return evaluationRepository.findByEnrollId(enrollId);
