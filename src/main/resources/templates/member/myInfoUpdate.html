@@ -27,7 +27,7 @@
                 <h1 style="font-weight:600">내 정보 수정하기</h1>
                 <div class="split--div"></div>
                 <form role="form" th:action="@{'/myInfo/update'}" th:object="${memberFormDto}" method="post" enctype="multipart/form-data" name="infoForm">
-                    <input type="hidden" name="dept" th:value="*{dept.id}">
+                    <input type="hidden" name="dept" th:value="(*{dept} == null) ? null : *{dept.id}">
                     <input type="hidden" name="role" th:value="*{role}">
 
                     <table class="table--container table">
