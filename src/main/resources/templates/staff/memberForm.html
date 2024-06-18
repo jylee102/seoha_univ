@@ -158,8 +158,8 @@
 
         document.getElementById('downloadButton').addEventListener('click', function() {
             const link = document.createElement('a');
-            link.href = '/excels/form_member.xlsm'; // 다운로드할 파일의 경로
-            link.download = '구성원등록_양식.xlsm'; // 저장될 파일 이름
+            link.href = '/excels/form_member.xlsx'; // 다운로드할 파일의 경로
+            link.download = '구성원등록_양식.xlsx'; // 저장될 파일 이름
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
