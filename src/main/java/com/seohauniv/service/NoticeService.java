@@ -45,7 +45,6 @@ public class NoticeService {
     }
 
     //상세페이지
-    @Transactional(readOnly = true)
     public Notice getNoticeDtl(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(EntityNotFoundException::new);
         notice.updateViews();
