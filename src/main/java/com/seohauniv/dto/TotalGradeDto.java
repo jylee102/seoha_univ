@@ -9,5 +9,5 @@ public class TotalGradeDto {
     private int year;
     private int semester;
     private int sumGrades;
-    private float average;
+    private Float average;
 }

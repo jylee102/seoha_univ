@@ -21,5 +21,5 @@ public interface EvaluationRepository extends JpaRepository<Evaluation,Long> {
     Integer countByCredit(@Param("studentId") String studentId,@Param("year") int year,@Param("semester") int semester);
 
     @Query("SELECT sum(e.grade)/count(e.course.syllabus.credit) from Evaluation e where e.enroll.student.id = :studentId AND  e.course.syllabus.year =:year AND  e.course.syllabus.semester = :semester")
-    float averageGrade(@Param("studentId") String studentId,@Param("year") int year,@Param("semester") int semester);
+    Float averageGrade(@Param("studentId") String studentId,@Param("year") int year,@Param("semester") int semester);
 }

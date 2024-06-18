@@ -23,7 +23,7 @@ public class GradeService {
         return (count != null) ? count : 0;
     }
     @Transactional(readOnly = true)
-    public float averageGrade(String studentId,int year,int semester){
+    public Float averageGrade(String studentId,int year,int semester){
         return evaluationRepository.averageGrade(studentId,year,semester);
     }
 }
