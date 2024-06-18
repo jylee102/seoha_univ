@@ -297,15 +297,15 @@
                     return xhr;
                 },
                 success: function(response) {
-                    $("#status").html("Upload Complete");
+                    $('#status').html('Upload Complete');
                     $('#syllabusForm').show();
-                    $("#progressWrapper").hide();
+                    $('#progressWrapper').hide();
                     alert(response);
                 },
                 error: function(xhr, status, error) {
-                    $("#status").html("Upload Failed");
+                    $('#status').html('Upload Failed');
                     $('#syllabusForm').show();
-                    $("#progressWrapper").hide();
+                    $('#progressWrapper').hide();
                     alert(xhr.responseText);
                 }
             });

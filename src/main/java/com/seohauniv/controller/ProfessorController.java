@@ -130,11 +130,11 @@ public class ProfessorController {
 
     // 성적 데이터 등록
     @PostMapping(value = "/professors/evaluation/{courseId}/{studentId}")
-    public String saveEvaluation(EvaluationFormDto evaluationFormDto, RedirectAttributes redirectAttributes, @PathVariable("studentId") String studentId){
+    public String saveEvaluation(EvaluationFormDto evaluationFormDto, RedirectAttributes redirectAttributes, @PathVariable("courseId") String courseId, @PathVariable("studentId") String studentId){
         try {
             // 해당 학생의 성적 데이터 불러오기
-            List<Evaluation> evaluations = evaluationService.findByEnrollStudentId(studentId);
-            if(!evaluations.isEmpty()){ // 기입되어 있는 성적이 있다면
+            Evaluation evaluations = evaluationService.findByEnrollStudentId(courseId, studentId);
+            if(evaluations != null){ // 기입되어 있는 성적이 있다면
                 redirectAttributes.addFlashAttribute("errorMessage","이미 기입된 기록이 있습니다.");
                 return "redirect:/professors/myCourse";
             }
