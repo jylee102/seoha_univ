@@ -38,7 +38,7 @@ public class CourseService {
         course.setRestSeat(courseFormDto.getSyllabus().getCapacity());
 
         String pdf = pdfService.makePdf(course); // PDF 생성
-        course.setPdf("/pdfs/syllabus/" + pdf);
+        course.setPdf("/pdfs/pdf/" + pdf);
 
         return courseRepository.save(course);
     }

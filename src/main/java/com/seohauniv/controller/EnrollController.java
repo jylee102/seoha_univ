@@ -28,7 +28,7 @@ public class EnrollController {
     private final StudentService studentService;
     private final CourseService courseService;
 
-    // 수강신청
+    // 수강 신청
     @PostMapping(value = "/student/enrollCourse/{courseId}")
     public @ResponseBody ResponseEntity enrollCourse(@PathVariable("courseId") String courseId, Principal principal) {
 
@@ -37,7 +37,7 @@ public class EnrollController {
             Course course = courseService.findById(courseId);
 
             if (course.getRestSeat() <= 0)
-                return new ResponseEntity("여석이 없습니다.", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("수강 신청 가능한 인원이 초과되었습니다.", HttpStatus.BAD_REQUEST);
             else if (enrollService.checkAlreadyEnrolled(course, student))
                 return new ResponseEntity("이미 수강 신청된 강의입니다.", HttpStatus.BAD_REQUEST);
             else if (enrollService.checkTimeConflict(course, student))
@@ -45,11 +45,11 @@ public class EnrollController {
             else {
                 enrollService.enroll(student, course);
                 courseService.deleteRestSeat(course);
-                return new ResponseEntity("수강신청이 완료되었습니다.", HttpStatus.OK);
+                return new ResponseEntity("수강 신청이 완료되었습니다.", HttpStatus.OK);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity("수강신청에 실패했습니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("수강 신청에 실패했습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
