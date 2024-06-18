@@ -52,7 +52,7 @@
     <div class="card">
         <div class="card-body px-5 py-5">
             <h1 style="font-weight:600">공지사항</h1>
-            <div class="split--div"></div>
+            <div class="split--div" style="margin-bottom:40px;"></div>
             <form role="form" th:action="@{'/notice/detail/' + ${noticeId}}" method="post" enctype="multipart/form-data"
                    name="notice" th:object="${notice}">
                 <table class="table--container table">
@@ -76,7 +76,7 @@
                 <div class="form-group">
                     <div class="col-md-12 d-flex justify-content-center">
                         <a th:href="@{'/notice/rewrite/' + ${noticeId}}" type="button" class="btn btn-seoha mb-3"
-                           style="width: 100px; margin-top:50px;"
+                           style="width:250px; margin-top:50px;"
                            th:if="${#authentication.principal.role == 'STAFF'}">수정</a>
                     </div>
                 </div>
