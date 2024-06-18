@@ -18,6 +18,7 @@ public class WeeklyPlan {
 
     private int week;
 
+    @Column(columnDefinition = "longtext")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

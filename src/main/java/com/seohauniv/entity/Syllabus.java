@@ -30,8 +30,10 @@ public class Syllabus {
 
     private int credit; // 이수학점
 
+    @Column(columnDefinition = "longtext")
     private String overview; // 개요
 
+    @Column(columnDefinition = "longtext")
     private String objective; // 강의 목표
 
     private String textbook; // 교재
@@ -40,7 +42,6 @@ public class Syllabus {
     private int semester; // 학기
 
     private int capacity; // 수강정원
-    
 
     @Enumerated(EnumType.STRING)
     private ProcedureStatus status;
