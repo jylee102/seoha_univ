@@ -42,8 +42,8 @@ public class PdfService {
         String fileUploadFullUrl = pdfLocation + "/" + savedFileName;
 
         // 작성되어 있는 템플릿으로 HTML 생성
-        String htmlContent1 = generateHtml("/forPDF/syllabus-template1", course);
-        String htmlContent2 = generateHtml("/forPDF/syllabus-template2", course);
+        String htmlContent1 = generateHtml("forPDF/syllabus-template1", course);
+        String htmlContent2 = generateHtml("forPDF/syllabus-template2", course);
 
         // 각 HTML을 개별 PDF로 변환
         String pdf1 = pdfLocation + "/temp1.pdf";

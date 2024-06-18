@@ -174,10 +174,10 @@
         document.getElementById('file').addEventListener('change', function() {
             var fileInput = this;
             var filePath = fileInput.value;
-            var allowedExtensions = /(\.xlsm)$/i; // 확장자가 .xlsm 인 파일을 허용하도록 설정
+            var allowedExtensions = /(\.xlsm|\.xlsx)$/i; // 확장자가 .xlsm 또는 .xlsx 인 파일을 허용하도록 설정
 
             if (!allowedExtensions.exec(filePath)) {
-                alert('올바른 파일 형식이 아닙니다. .xlsm 확장자의 파일을 선택해주세요.');
+                alert('올바른 파일 형식이 아닙니다. .xlsm 또는 .xlsx 확장자의 파일을 선택해주세요.');
                 fileInput.value = '';
                 return false;
             }
