@@ -179,7 +179,18 @@
                 + "&searchSemester=" + searchSemester;
         }
 
+        // 쿼리 매개변수 읽기
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchYear = urlParams.get('searchYear');
+        const searchSemester = urlParams.get('searchSemester');
 
+        // 쿼리 매개변수가 있는 경우, select 요소의 값을 설정
+        if (searchYear) {
+            yearSelect.value = searchYear;
+        }
+        if (searchSemester) {
+            document.querySelector("select[name='searchSemester']").value = searchSemester;
+        }
     </script>
 </th:block>
 

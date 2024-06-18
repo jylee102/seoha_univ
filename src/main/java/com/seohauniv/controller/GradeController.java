@@ -27,7 +27,7 @@ public class GradeController {
         try{
         List<Evaluation> grades = gradeService.findByEnrollStudentIdAndCourseSyllabusYearAndCourseSyllabusSemester(principal.getName(),2024,1);
         int countByGrade = gradeService.countByCredit(principal.getName(),2024,1);
-        float averageGrade = gradeService.averageGrade(principal.getName(), 2024,1);
+        Float averageGrade = gradeService.averageGrade(principal.getName(), 2024,1);
 
             TotalGradeDto totalGradeDto =new TotalGradeDto();
             totalGradeDto.setYear(2024);
@@ -52,7 +52,7 @@ public class GradeController {
         try {
             List<Evaluation> grades = gradeService.findByEnrollStudentIdAndCourseSyllabusYearAndCourseSyllabusSemester(principal.getName(), year, semester);
             int countByGrade = gradeService.countByCredit(principal.getName(), year, semester);
-            float averageGrade = gradeService.averageGrade(principal.getName(), year, semester);
+            Float averageGrade = gradeService.averageGrade(principal.getName(), year, semester);
 
             TotalGradeDto totalGradeDto = new TotalGradeDto();
             totalGradeDto.setYear(year);
