@@ -106,23 +106,22 @@ dependencies {
 
 <details>
   <summary>ERD</summary>
-  
-  자세한 내용은 [ERD](https://www.erdcloud.com/d/ZqPhoyxMsndkxBeMJ) 링크를 참고하세요.
+	
+  ![erd](https://github.com/jylee102/seoha_univ/assets/101354244/3f841c65-8a9e-46c1-8bdd-68bfe0a1bba6)
+
+  - 자세한 정보는 [ERD](https://www.erdcloud.com/d/ZqPhoyxMsndkxBeMJ) 링크를 참조하세요.
+    
 </details>
 
 <details>
   <summary>Structure</summary> 
   
-  ![Structure](https://github.com/jylee102/seoha_univ/assets/101354244/6a30a3ec-7628-4416-848e-67ee6945e7af)
+  ![Structure](https://github.com/jylee102/seoha_univ/assets/101354244/940994f1-455d-4ea2-a7a4-e230057fc918)
 </details>
 
 ## 화면구성 
-
-<details>
-  <summary>FIGMA</summary>
   
-  자세한 내용은 [FIGMA](https://www.figma.com/design/ReFlk7qdJ02ze86EnuuGIk/Untitled?node-id=0-1&t=Gs8N523LbywdK1Av-1) 링크를 참고하세요.
-</details>
+- [FIGMA](https://www.figma.com/design/ReFlk7qdJ02ze86EnuuGIk/Untitled?node-id=0-1&t=Gs8N523LbywdK1Av-1)
 
 ## 기능
 ### 차별화된 기능 ✨
