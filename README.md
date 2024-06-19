@@ -17,10 +17,10 @@
 #### 참여인원
 | 이름   |      역할     |  담당 기능     |
 |:--------:|:-----------------:|------------|
-| 이지영 | **팀장** <br> **[Back / Front]** | - 사용자 생성 구현 <br> - 비밀번호 변경 구현 <br> - 교수 강의계획서 CRUD 구현 <br> - 교직원 강의실 배정 및 강의 개설 구현 <br> - 메시지 구현 <br> - 강의계획서 PDF 기능 구현 <br> - 사용자, 강의계획서 생성시 엑셀 기능 구현 |
-| 박정민 | **팀원** <br> **[Back / Front]** | - 학생, 교수, 교직원 마이페이지 구현 <br> - 학생 휴학신청 기능 구현 <br> - 교직원 휴학신청 처리 기능 구현 <br> - 공지사항 CRUD 구현 <br> - 학사일정 CRUD 구현 <br> - 로고 제작 및 CSS 업무 | 
-| 이승민 | **팀원** <br> **[Back / Front]** | - 학생 성적 입력 <br> - 학생 출결 정보 등록 <br> - 금학기 성적 조회 <br> - 학기별 성적 조회 <br> - 누계 성적 조회 <br> - CSS 업무 |
-| 최은석 | **팀원** <br> **[Back / Front]** | - 로그인 화면 구성 <br> - 로그인 기능 구현 <br> - 비밀번호 초기화 기능 구현 <br> - 학생 수강신청 <br> - 내 강의 조회 및 시간표 <br> - CSS 업무 |
+| [이지영](https://github.com/jylee102) | **팀장** <br> **[Back / Front]** | - 사용자 생성 <br> - 비밀번호 변경 <br> - 교수 강의계획서 CRUD <br> - 교직원 강의실 배정 및 강의 개설 <br> - 메시지 <br> - 강의계획서 PDF 기능 <br> - 사용자, 강의계획서 생성시 엑셀 기능 <br> - CSS 업무 |
+| [박정민](https://github.com/parkjeongmin1)  | **팀원** <br> **[Back / Front]** | - 학생, 교수, 교직원 마이페이지 <br> - 학생 휴학신청 기능 <br> - 교직원 휴학신청 처리 기능 <br> - 공지사항 CRUD <br> - 학사일정 CRUD <br> - 로고 제작 및 CSS 업무 | 
+| [이승민](https://github.com/sm9940)  | **팀원** <br> **[Back / Front]** | - 학생 성적 입력 <br> - 학생 출결 정보 등록 <br> - 금학기 성적 조회 <br> - 학기별 성적 조회 <br> - 누계 성적 조회 <br> - CSS 업무 |
+| [최은석](https://github.com/volkinuna) | **팀원** <br> **[Back / Front]** | - 로그인 화면 구성 <br> - 로그인 기능 <br> - 비밀번호 초기화 기능 <br> - 학생 수강신청 <br> - 내 강의 조회 및 시간표 <br> - CSS 업무 |
 
 ## 사용기술
 > #### Back-end 
@@ -112,7 +112,7 @@ dependencies {
 <details>
   <summary>FIGMA</summary>
   
-  자세한 내용은 [FIGMA](https://www.figma.com/team_invite/redeem/CZpj67ALQqlBh403GF7Xvl) 링크를 참고하세요.
+  자세한 내용은 [FIGMA](https://www.figma.com/design/ReFlk7qdJ02ze86EnuuGIk/Untitled?node-id=0-1&t=Gs8N523LbywdK1Av-1) 링크를 참고하세요.
 </details>
 
 ## 기능
