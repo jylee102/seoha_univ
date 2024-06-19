@@ -43,11 +43,11 @@ https://seohauni.kro.kr/
 
 > #### Library
 ```
-<!-- DayPilot JS -->
+<!-- DayPilot JS: 시간표 -->
     <script src="/js/daypilot/daypilot-all.min.js"></script>
 ```
 ```
-<!-- flatpickr 라이브러리-->
+<!-- flatpickr: 달력(DatePicker) -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/l10n/ko.js"></script> <!-- 한국어-->
 ```
