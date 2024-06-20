@@ -5,7 +5,7 @@
 https://seohauni.kro.kr/
 
 ### 시연영상(YouTube)
-주소입력란입니다.
+https://youtu.be/TjPV7QwwpRc
 
 ## 📑 목차 
 - [소개](#소개)
